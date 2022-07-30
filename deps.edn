@@ -1,0 +1,2 @@
+{:deps
+ {iglu/iglu {:mvn/version "0.10.1"}}}
