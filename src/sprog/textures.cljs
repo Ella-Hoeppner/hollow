@@ -1,14 +1,17 @@
 (ns sprog.textures)
 
 (defn create-float-tex [gl resolution & [clamp?]]
-  (let [tex (.createTexture gl)]
+  (let [[width height] (if (number? resolution)
+                         [resolution resolution]
+                         resolution)
+        tex (.createTexture gl)]
     (.bindTexture gl gl.TEXTURE_2D tex)
     (.texImage2D gl
                  gl.TEXTURE_2D
                  0
                  gl.RGBA
-                 resolution
-                 resolution
+                 width
+                 height
                  0
                  gl.RGBA
                  gl.UNSIGNED_BYTE
@@ -35,14 +38,17 @@
     tex))
 
 (defn create-ui16-tex [gl resolution & [clamp?]]
-  (let [tex (.createTexture gl)]
+  (let [[width height] (if (number? resolution)
+                         [resolution resolution]
+                         resolution)
+        tex (.createTexture gl)]
     (.bindTexture gl gl.TEXTURE_2D tex)
     (.texImage2D gl
                  gl.TEXTURE_2D
                  0
                  gl.RGBA16UI
-                 resolution
-                 resolution
+                 width
+                 height
                  0
                  gl.RGBA_INTEGER
                  gl.UNSIGNED_SHORT
@@ -69,14 +75,17 @@
     tex))
 
 (defn create-ui32-tex [gl resolution & [clamp?]]
-  (let [tex (.createTexture gl)]
+  (let [[width height] (if (number? resolution)
+                         [resolution resolution]
+                         resolution)
+        tex (.createTexture gl)]
     (.bindTexture gl gl.TEXTURE_2D tex)
     (.texImage2D gl
                  gl.TEXTURE_2D
                  0
                  gl.RGBA32UI
-                 resolution
-                 resolution
+                 width
+                 height
                  0
                  gl.RGBA_INTEGER
                  gl.UNSIGNED_INT
