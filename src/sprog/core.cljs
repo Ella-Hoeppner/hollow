@@ -101,3 +101,17 @@
   (let [uniform-name-str (str uniform-name)]
     (ensure-uniform-present! sprog uniform-name-str)
     (.uniform2fv gl (@uniforms-atom uniform-name-str) value)))
+
+(defn set-sprog-uniform-3fv! [{:keys [gl uniforms-atom] :as sprog}
+                              uniform-name
+                              value]
+  (let [uniform-name-str (str uniform-name)]
+    (ensure-uniform-present! sprog uniform-name-str)
+    (.uniform3fv gl (@uniforms-atom uniform-name-str) value)))
+
+(defn set-sprog-uniform-4fv! [{:keys [gl uniforms-atom] :as sprog}
+                              uniform-name
+                              value]
+  (let [uniform-name-str (str uniform-name)]
+    (ensure-uniform-present! sprog uniform-name-str)
+    (.uniform4fv gl (@uniforms-atom uniform-name-str) value)))
