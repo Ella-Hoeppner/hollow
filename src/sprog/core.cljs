@@ -115,3 +115,23 @@
   (let [uniform-name-str (str uniform-name)]
     (ensure-uniform-present! sprog uniform-name-str)
     (.uniform4fv gl (@uniforms-atom uniform-name-str) value)))
+
+(defn set-sprog-float-uniform! [sprog uniform-name value]
+  ((cond
+     (number? value) set-sprog-uniform-1f!
+     (== (count value) 2) set-sprog-uniform-2fv!
+     (== (count value) 3) set-sprog-uniform-3fv!
+     (== (count value) 4) set-sprog-uniform-4fv!)
+   sprog uniform-name value))
+
+(defn set-sprog-float-uniforms! [sprog name-value-map]
+  (doseq [[name value] name-value-map]
+    (set-sprog-float-uniform! sprog name value)))
+
+(defn set-sprog-tex-uniforms! [{:keys [gl] :as sprog} name-tex-map]
+  (let [name-tex-vec (vec name-tex-map)]
+    (doseq [i (range (count name-tex-vec))]
+      (let [[name tex] (name-tex-vec i)]
+        (.activeTexture gl (+ gl.TEXTURE0 i))
+        (.bindTexture gl gl.TEXTURE_2D tex)
+        (set-sprog-uniform-1i! sprog name i)))))
