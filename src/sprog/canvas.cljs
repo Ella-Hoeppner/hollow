@@ -17,19 +17,39 @@
                       js/window.devicePixelRatio)
         style canvas.style
         max-resolution (.getParameter gl gl.MAX_TEXTURE_SIZE)
-        resolution (mapv (partial *
-                                  (Math/floor
-                                   (min pixel-ratio
-                                        (/ max-resolution
-                                           (max raw-width raw-height)))))
-                         [raw-width raw-height])
-        [width height] resolution]
+        [width height] (mapv (partial *
+                                      (Math/floor
+                                       (min pixel-ratio
+                                            (/ max-resolution
+                                               (max raw-width raw-height)))))
+                             [raw-width raw-height])]
     (set! (.-left style) 0)
     (set! (.-top style) 0)
     (set! (.-width style) (str raw-width "px"))
     (set! (.-height style) (str raw-height "px"))
     (set! (.-width canvas) width)
     (set! (.-height canvas) height)))
+
+(defn square-maximize-gl-canvas [gl & {:keys [max-pixel-ratio]}]
+  (let [canvas (.-canvas gl)
+        raw-width js/window.innerWidth
+        raw-height js/window.innerHeight
+        raw-size (min raw-width raw-height)
+        pixel-ratio (if max-pixel-ratio
+                      (min js/window.devicePixelRatio max-pixel-ratio)
+                      js/window.devicePixelRatio)
+        style canvas.style
+        max-resolution (.getParameter gl gl.MAX_TEXTURE_SIZE)
+        size (* raw-size
+                (Math/floor
+                 (min pixel-ratio
+                      (/ max-resolution raw-size))))]
+    (set! (.-left style) (* (- raw-width raw-size) 0.5))
+    (set! (.-top style) (* (- raw-height raw-size) 0.5))
+    (set! (.-width style) (str raw-size "px"))
+    (set! (.-height style) (str raw-size "px"))
+    (set! (.-width canvas) size)
+    (set! (.-height canvas) size)))
 
 (defn save-gl-image [gl name]
   (.toBlob gl.canvas

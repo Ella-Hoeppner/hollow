@@ -24,12 +24,11 @@
   (let [gl @gl-atom]
     (maximize-gl-canvas gl)
     (let [sprog @sprog-atom
-          width gl.canvas.width
-          height gl.canvas.height]
+          resolution [gl.canvas.width gl.canvas.height]]
       (.bindFramebuffer gl gl.FRAMEBUFFER nil)
       (run-purefrag-sprog sprog 
-                          [width height] 
-                          {:floats {"size" [width height]}}))
+                          resolution
+                          {:floats {"size" resolution}}))
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
