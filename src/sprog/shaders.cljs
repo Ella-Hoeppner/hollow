@@ -88,6 +88,27 @@
     (ensure-uniform-present! sprog uniform-name-str)
     (.uniform1i gl (@uniforms-atom uniform-name-str) value)))
 
+(defn set-sprog-uniform-2iv! [{:keys [gl uniforms-atom] :as sprog}
+                              uniform-name
+                              value]
+  (let [uniform-name-str (str uniform-name)]
+    (ensure-uniform-present! sprog uniform-name-str)
+    (.uniform2iv gl (@uniforms-atom uniform-name-str) value)))
+
+(defn set-sprog-uniform-3iv! [{:keys [gl uniforms-atom] :as sprog}
+                              uniform-name
+                              value]
+  (let [uniform-name-str (str uniform-name)]
+    (ensure-uniform-present! sprog uniform-name-str)
+    (.uniform3iv gl (@uniforms-atom uniform-name-str) value)))
+
+(defn set-sprog-uniform-4iv! [{:keys [gl uniforms-atom] :as sprog}
+                              uniform-name
+                              value]
+  (let [uniform-name-str (str uniform-name)]
+    (ensure-uniform-present! sprog uniform-name-str)
+    (.uniform4iv gl (@uniforms-atom uniform-name-str) value)))
+
 (defn set-sprog-uniform-1f! [{:keys [gl uniforms-atom] :as sprog}
                              uniform-name
                              value]
@@ -128,6 +149,18 @@
   (doseq [[name value] name-value-map]
     (set-sprog-float-uniform! sprog name value)))
 
+(defn set-sprog-int-uniform! [sprog uniform-name value]
+  ((cond
+     (number? value) set-sprog-uniform-1i!
+     (== (count value) 2) set-sprog-uniform-2iv!
+     (== (count value) 3) set-sprog-uniform-3iv!
+     (== (count value) 4) set-sprog-uniform-4iv!)
+   sprog uniform-name value))
+
+(defn set-sprog-int-uniforms! [sprog name-value-map]
+  (doseq [[name value] name-value-map]
+    (set-sprog-int-uniform! sprog name value)))
+
 (defn set-sprog-tex-uniforms! [{:keys [gl] :as sprog} name-tex-map]
   (let [name-tex-vec (vec name-tex-map)]
     (doseq [i (range (count name-tex-vec))]
@@ -135,3 +168,8 @@
         (.activeTexture gl (+ gl.TEXTURE0 i))
         (.bindTexture gl gl.TEXTURE_2D tex)
         (set-sprog-uniform-1i! sprog name i)))))
+
+(defn set-sprog-uniforms! [sprog {:keys [floats ints textures]}]
+  (set-sprog-float-uniforms! sprog floats)
+  (set-sprog-int-uniforms! sprog ints)
+  (set-sprog-tex-uniforms! sprog textures))

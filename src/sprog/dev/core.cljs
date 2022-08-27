@@ -4,11 +4,23 @@
                                   maximize-gl-canvas]]
             [sprog.shaders :refer [create-purefrag-sprog
                                    use-sprog
-                                   set-sprog-float-uniforms!]]
+                                   set-sprog-float-uniforms!
+                                   set-sprog-uniforms!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
 (defonce sprog-atom (atom nil))
+
+(def frag-source
+  '{:version "300 es"
+    :precision "highp float"
+    :uniforms {size vec2}
+    :outputs {fragColor vec4}
+    :signatures {main ([] void)}
+    :functions {main
+                ([]
+                 (=vec2 pos (/ gl_FragCoord.xy size))
+                 (= fragColor (vec4 pos 0 1)))}})
 
 (defn update-page! []
   (let [gl @gl-atom]
@@ -19,26 +31,16 @@
       (.bindFramebuffer gl gl.FRAMEBUFFER nil)
       (.viewport gl 0 0 width height)
       (use-sprog sprog)
-      (set-sprog-float-uniforms! sprog {"size" [width height]})
+      (set-sprog-uniforms! sprog {:floats {"size" [width height]}})
       (.drawArrays gl gl.TRIANGLES 0 3))
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! sprog-atom
-            (create-purefrag-sprog
-             gl
-             (iglu->glsl
-              '{:version "300 es"
-                :precision "highp float"
-                :uniforms {size vec2}
-                :outputs {fragColor vec4}
-                :signatures {main ([] void)}
-                :functions {main
-                            ([]
-                             (=vec2 pos (/ gl_FragCoord.xy size))
-                             (= fragColor (vec4 pos 0 1)))}}))))
+    (reset! sprog-atom (create-purefrag-sprog
+                        gl
+                        (iglu->glsl frag-source))))
   (update-page!))
 
 (defn pre-init []
