@@ -174,8 +174,9 @@
   (set-sprog-int-uniforms! sprog ints)
   (set-sprog-tex-uniforms! sprog textures))
 
-(defn run-purefrag-sprog [{:keys [gl] :as sprog} [width height] uniform-map]
-  (.viewport gl 0 0 width height)
-  (use-sprog sprog)
-  (set-sprog-uniforms! sprog uniform-map)
-  (.drawArrays gl gl.TRIANGLES 0 3))
+(defn run-purefrag-sprog [{:keys [gl] :as sprog} size uniform-map]
+  (let [[width height] (if (number? size) [size size] size)]
+    (.viewport gl 0 0 width height)
+    (use-sprog sprog)
+    (set-sprog-uniforms! sprog uniform-map)
+    (.drawArrays gl gl.TRIANGLES 0 3)))
