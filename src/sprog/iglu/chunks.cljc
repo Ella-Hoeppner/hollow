@@ -1,4 +1,4 @@
-(ns iglu.chunks)
+(ns sprog.iglu.chunks)
 
 (def rand-chunk
   '{:signatures {rand ([vec2] float)}

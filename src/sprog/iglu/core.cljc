@@ -1,6 +1,6 @@
-(ns iglu.core
-  (:require [iglu.glsl :as glsl]
-            [iglu.parse :as parse]))
+(ns sprog.iglu.core
+  (:require [sprog.iglu.glsl :as glsl]
+            [sprog.iglu.parse :as parse]))
 
 (defn iglu->glsl
   "Converts an iglu map into a GLSL string. The second arity is only for backwards

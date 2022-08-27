@@ -1,5 +1,5 @@
-(ns sprog.core
-  (:require [iglu.core :refer [iglu->glsl]]))
+(ns sprog.shaders
+  (:require [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defn create-shader [gl shader-type source]
   (let [shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER

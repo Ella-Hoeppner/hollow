@@ -1,4 +1,4 @@
-(ns iglu.parse
+(ns sprog.iglu.parse
   (:require [clojure.spec.alpha :as s]
             [expound.alpha :as expound]))
 

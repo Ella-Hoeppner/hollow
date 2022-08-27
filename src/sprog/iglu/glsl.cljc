@@ -1,6 +1,6 @@
-(ns iglu.glsl
+(ns sprog.iglu.glsl
   (:require [clojure.string :as str]
-            [iglu.parse :as parse]))
+            [sprog.iglu.parse :as parse]))
 
 ;; multimethods
 

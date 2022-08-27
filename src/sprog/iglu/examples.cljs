@@ -1,5 +1,5 @@
-(ns iglu.examples
-  (:require [iglu.core :refer [iglu->glsl]]))
+(ns sprog.iglu.examples
+  (:require [sprog.iglu.core :refer [iglu->glsl]]))
 
 ; A simple vertex shader.
 (iglu->glsl
