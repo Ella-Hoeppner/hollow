@@ -3,9 +3,7 @@
             [sprog.canvas :refer [create-gl-canvas
                                   maximize-gl-canvas]]
             [sprog.shaders :refer [create-purefrag-sprog
-                                   use-sprog
-                                   set-sprog-float-uniforms!
-                                   set-sprog-uniforms!]]
+                                   run-purefrag-sprog]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
@@ -29,10 +27,9 @@
           width gl.canvas.width
           height gl.canvas.height]
       (.bindFramebuffer gl gl.FRAMEBUFFER nil)
-      (.viewport gl 0 0 width height)
-      (use-sprog sprog)
-      (set-sprog-uniforms! sprog {:floats {"size" [width height]}})
-      (.drawArrays gl gl.TRIANGLES 0 3))
+      (run-purefrag-sprog sprog 
+                          [width height] 
+                          {:floats {"size" [width height]}}))
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

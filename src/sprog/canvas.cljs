@@ -24,7 +24,6 @@
                                            (max raw-width raw-height)))))
                          [raw-width raw-height])
         [width height] resolution]
-    (u/log pixel-ratio)
     (set! (.-left style) 0)
     (set! (.-top style) 0)
     (set! (.-width style) (str raw-width "px"))
