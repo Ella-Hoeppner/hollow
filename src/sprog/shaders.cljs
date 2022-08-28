@@ -68,9 +68,6 @@
                             0))
     sprog))
 
-(defn use-sprog [{:keys [gl program]}]
-  (.useProgram gl program))
-
 (defn ensure-uniform-present! [{:keys [gl program uniforms-atom]}
                                uniform-name-str]
   (when (not (@uniforms-atom uniform-name-str))
@@ -174,9 +171,18 @@
   (set-sprog-int-uniforms! sprog ints)
   (set-sprog-tex-uniforms! sprog textures))
 
+(defn use-sprog [{:keys [gl program] :as sprog} uniform-map]
+  (.useProgram gl program)
+  (set-sprog-uniforms! sprog uniform-map))
+
+(defn run-triangle-sprog [{:keys [gl] :as sprog} size uniform-map start length]
+  (let [[width height] (if (number? size) [size size] size)]
+    (.viewport gl 0 0 width height)
+    (use-sprog sprog uniform-map)
+    (.drawArrays gl gl.TRIANGLES start length)))
+
 (defn run-purefrag-sprog [{:keys [gl] :as sprog} size uniform-map]
   (let [[width height] (if (number? size) [size size] size)]
     (.viewport gl 0 0 width height)
-    (use-sprog sprog)
-    (set-sprog-uniforms! sprog uniform-map)
+    (use-sprog sprog uniform-map)
     (.drawArrays gl gl.TRIANGLES 0 3)))
