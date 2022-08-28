@@ -1,4 +1,6 @@
-(ns sprog.iglu.chunks)
+(ns sprog.iglu.chunks
+  (:require [clojure.walk :refer [postwalk 
+                                  postwalk-replace]]))
 
 (defn merge-chunks [& chunks]
   (assoc (reduce (partial merge-with merge)
@@ -12,6 +14,23 @@
                  (=vec3 p3 (fract (* (vec3 p.xyx) "0.1031")))
                  (+= p3 (dot p3 (+ p3.yzx "33.33")))
                  (fract (* (+ p3.x p3.y) p3.z)))}})
+
+(defn random-shortcut [expression & [rand-fn]]
+  (let [rand-fn (or rand-fn rand)]
+    (postwalk
+     (fn [subexp]
+       (if (and (vector? subexp)
+                (= (first subexp) :rand))
+         (postwalk-replace
+          {:scale (* (if (> (rand-fn) 0.5) 1 -1)
+                     (+ 200 (* (rand-fn) 300)))
+           :x (- (* (rand-fn) 100) 50)
+           :y (- (* (rand-fn) 100) 50)
+           :seed-exp (second subexp)}
+          '(rand (+ (* :seed-exp :scale)
+                    (vec2 :x :y))))
+         subexp))
+     expression)))
 
 (def hsl-to-rgb-chunk
   '{:signatures {hsl2rgb ([vec3] vec3)}
@@ -105,3 +124,63 @@
                  (* color.z (mix (vec3 1)
                                  rgb
                                  color.y)))}})
+
+(def particle-vert-source
+  '{:precision {float highp
+                int highp
+                usampler2D highp}
+    :outputs {particlePos vec2}
+    :uniforms {particleTex usampler2D
+               radius float}
+    :signatures {main ([] void)}
+    :functions
+    {main
+     ([]
+      (=int agentIndex (/ gl_VertexID 6))
+      (=int corner "gl_VertexID % 6")
+
+      (=ivec2 texSize (textureSize particleTex 0))
+
+      (=vec2 texPos
+             (/ (+ "0.5" (vec2 (% agentIndex texSize.x)
+                               (/ agentIndex texSize.x)))
+                (vec2 texSize)))
+
+      (=uvec4 particleColor (texture particleTex texPos))
+      (= particlePos (/ (vec2 particleColor.xy) "65535.0"))
+
+      (= gl_Position
+         (vec4 (- (* (+ particlePos
+                        (* radius
+                           (- (* "2.0"
+                                 (if (|| (== corner 0)
+                                         (== corner 3))
+                                   (vec2 0 1)
+                                   (if (|| (== corner 1)
+                                           (== corner 4))
+                                     (vec2 1 0)
+                                     (if (== corner 2)
+                                       (vec2 0 0)
+                                       (vec2 1 1)))))
+                              "1.0")))
+                     "2.0")
+                  "1.0")
+               0
+               1)))}})
+
+(def particle-frag-source
+  '{:precision {float highp
+                int highp}
+    :uniforms {radius float
+               size float}
+    :inputs {circlePos vec2}
+    :outputs {fragColor vec4}
+    :signatures {main ([] void)}
+    :functions
+    {main
+     ([]
+      (=vec2 pos (/ gl_FragCoord.xy size))
+      (=float dist (distance pos circlePos))
+      ("if" (> dist radius)
+            "discard")
+      (= fragColor (vec4 1 0 0 1)))}})
