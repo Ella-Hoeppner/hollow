@@ -173,14 +173,14 @@
                 int highp}
     :uniforms {radius float
                size float}
-    :inputs {circlePos vec2}
+    :inputs {particlePos vec2}
     :outputs {fragColor vec4}
     :signatures {main ([] void)}
     :functions
     {main
      ([]
       (=vec2 pos (/ gl_FragCoord.xy size))
-      (=float dist (distance pos circlePos))
+      (=float dist (distance pos particlePos))
       ("if" (> dist radius)
             "discard")
       (= fragColor (vec4 1 0 0 1)))}})
