@@ -8,7 +8,7 @@
 (s/def ::declarations (s/map-of symbol? ::type))
 
 (s/def ::version string?)
-(s/def ::precision string?)
+(s/def ::precision (s/map-of symbol? symbol?))
 (s/def ::uniforms ::declarations)
 (s/def ::attributes ::declarations)
 (s/def ::varyings ::declarations)

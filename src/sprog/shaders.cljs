@@ -32,12 +32,12 @@
 
 (def purefrag-vert-source
   (iglu->glsl
-   {:version "300 es"
-    :precision "lowp float"
-    :inputs '{vertPos vec4}
-    :signatures '{main ([] void)}
-    :functions
-    '{main
+   '{:version "300 es"
+     :precision {float lowp}
+     :inputs {vertPos vec4}
+     :signatures {main ([] void)}
+     :functions
+     {main
       ([]
        (= gl_Position vertPos))}}))
 

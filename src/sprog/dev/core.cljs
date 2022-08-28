@@ -11,7 +11,7 @@
 
 (def frag-source
   '{:version "300 es"
-    :precision "highp float"
+    :precision {float highp}
     :uniforms {size vec2}
     :outputs {fragColor vec4}
     :signatures {main ([] void)}

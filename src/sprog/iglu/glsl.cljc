@@ -124,6 +124,9 @@
 (defn ->in [[name type]]
   (str "in " (parse-type type) " " name))
 
+(defn ->precision [[type precision]]
+  (str "precision " precision " " type))
+
 (defn ->uniform [[name type]]
   (str "uniform " (parse-type type) " " name))
 
@@ -198,7 +201,7 @@
   (let [[fn-kind fn-val] functions]
     (->> (cond-> []
            version (conj (str "#version " version))
-           precision (conj (str "precision " precision))
+           precision (into (mapv ->precision precision))
            uniforms (into (mapv ->uniform uniforms))
            attributes (into (mapv ->attribute attributes))
            varyings (into (mapv ->varying varyings))
