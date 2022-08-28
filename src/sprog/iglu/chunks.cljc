@@ -1,5 +1,10 @@
 (ns sprog.iglu.chunks)
 
+(defn merge-chunks [& chunks]
+  (assoc (reduce (partial merge-with merge)
+                 (map #(dissoc % :version) chunks))
+         :version "300 es"))
+
 (def rand-chunk
   '{:signatures {rand ([vec2] float)}
     :functions {rand
