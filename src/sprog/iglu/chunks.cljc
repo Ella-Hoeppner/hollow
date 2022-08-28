@@ -184,3 +184,32 @@
       ("if" (> dist radius)
             "discard")
       (= fragColor (vec4 1 0 0 1)))}})
+
+(defn sparse-gaussian-expression [value-fn radius sigma & [skip-factor]]
+  (let [coords (conj (mapcat (fn [r]
+                               (list [0 r]
+                                     [r r]
+                                     [r 0]
+                                     [r (- r)]
+                                     [0 (- r)]
+                                     [(- r) (- r)]
+                                     [(- r) 0]
+                                     [(- r) r]))
+                             (range 1 (inc radius) (or skip-factor 1)))
+                     [0 0])
+        factors (map (fn [[x y]]
+                       (Math/exp
+                        (/ (- (+ (* x x) (* y y)))
+                           (* 2 sigma sigma))))
+                     coords)
+        factor-sum (apply + factors)]
+    (conj (map (fn [[x y] factor]
+                 (postwalk-replace
+                  {:x (.toFixed x 1)
+                   :y (.toFixed y 1)
+                   :factor (.toFixed (/ factor factor-sum) 8)
+                   :value-fn value-fn}
+                  '(* (:value-fn :x :y) :factor)))
+               coords
+               factors)
+          '+)))
