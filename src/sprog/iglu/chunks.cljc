@@ -2,6 +2,16 @@
   (:require [clojure.walk :refer [postwalk 
                                   postwalk-replace]]))
 
+(def trivial-vert-source
+  '{:version "300 es"
+    :precision {float lowp}
+    :inputs {vertPos vec4}
+    :signatures {main ([] void)}
+    :functions
+    {main
+     ([]
+      (= gl_Position vertPos))}})
+
 (defn merge-chunks [& chunks]
   (assoc (reduce (partial merge-with merge)
                  (map #(dissoc % :version) chunks))

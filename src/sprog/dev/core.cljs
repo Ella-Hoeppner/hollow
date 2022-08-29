@@ -1,8 +1,8 @@
 (ns sprog.dev.core
   (:require [sprog.util :as u]
-            [sprog.canvas :refer [create-gl-canvas
+            [sprog.webgl.canvas :refer [create-gl-canvas
                                   maximize-gl-canvas]]
-            [sprog.shaders :refer [create-purefrag-sprog
+            [sprog.webgl.shaders :refer [create-purefrag-sprog
                                    run-purefrag-sprog]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 

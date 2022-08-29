@@ -1,4 +1,4 @@
-(ns sprog.canvas
+(ns sprog.webgl.canvas
   (:require [sprog.util :as u]))
 
 (defn create-gl-canvas []
@@ -51,7 +51,7 @@
     (set! (.-width canvas) size)
     (set! (.-height canvas) size)))
 
-(defn save-gl-image [gl name]
+(defn save-image [gl name]
   (.toBlob gl.canvas
            (fn [blob]
              (let [a (js/document.createElement "a")]

@@ -1,4 +1,4 @@
-(ns sprog.textures)
+(ns sprog.webgl.textures)
 
 (defn create-float-tex [gl resolution & [clamp?]]
   (let [[width height] (if (number? resolution)
