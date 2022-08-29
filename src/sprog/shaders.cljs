@@ -186,3 +186,16 @@
     (.viewport gl 0 0 width height)
     (use-sprog sprog uniform-map)
     (.drawArrays gl gl.TRIANGLES 0 3)))
+
+(defn target-screen! [gl]
+  (.bindFramebuffer gl gl.FRAMEBUFFER nil))
+
+(defn target-textures! [gl framebuffer & textures]
+  (.bindFramebuffer gl gl.FRAMEBUFFER framebuffer)
+  (doseq [[texture index] (map list textures (range))]
+    (.framebufferTexture2D gl
+                           gl.FRAMEBUFFER
+                           (+ gl.COLOR_ATTACHMENT0 index)
+                           gl.TEXTURE_2D
+                           texture
+                           0)))
