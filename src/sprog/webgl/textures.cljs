@@ -1,6 +1,9 @@
 (ns sprog.webgl.textures)
 
-(defn create-float-tex [gl resolution & [clamp?]]
+(defn create-float-tex [gl resolution & [{:keys [wrap-mode
+                                                 filter-mode]
+                                          :or {wrap-mode :wrap
+                                               filter-mode :linear}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
                          resolution)
@@ -16,28 +19,32 @@
                  gl.RGBA
                  gl.UNSIGNED_BYTE
                  nil)
-    (.texParameteri gl
-                    gl.TEXTURE_2D
-                    gl.TEXTURE_MIN_FILTER
-                    gl.LINEAR)
-    (.texParameteri gl
-                    gl.TEXTURE_2D
-                    gl.TEXTURE_MAG_FILTER
-                    gl.LINEAR)
-    (let [wrap-mode (if clamp?
-                      gl.CLAMP_TO_EDGE
-                      gl.REPEAT)]
+    (let [gl-filter-mode ({:linear gl.LINEAR
+                           :nearest gl.NEAREST}
+                          filter-mode)]
+      (.texParameteri gl
+                      gl.TEXTURE_2D
+                      gl.TEXTURE_MIN_FILTER
+                      gl-filter-mode)
+      (.texParameteri gl
+                      gl.TEXTURE_2D
+                      gl.TEXTURE_MAG_FILTER
+                      gl-filter-mode))
+    (let [gl-wrap-mode ({:wrap gl.CLAMP_TO_EDGE
+                         :linear gl.REPEAT}
+                        wrap-mode)]
       (.texParameteri gl
                       gl.TEXTURE_2D
                       gl.TEXTURE_WRAP_S
-                      wrap-mode)
+                      gl-wrap-mode)
       (.texParameteri gl
                       gl.TEXTURE_2D
                       gl.TEXTURE_WRAP_T
-                      wrap-mode))
+                      gl-wrap-mode))
     tex))
 
-(defn create-ui16-tex [gl resolution & [clamp?]]
+(defn create-ui16-tex [gl resolution & [{:keys [wrap-mode]
+                                         :or {wrap-mode :wrap}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
                          resolution)
@@ -61,20 +68,21 @@
                     gl.TEXTURE_2D
                     gl.TEXTURE_MAG_FILTER
                     gl.NEAREST)
-    (let [wrap-mode (if clamp?
-                      gl.CLAMP_TO_EDGE
-                      gl.REPEAT)]
+    (let [gl-wrap-mode ({:wrap gl.CLAMP_TO_EDGE
+                         :linear gl.REPEAT}
+                        wrap-mode)]
       (.texParameteri gl
                       gl.TEXTURE_2D
                       gl.TEXTURE_WRAP_S
-                      wrap-mode)
+                      gl-wrap-mode)
       (.texParameteri gl
                       gl.TEXTURE_2D
                       gl.TEXTURE_WRAP_T
-                      wrap-mode))
+                      gl-wrap-mode))
     tex))
 
-(defn create-ui32-tex [gl resolution & [clamp?]]
+(defn create-ui32-tex [gl resolution & [{:keys [wrap-mode]
+                                         :or {wrap-mode :wrap}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
                          resolution)
@@ -98,15 +106,15 @@
                     gl.TEXTURE_2D
                     gl.TEXTURE_MAG_FILTER
                     gl.NEAREST)
-    (let [wrap-mode (if clamp?
-                      gl.CLAMP_TO_EDGE
-                      gl.REPEAT)]
+    (let [gl-wrap-mode ({:wrap gl.CLAMP_TO_EDGE
+                         :linear gl.REPEAT}
+                        wrap-mode)]
       (.texParameteri gl
                       gl.TEXTURE_2D
                       gl.TEXTURE_WRAP_S
-                      wrap-mode)
+                      gl-wrap-mode)
       (.texParameteri gl
                       gl.TEXTURE_2D
                       gl.TEXTURE_WRAP_T
-                      wrap-mode))
+                      gl-wrap-mode))
     tex))
