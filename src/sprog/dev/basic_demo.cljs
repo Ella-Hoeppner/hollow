@@ -1,9 +1,10 @@
-(ns sprog.dev.core
+(ns sprog.dev.basic-demo
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
-                                  maximize-gl-canvas]]
+                                        maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                   run-purefrag-sprog]]
+                                         run-purefrag-sprog]]
+            [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
@@ -21,14 +22,13 @@
                  (= fragColor (vec4 pos 0 1)))}})
 
 (defn update-page! []
-  (let [gl @gl-atom]
+  (let [gl @gl-atom
+        resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (let [sprog @sprog-atom
-          resolution [gl.canvas.width gl.canvas.height]]
-      (.bindFramebuffer gl gl.FRAMEBUFFER nil)
-      (run-purefrag-sprog sprog 
-                          resolution
-                          {:floats {"size" resolution}}))
+    (target-screen! gl)
+    (run-purefrag-sprog @sprog-atom
+                        resolution
+                        {:floats {"size" resolution}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
@@ -38,6 +38,3 @@
                         gl
                         (iglu->glsl frag-source))))
   (update-page!))
-
-(defn pre-init []
-  (js/window.addEventListener "load" (fn [_] (init))))
