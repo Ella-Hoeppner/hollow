@@ -11,4 +11,6 @@
                            (+ gl.COLOR_ATTACHMENT0 index)
                            gl.TEXTURE_2D
                            texture
-                           0)))
+                           0))
+  (.drawBuffers gl (map #(+ gl.COLOR_ATTACHMENT0 %)
+                        (range (count textures)))))

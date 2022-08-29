@@ -121,9 +121,6 @@
     :type-name v
     :array (str (:type-name v) "[" (:size v) "]")))
 
-(defn ->in [[name type]]
-  (str "in " (parse-type type) " " name))
-
 (defn ->precision [[type precision]]
   (str "precision " precision " " type))
 
@@ -136,9 +133,24 @@
 (defn ->varying [[name type]]
   (str "varying " (parse-type type) " " name))
 
-(defn ->out [[name type]]
-  (when type
-    (str "out " (parse-type type) " " name)))
+(defn ->inout [in-or-out layout [name type]]
+  (str (when layout
+         (let [layout-index (layout name)]
+           (when layout-index
+             (str "layout(location = "
+                  (layout name)
+                  ") "))))
+       in-or-out
+       " "
+       (parse-type type)
+       " "
+       name))
+
+(defn ->in [layout name-type-pair]
+  (->inout "in" layout name-type-pair))
+
+(defn ->out [layout name-type-pair]
+  (->inout "out" layout name-type-pair))
 
 (defn ->function [signatures [name {:keys [args body]}]]
   (if-let [{:keys [in out]} (get signatures name)]
@@ -194,9 +206,17 @@
                     (contains? (fn-deps b) a) -1
                     :else 0)))))
 
-(defn iglu->glsl [{:keys [version precision
-                          uniforms attributes varyings inputs outputs
-                          signatures functions fn-deps]
+(defn iglu->glsl [{:keys [version
+                          precision
+                          uniforms
+                          attributes
+                          varyings
+                          inputs
+                          outputs
+                          layout
+                          signatures
+                          functions
+                          fn-deps]
                    :as shader}]
   (let [[fn-kind fn-val] functions]
     (->> (cond-> []
@@ -205,8 +225,8 @@
            uniforms (into (mapv ->uniform uniforms))
            attributes (into (mapv ->attribute attributes))
            varyings (into (mapv ->varying varyings))
-           inputs (into (mapv ->in inputs))
-           outputs (into (mapv ->out outputs))
+           inputs (into (mapv (partial ->in layout) inputs))
+           outputs (into (mapv (partial ->out layout) outputs))
            (= fn-kind :iglu) (into (mapv (partial ->function signatures)
                                          (sort-fns fn-val fn-deps))))
          (reduce (partial stringify 0) [])
