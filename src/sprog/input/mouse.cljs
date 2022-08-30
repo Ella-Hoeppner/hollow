@@ -1,4 +1,4 @@
-(ns input.mouse)
+(ns sprog.input.mouse)
 
 (defonce mouse-atom (atom {:pos [0.5 0.5]
                            :down? false}))

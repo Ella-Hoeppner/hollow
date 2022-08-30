@@ -1,4 +1,4 @@
-(ns input.searcher
+(ns sprog.input.searcher
   (:require [input.keyboard :refer [add-left-right-key-callback
                                     add-up-down-key-callback]]
             [input.mouse :refer [mouse-pos

@@ -1,4 +1,4 @@
-(ns input.keyboard)
+(ns sprog.input.keyboard)
 
 (defonce key-callbacks (atom {}))
 
