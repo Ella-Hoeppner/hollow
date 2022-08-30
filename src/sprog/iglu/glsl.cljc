@@ -1,8 +1,8 @@
 (ns sprog.iglu.glsl
   (:require [clojure.string :as str]
             [clojure.walk :refer [walk]]
-            [clojure.set :refer [union]]
-            [sprog.iglu.parse :as parse]))
+            [clojure.set :refer [union
+                                 intersection]]))
 
 ;; multimethods
 
@@ -198,12 +198,6 @@
     :else
     (into lines (reduce (partial stringify level) [] line))))
 
-(defn propagate-deps [deps]
-  (into {}
-        (mapv (fn [[fn-name fn-deps]]
-                [fn-name (union fn-deps (apply union (map deps fn-deps)))])
-              deps)))
-
 (defn sort-fns [functions]
   (letfn [(inner-symbols [form]
                          (walk (fn [s]
@@ -216,25 +210,28 @@
                                      #{})))
                                #(apply union %)
                                form))]
-    (let [fn-deps (into {}
+    (let [fn-names (set (keys functions))
+          fn-deps (into {}
                         (mapv (fn [[fn-name fn-content]]
                                 [fn-name
-                                 (inner-symbols (:body fn-content))])
-                              functions))
-          transative-fn-deps (some (fn [[old-deps new-deps]]
-                                     (when (= old-deps new-deps)
-                                       old-deps))
-                                   (partition 2 1 (iterate propagate-deps
-                                                           fn-deps)))]
-      (sort-by first
-               (fn [a b]
-                 (let [a-deps (transative-fn-deps a)
-                       b-deps (transative-fn-deps b)]
-                   (cond
-                     (a-deps b) 1
-                     (b-deps a) -1
-                     :else 0)))
-               (seq functions)))))
+                                 (intersection fn-names
+                                               (inner-symbols
+                                                (:body fn-content)))])
+                              functions))]
+      (loop [remaining-names fn-names
+             sorted-fns []]
+        (if (empty? remaining-names)
+          (seq sorted-fns)
+          (let [next-fn-name (some #(when (empty?
+                                           (intersection remaining-names
+                                                         (fn-deps %)))
+                                      %)
+                                   remaining-names)]
+            (if next-fn-name
+              (recur (disj remaining-names next-fn-name)
+                     (conj sorted-fns [next-fn-name (functions next-fn-name)]))
+              (throw (ex-info "Cyclic dependency detected between functions"
+                              {:functions (str remaining-names)})))))))))
 
 (defn iglu->glsl [{:keys [version
                           precision
