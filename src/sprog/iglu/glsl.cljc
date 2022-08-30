@@ -1,5 +1,7 @@
 (ns sprog.iglu.glsl
   (:require [clojure.string :as str]
+            [clojure.walk :refer [walk]]
+            [clojure.set :refer [union]]
             [sprog.iglu.parse :as parse]))
 
 ;; multimethods
@@ -196,15 +198,43 @@
     :else
     (into lines (reduce (partial stringify level) [] line))))
 
-(defn sort-fns [functions fn-deps]
-  (->> functions
-       seq
-       (sort-by first
-                (fn [a b]
-                  (cond
-                    (contains? (fn-deps a) b) 1
-                    (contains? (fn-deps b) a) -1
-                    :else 0)))))
+(defn propagate-deps [deps]
+  (into {}
+        (mapv (fn [[fn-name fn-deps]]
+                [fn-name (union fn-deps (apply union (map deps fn-deps)))])
+              deps)))
+
+(defn sort-fns [functions]
+  (letfn [(inner-symbols [form]
+                         (walk (fn [s]
+                                 (if (coll? s)
+                                   (if (map? s)
+                                     (inner-symbols (vals s))
+                                     (inner-symbols s))
+                                   (if (symbol? s)
+                                     #{s}
+                                     #{})))
+                               #(apply union %)
+                               form))]
+    (let [fn-deps (into {}
+                        (mapv (fn [[fn-name fn-content]]
+                                [fn-name
+                                 (inner-symbols (:body fn-content))])
+                              functions))
+          transative-fn-deps (some (fn [[old-deps new-deps]]
+                                     (when (= old-deps new-deps)
+                                       old-deps))
+                                   (partition 2 1 (iterate propagate-deps
+                                                           fn-deps)))]
+      (sort-by first
+               (fn [a b]
+                 (let [a-deps (transative-fn-deps a)
+                       b-deps (transative-fn-deps b)]
+                   (cond
+                     (a-deps b) 1
+                     (b-deps a) -1
+                     :else 0)))
+               (seq functions)))))
 
 (defn iglu->glsl [{:keys [version
                           precision
@@ -215,10 +245,9 @@
                           outputs
                           layout
                           signatures
-                          functions
-                          fn-deps]
-                   :as shader}]
-  (let [[fn-kind fn-val] functions]
+                          functions]}]
+  (let [[fn-kind fn-val] functions
+        sorted-fns (sort-fns fn-val)]
     (->> (cond-> []
            version (conj (str "#version " version))
            precision (into (mapv ->precision precision))
@@ -228,7 +257,7 @@
            inputs (into (mapv (partial ->in layout) inputs))
            outputs (into (mapv (partial ->out layout) outputs))
            (= fn-kind :iglu) (into (mapv (partial ->function signatures)
-                                         (sort-fns fn-val fn-deps))))
+                                         sorted-fns)))
          (reduce (partial stringify 0) [])
          (str/join \newline)
          ((fn [output]

@@ -1,6 +1,7 @@
 (ns sprog.iglu.parse
   (:require [clojure.spec.alpha :as s]
-            [expound.alpha :as expound]))
+            [expound.alpha :as expound]
+            [sprog.util :as u]))
 
 (s/def ::type (s/or
                :type-name symbol?
@@ -16,19 +17,7 @@
 (s/def ::inputs ::declarations)
 (s/def ::outputs ::declarations)
 
-(def ^:dynamic *fn-dependencies* nil)
-
-(def ^:dynamic *current-fn* nil)
-
 (defn fn-name? [x]
-  (when (and (symbol? x) *current-fn*)
-    (some-> *fn-dependencies*
-            (swap! (fn [deps]
-                     (when (contains? (deps x) *current-fn*)
-                       (throw (ex-info "Cyclic dependency detected between functions"
-                                       {:first-fn *current-fn*
-                                        :second-fn x})))
-                     (update deps *current-fn* #(conj (set %) x))))))
   (or (symbol? x)
       (number? x)
       (string? x)))
@@ -67,12 +56,4 @@
   (let [parsed-content (s/conform ::shader content)]
     (if (= parsed-content ::s/invalid)
       (throw (ex-info (expound/expound-str ::shader content) {}))
-      (let [*fn-deps (atom {})]
-        (when (map? (:functions content))
-          (doseq [[fn-sym body] (:functions content)]
-            (binding [*fn-dependencies* *fn-deps
-                      *current-fn* fn-sym]
-              (s/conform ::function body))))
-        (assoc parsed-content
-               :fn-deps @*fn-deps)))))
-
+      parsed-content)))

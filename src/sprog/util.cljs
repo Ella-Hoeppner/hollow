@@ -12,7 +12,7 @@
 
 (defn log [& vals]
   (doseq [val vals]
-    (js/console.log (clj->js val)))
+    (js/console.log (str val)))
   (last vals))
 
 (defn scale
