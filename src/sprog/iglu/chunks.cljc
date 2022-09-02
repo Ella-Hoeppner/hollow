@@ -266,3 +266,59 @@
                coords
                factors)
           '+)))
+
+; from https://stackoverflow.com/a/42179924
+(def bicubic-sample-chunk
+  '{:signatures {cubic ([float] vec4)
+                 textureBicubic ([usampler2D vec2] vec4)}
+    :functions
+    {cubic
+     ([v]
+      (=vec4 n (- (vec4 1 2 3 4) v))
+      (=vec4 s (* n n n))
+      (=float x s.x)
+      (=float y (- s.y (* "4.0" s.x)))
+      (=float z (+ s.z
+                   (* "-4.0" s.y)
+                   (* "6.0" s.x)))
+      (=float w (- "6.0"
+                   (+ x y z)))
+      (/ (vec4 x y z w)
+         "6.0"))
+     textureBicubic
+     ([tex pos]
+      (=vec2 texSize (vec2 (textureSize tex 0)))
+
+      (=vec2 texCoords (- (* pos texSize) "0.5"))
+
+      (=vec2 fxy (fract texCoords))
+      (-= texCoords fxy)
+
+      (=vec4 xcubic (cubic fxy.x))
+      (=vec4 ycubic (cubic fxy.y))
+
+      (=vec4 c (+ texCoords.xxyy
+                  (vec4 "-0.5"
+                        "1.5"
+                        "-0.5"
+                        "1.5")))
+
+      (=vec4 s (vec4 (+ xcubic.xz
+                        xcubic.yw)
+                     (+ ycubic.xz
+                        ycubic.yw)))
+
+      (=vec4 offset (/ (+ c (/ (vec4 xcubic.yw ycubic.yw) s))
+                       texSize.xxyy))
+
+      (=vec4 sample0 (vec4 (texture tex offset.xz)))
+      (=vec4 sample1 (vec4 (texture tex offset.yz)))
+      (=vec4 sample2 (vec4 (texture tex offset.xw)))
+      (=vec4 sample3 (vec4 (texture tex offset.yw)))
+
+      (=float sx (/ s.x (+ s.x s.y)))
+      (=float sy (/ s.z (+ s.z s.w)))
+
+      (mix (mix sample3 sample2 sx)
+           (mix sample1 sample0 sx)
+           sy))}})
