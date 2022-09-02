@@ -2,7 +2,7 @@
 
 (defn create-float-tex [gl resolution & [{:keys [wrap-mode
                                                  filter-mode]
-                                          :or {wrap-mode :wrap
+                                          :or {wrap-mode :repeat
                                                filter-mode :linear}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
@@ -30,8 +30,8 @@
                       gl.TEXTURE_2D
                       gl.TEXTURE_MAG_FILTER
                       gl-filter-mode))
-    (let [gl-wrap-mode ({:wrap gl.CLAMP_TO_EDGE
-                         :linear gl.REPEAT}
+    (let [gl-wrap-mode ({:clamp gl.CLAMP_TO_EDGE
+                         :repeat gl.REPEAT}
                         wrap-mode)]
       (.texParameteri gl
                       gl.TEXTURE_2D
@@ -68,8 +68,8 @@
                     gl.TEXTURE_2D
                     gl.TEXTURE_MAG_FILTER
                     gl.NEAREST)
-    (let [gl-wrap-mode ({:wrap gl.CLAMP_TO_EDGE
-                         :linear gl.REPEAT}
+    (let [gl-wrap-mode ({:clamp gl.CLAMP_TO_EDGE
+                         :repeat gl.REPEAT}
                         wrap-mode)]
       (.texParameteri gl
                       gl.TEXTURE_2D
@@ -106,8 +106,8 @@
                     gl.TEXTURE_2D
                     gl.TEXTURE_MAG_FILTER
                     gl.NEAREST)
-    (let [gl-wrap-mode ({:wrap gl.CLAMP_TO_EDGE
-                         :linear gl.REPEAT}
+    (let [gl-wrap-mode ({:clamp gl.CLAMP_TO_EDGE
+                         :repeat gl.REPEAT}
                         wrap-mode)]
       (.texParameteri gl
                       gl.TEXTURE_2D
