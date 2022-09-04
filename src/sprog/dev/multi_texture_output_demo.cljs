@@ -5,7 +5,7 @@
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
-            [sprog.webgl.textures :refer [create-float-tex]]
+            [sprog.webgl.textures :refer [create-f8-tex]]
             [sprog.webgl.framebuffers :refer [target-screen!
                                               target-textures!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
@@ -77,9 +77,9 @@
                              (iglu->glsl draw-frag-source)))
     (doseq [tex-atom [texture-1-atom
                       texture-2-atom]]
-      (reset! tex-atom (create-float-tex gl
-                                         texture-resolution
-                                         {:filter-mode :nearest})))
+      (reset! tex-atom (create-f8-tex gl
+                                      texture-resolution
+                                      {:filter-mode :nearest})))
     (let [render-sprog (create-purefrag-sprog
                         gl
                         (u/log (iglu->glsl render-frag-source)))]
