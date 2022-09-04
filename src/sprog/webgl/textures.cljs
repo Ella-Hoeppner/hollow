@@ -44,7 +44,7 @@
     tex))
 
 (defn create-ui16-tex [gl resolution & [{:keys [wrap-mode]
-                                         :or {wrap-mode :wrap}}]]
+                                         :or {wrap-mode :repeat}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
                          resolution)
@@ -82,7 +82,7 @@
     tex))
 
 (defn create-ui32-tex [gl resolution & [{:keys [wrap-mode]
-                                         :or {wrap-mode :wrap}}]]
+                                         :or {wrap-mode :repeat}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
                          resolution)
