@@ -48,6 +48,7 @@
                  (= pos.y (- "1.0" pos.y))
                  (= fragColor (texture tex pos)))}})
 
+; adapted from https://www.shadertoy.com/view/wsSczw
 (def logic-frag-source
   '{:version "300 es"
     :precision {float highp}
