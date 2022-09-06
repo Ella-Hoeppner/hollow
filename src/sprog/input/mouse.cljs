@@ -1,7 +1,8 @@
 (ns sprog.input.mouse)
 
 (defonce mouse-atom (atom {:pos [0.5 0.5]
-                           :down? false}))
+                           :down? false
+                           :present? false}))
 
 (defonce mouse-down-callbacks-atom (atom []))
 (defonce mouse-up-callbacks-atom (atom []))
@@ -17,6 +18,9 @@
 
 (defn mouse-down? []
   (:down? @mouse-atom))
+
+(defn mouse-present? []
+  (:present? @mouse-atom))
 
 (set! js/document.onmousemove
       (fn [event]
@@ -49,9 +53,16 @@
                :down?
                false)))
 
+(set! js/document.onmouseenter
+      (fn [_]
+        (swap! mouse-atom
+               #(-> %
+                    (assoc :present? true)))))
+
 (set! js/document.onmouseleave
       (fn [_]
         (swap! mouse-atom
                #(-> %
                     (assoc :pos [0.5 0.5])
-                    (assoc :down? false)))))
+                    (assoc :down? false)
+                    (assoc :present? false)))))

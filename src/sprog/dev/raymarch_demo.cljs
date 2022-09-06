@@ -7,7 +7,7 @@
             [clojure.walk :refer [postwalk-replace]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
-                                       mouse-down?]]
+                                       mouse-present?]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def start-time (u/now))
@@ -17,7 +17,7 @@
 
 (def frag-source
   (postwalk-replace
-   {:raymarch-step-factor "1.0"
+   {:raymarch-step-factor "0.5"
     :max-ray-dist "100.0"
     :fov "0.5"
     :distortion-amplitude-factor "0.1"
@@ -115,7 +115,9 @@
                         resolution
                         {:floats {"size" resolution
                                   "time" (/ (- (u/now) start-time) 1000)
-                                  "mouse" (mouse-pos)}})
+                                  "mouse" (if (mouse-present?)
+                                            (mouse-pos)
+                                            [0 0])}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
