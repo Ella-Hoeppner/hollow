@@ -25,6 +25,81 @@
                  (+= p3 (dot p3 (+ p3.yzx "33.33")))
                  (fract (* (+ p3.x p3.y) p3.z)))}})
 
+; based on https://thebookofshaders.com/edit.php#11/2d-snoise-clear.frag
+(def simplex-chunk
+  {:signatures '{mod289_3 ([vec3] vec3)
+                 mod289 ([vec2] vec2)
+                 permute ([vec3] vec3)
+                 snoise ([vec2] float)}
+   :functions
+   {'mod289_3 '([x] (- x (* (floor (/ x "289.0")) "289.0")))
+    'mod289 '([x] (- x (* (floor (/ x "289.0")) "289.0")))
+    'permute '([x] (mod289_3 (* x (+ "1.0" (* x "34.0")))))
+    'snoise
+    (postwalk-replace
+     {:c (conj (list (/ (- 3 (Math/sqrt 3)) 6)
+                     (/ (- (Math/sqrt 3) 1) 2)
+                     (- (/ (- 3 (Math/sqrt 3)) 3) 1)
+                     (/ 1 41))
+               'vec4)}
+     '([v]
+       (+= v (vec2 "12.5" "-3.6"))
+       (=vec4 C :c)
+       (=vec2 i (floor (+ v (dot v C.yy))))
+       (=vec2 x0 (- (+ v (dot i C.xx))
+                    i))
+
+       (=vec2 i1 (if (> x0.x x0.y) (vec2 1 0) (vec2 0 1)))
+       (=vec2 x1 (- (+ x0.xy C.xx) i1))
+       (=vec2 x2 (+ x0.xy C.zz))
+
+       (= i (mod289 i))
+
+       (=vec3 p (permute
+                 (+ (permute (+ i.y (vec3 0 i1.y 1)))
+                    i.x
+                    (vec3 0 i1.x 1))))
+       (=vec3 m (max (vec3 "0.0")
+                     (- "0.5"
+                        (vec3 (dot x0 x0)
+                              (dot x1 x1)
+                              (dot x2 x2)))))
+
+       (= m (* m m))
+       (= m (* m m))
+
+       (=vec3 x (- (* "2.0" (fract (* p C.www))) "1.0"))
+       (=vec3 h (- (abs x) "0.5"))
+       (=vec3 ox (floor (+ x "0.5")))
+       (=vec3 a0 (- x ox))
+
+       (*= m (- "1.79284291400159"
+                (* "0.85373472095314"
+                   (+ (* a0 a0)
+                      (* h h)))))
+
+       (=vec3 g (vec3 (+ (* a0.x x0.x) (* h.x x0.y))
+                      (+ (* a0.yz (vec2 x1.x x2.x))
+                         (* h.yz (vec2 x1.y x2.y)))))
+       (* "130.0" (dot m g))))}})
+
+(defn get-fractional-brownian-motion-chunk [noise-fn]
+  (postwalk-replace
+   {:noise-fn noise-fn}
+   '{:signatures {fbm ([vec2 int float] float)}
+     :functions
+     {fbm
+      ([x octaves hurstExponent]
+       (=float g (exp2 (- "0.0" hurstExponent)))
+       (=float f "1.0")
+       (=float a "1.0")
+       (=float t "0.0")
+       ("for(int i=0;i<octaves;i++)"
+        (+= t (* a (:noise-fn (* f x))))
+        (*= f "2.0")
+        (*= a g))
+       t)}}))
+
 (defn random-shortcut [expression & [rand-fn]]
   (let [rand-fn (or rand-fn rand)]
     (postwalk
@@ -135,8 +210,9 @@
                                  rgb
                                  color.y)))}})
 
-(def particle-vert-source-ui16
-  '{:precision {float highp
+(def particle-vert-source-u16
+  '{:version "300 es"
+    :precision {float highp
                 int highp
                 usampler2D highp}
     :outputs {particlePos vec2}
@@ -178,8 +254,9 @@
                0
                1)))}})
 
-(def particle-vert-source-ui32
-  '{:precision {float highp
+(def particle-vert-source-u32
+  '{:version "300 es"
+    :precision {float highp
                 int highp
                 usampler2D highp}
     :outputs {particlePos vec2}
@@ -221,8 +298,45 @@
                0
                1)))}})
 
-(def particle-frag-source
-  '{:precision {float highp
+(def particle-frag-source-u16
+  '{:version "300 es"
+    :precision {float highp
+                int highp}
+    :uniforms {radius float
+               size float}
+    :inputs {particlePos vec2}
+    :outputs {fragColor uvec4}
+    :signatures {main ([] void)}
+    :functions
+    {main
+     ([]
+      (=vec2 pos (/ gl_FragCoord.xy size))
+      (=float dist (distance pos particlePos))
+      ("if" (> dist radius)
+            "discard")
+      (= fragColor (uvec4 65535 0 0 0)))}})
+
+(def particle-frag-source-u32
+  '{:version "300 es"
+    :precision {float highp
+                int highp}
+    :uniforms {radius float
+               size float}
+    :inputs {particlePos vec2}
+    :outputs {fragColor uvec4}
+    :signatures {main ([] void)}
+    :functions
+    {main
+     ([]
+      (=vec2 pos (/ gl_FragCoord.xy size))
+      (=float dist (distance pos particlePos))
+      ("if" (> dist radius)
+            "discard")
+      (= fragColor (uvec4 65535 0 0 0)))}})
+
+(def particle-frag-source-f8
+  '{:version "300 es"
+    :precision {float highp
                 int highp}
     :uniforms {radius float
                size float}
