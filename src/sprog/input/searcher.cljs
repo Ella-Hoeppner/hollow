@@ -1,8 +1,8 @@
 (ns sprog.input.searcher
-  (:require [input.keyboard :refer [add-left-right-key-callback
-                                    add-up-down-key-callback]]
-            [input.mouse :refer [mouse-pos
-                                 add-mouse-down-callback]]))
+  (:require [sprog.input.keyboard :refer [add-left-right-key-callback
+                                          add-up-down-key-callback]]
+            [sprog.input.mouse :refer [mouse-pos
+                                       add-mouse-down-callback]]))
 
 (defonce searcher-values-atom (atom nil))
 (defonce searcher-indeces-atom (atom nil))
