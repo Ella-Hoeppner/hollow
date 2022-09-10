@@ -4,7 +4,8 @@
             sprog.dev.fn-sort-demo
             sprog.dev.pixel-sort-demo
             sprog.dev.raymarch-demo
-            sprog.dev.physarum-demo))
+            sprog.dev.physarum-demo
+            sprog.dev.texture-channel-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -12,7 +13,8 @@
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.raymarch-demo/init)
-  (sprog.dev.physarum-demo/init))
+  #_(sprog.dev.physarum-demo/init)
+  (sprog.dev.texture-channel-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

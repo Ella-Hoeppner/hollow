@@ -29,22 +29,32 @@
                       resolution
                       texture-type
                       & [{:keys [wrap-mode
-                                 filter-mode]
+                                 filter-mode
+                                 channels]
                           :or {wrap-mode :repeat
-                               filter-mode :linear}}]]
+                               filter-mode :linear
+                               channels 4}}]]
   (let [[width height] (if (number? resolution)
                          [resolution resolution]
                          resolution)
         tex (.createTexture gl)]
     (.bindTexture gl gl.TEXTURE_2D tex)
-    (let [internal-format ({:f8 gl.RGBA
-                            :u16 gl.RGBA16UI
-                            :u32 gl.RGBA32UI}
-                           texture-type)
-          format ({:f8 gl.RGBA
-                   :u16 gl.RGBA_INTEGER
-                   :u32 gl.RGBA_INTEGER}
-                  texture-type)
+    (let [internal-format (({:f8 [gl.R8 gl.RG8 gl.RGB8 gl.RGBA]
+                             :u16 [gl.R16UI gl.RG16UI gl.RGB16UI gl.RGBA16UI]
+                             :u32 [gl.R32UI gl.RG32UI gl.RGB32UI gl.RGBA32UI]}
+                            texture-type)
+                           (dec channels))
+          format (({:f8 [gl.RED gl.RG gl.RGB gl.RGBA]
+                    :u16 [gl.RED_INTEGER 
+                          gl.RG_INTEGER
+                          gl.RGBA_INTEGER
+                          gl.RGBA_INTEGER]
+                    :u32 [gl.RED_INTEGER 
+                          gl.RG_INTEGER
+                          gl.RGBA_INTEGER
+                          gl.RGBA_INTEGER]}
+                   texture-type)
+                  (dec channels))
           webgl-type ({:f8 gl.UNSIGNED_BYTE
                        :u16 gl.UNSIGNED_SHORT
                        :u32 gl.UNSIGNED_INT}
