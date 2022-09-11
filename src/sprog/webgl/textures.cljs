@@ -14,7 +14,8 @@
                     gl.TEXTURE_MAG_FILTER
                     gl-filter-mode))
   (let [gl-wrap-mode ({:clamp gl.CLAMP_TO_EDGE
-                       :repeat gl.REPEAT}
+                       :repeat gl.REPEAT
+                       :mirror gl.MIRRORED_REPEAT}
                       wrap-mode)]
     (.texParameteri gl
                     gl.TEXTURE_2D
