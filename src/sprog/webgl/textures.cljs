@@ -48,11 +48,11 @@
           format (({:f8 [gl.RED gl.RG gl.RGB gl.RGBA]
                     :u16 [gl.RED_INTEGER 
                           gl.RG_INTEGER
-                          gl.RGBA_INTEGER
+                          gl.RGB_INTEGER
                           gl.RGBA_INTEGER]
                     :u32 [gl.RED_INTEGER 
                           gl.RG_INTEGER
-                          gl.RGBA_INTEGER
+                          gl.RGB_INTEGER
                           gl.RGBA_INTEGER]}
                    texture-type)
                   (dec channels))
