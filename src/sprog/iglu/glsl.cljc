@@ -154,6 +154,16 @@
 (defn ->out [layout name-type-pair]
   (->inout "out" layout name-type-pair))
 
+(defn ->struct [[name fields]]
+  (str "struct "
+       name
+       "{\n"
+       (apply str
+              (map (fn [[field-name field-type]]
+                     (str "  " field-type " " field-name ";\n"))
+                   (partition 2 fields)))
+       "}"))
+
 (defn ->function [signatures [name {:keys [args body]}]]
   (if-let [{:keys [in out]} (get signatures name)]
     (let [_ (when (not= (count in) (count args))
@@ -236,6 +246,7 @@
 (defn iglu->glsl [{:keys [version
                           precision
                           uniforms
+                          structs
                           attributes
                           varyings
                           inputs
@@ -253,6 +264,7 @@
            varyings (into (mapv ->varying varyings))
            inputs (into (mapv (partial ->in layout) inputs))
            outputs (into (mapv (partial ->out layout) outputs))
+           structs (into (mapv ->struct structs))
            (= fn-kind :iglu) (into (mapv (partial ->function signatures)
                                          sorted-fns)))
          (reduce (partial stringify 0) [])
