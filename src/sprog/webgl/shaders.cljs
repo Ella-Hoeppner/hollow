@@ -71,8 +71,12 @@
     (use-sprog sprog uniform-map)
     (.drawArrays gl gl.TRIANGLES start length)))
 
-(defn run-purefrag-sprog [{:keys [gl] :as sprog} size uniform-map]
-  (let [[width height] (if (number? size) [size size] size)]
-    (.viewport gl 0 0 width height)
+(defn run-purefrag-sprog [{:keys [gl] :as sprog}
+                          size
+                          uniform-map
+                          & [{:keys [offset]}]]
+  (let [[width height] (if (number? size) [size size] size)
+        [x y] (if offset offset [0 0])]
+    (.viewport gl x y width height)
     (use-sprog sprog uniform-map)
     (.drawArrays gl gl.TRIANGLES 0 3)))
