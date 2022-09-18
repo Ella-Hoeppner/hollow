@@ -6,7 +6,8 @@
             sprog.dev.raymarch-demo
             sprog.dev.physarum-demo
             sprog.dev.texture-channel-demo
-            sprog.dev.struct-demo))
+            sprog.dev.struct-demo
+            sprog.dev.simplex-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -16,7 +17,8 @@
   #_(sprog.dev.raymarch-demo/init)
   #_(sprog.dev.physarum-demo/init)
   #_(sprog.dev.texture-channel-demo/init)
-  (sprog.dev.struct-demo/init))
+  #_(sprog.dev.struct-demo/init)
+  (sprog.dev.simplex-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
