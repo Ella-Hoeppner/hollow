@@ -243,17 +243,17 @@
               (throw (ex-info "Cyclic dependency detected between functions"
                               {:functions (str remaining-names)})))))))))
 
-(defn iglu->glsl [{:keys [version
-                          precision
-                          uniforms
-                          structs
-                          attributes
-                          varyings
-                          inputs
-                          outputs
-                          layout
-                          signatures
-                          functions]}]
+(defn parsed-iglu->glsl [{:keys [version
+                                 precision
+                                 uniforms
+                                 structs
+                                 attributes
+                                 varyings
+                                 inputs
+                                 outputs
+                                 layout
+                                 signatures
+                                 functions]}]
   (let [[fn-kind fn-val] functions
         sorted-fns (sort-fns fn-val)]
     (->> (cond-> []
