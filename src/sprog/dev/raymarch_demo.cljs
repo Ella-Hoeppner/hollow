@@ -8,6 +8,8 @@
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
+            [sprog.iglu.chunks :refer [simplex-3d-chunk
+                                       get-fbm-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def start-time (u/now))
@@ -15,15 +17,16 @@
 (defonce gl-atom (atom nil))
 (defonce sprog-atom (atom nil))
 
-(def frag-source
-  (postwalk-replace
+(def frag-glsl
+  (iglu->glsl
    {:raymarch-step-factor "0.5"
-    :max-ray-dist "100.0"
+    :max-ray-dist "5.0"
     :fov "0.5"
     :distortion-amplitude-factor "0.1"
     :distortion-frequency-factor "4.0"
     :time-factor "0.25"
     :TAU (.toFixed u/TAU 8)}
+   simplex-3d-chunk
    '{:version "300 es"
      :precision {float highp
                  usampler2D highp}
@@ -39,14 +42,7 @@
       ([pos]
        (+ (* :distortion-amplitude-factor
              mouse.x
-             (+ (cos (* :TAU
-                        :distortion-frequency-factor
-                        (+ (* :time-factor time)
-                           pos.x)))
-                (sin (* :TAU
-                        :distortion-frequency-factor
-                        (+ (* :time-factor time)
-                           pos.y)))))
+             (snoise (* (mix "1.0" "5.0" mouse.y) pos)))
           (- (length pos) "1.0")))
       rayNormal
       ([rayOrigin rayDirection]
@@ -125,5 +121,5 @@
     (reset! gl-atom gl)
     (reset! sprog-atom (create-purefrag-sprog
                         gl
-                        (iglu->glsl frag-source))))
+                        frag-glsl)))
   (update-page!))
