@@ -28,7 +28,9 @@
      :functions {main
                  ([]
                   (=vec2 pos (/ gl_FragCoord.xy size))
-                  (=float noiseValue (snoise (* pos "10.0")))
+                  (=float noiseValue (* (+ (snoise (* pos "10.0"))
+                                           "1.0")
+                                        "0.5"))
                   (= fragColor (vec4 noiseValue
                                      noiseValue
                                      noiseValue
@@ -46,7 +48,9 @@
      :functions {main
                  ([]
                   (=vec2 pos (/ gl_FragCoord.xy size))
-                  (=float noiseValue (snoise (vec3 (* pos "10.0") time)))
+                  (=float noiseValue (* (+ (snoise (vec3 (* pos "10.0") time))
+                                           "1.0")
+                                        "0.5"))
                   (= fragColor (vec4 noiseValue
                                      noiseValue
                                      noiseValue

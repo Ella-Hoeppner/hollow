@@ -81,8 +81,7 @@
        (=vec3 g (vec3 (+ (* a0.x x0.x) (* h.x x0.y))
                       (+ (* a0.yz (vec2 x1.x x2.x))
                          (* h.yz (vec2 x1.y x2.y)))))
-       (+ "0.5"
-          (* "65.0" (dot m g)))))}})
+       (* "130.0" (dot m g))))}})
 
 ; based on https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 (def simplex-3d-chunk
@@ -97,12 +96,12 @@
      ([v]
       (=vec2 C (vec2 (/ "1.0" "6.0") (/ "1.0" "3.0")))
       (=vec4 D (vec4 "0.0" "0.5" "1.0" "2.0"))
-      
+
       ; first corner
       (=vec3 i (floor (+ v (dot v C.yyy))))
       (=vec3 x0 (+ (- v i)
                    (dot i C.xxx)))
-      
+
       ; other corners
       (=vec3 g (step x0.yzx x0.xyz))
       (=vec3 l (- "1.0" g))
@@ -120,7 +119,7 @@
                                        (vec4 0 i1.y i2.y 1)))
                            i.x
                            (vec4 0 i1.x i2.x 1))))
-      
+
       ; gradients
       (=vec3 ns (- (* D.wyz (/ "1.0" "7.0")) D.xzx))
 
@@ -128,7 +127,7 @@
 
       (=vec4 x_ (floor (* j ns.z)))
       (=vec4 y_ (floor (- j (* "7.0" x_))))
-      
+
       (=vec4 x (+ ns.yyyy (* ns.x x_)))
       (=vec4 y (+ ns.yyyy (* ns.x y_)))
       (=vec4 h (- "1.0" (+ (abs x) (abs y))))
@@ -153,7 +152,7 @@
                                        (dot p1 p1)
                                        (dot p2 p2)
                                        (dot p3 p3))))
-      
+
       (*= p0 norm.x)
       (*= p1 norm.y)
       (*= p2 norm.z)
@@ -167,13 +166,11 @@
                              (dot x3 x3)))
                     "0.0"))
       (*= m m)
-      (+ "0.5"
-         (* "21.0" (dot (* m m)
-                        (vec4 (dot p0 x0)
-                              (dot p1 x1)
-                              (dot p2 x2)
-                              (dot p3 x3)))))
-      )}})
+      (* "42.0" (dot (* m m)
+                     (vec4 (dot p0 x0)
+                           (dot p1 x1)
+                           (dot p2 x2)
+                           (dot p3 x3)))))}})
 
 ; fractional brownian motion
 (defn get-fbm-chunk [noise-fn & [noise-dimensions]]
