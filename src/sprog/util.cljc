@@ -1,5 +1,6 @@
 (ns sprog.util
-  #?(:cljs (:require-macros [sprog.util])))
+  #?(:cljs (:require-macros [sprog.util]))
+  #?(:clj (:require [backtick :refer [template]])))
 
 (defn now []
   #?(:cljs (js/Date.now)
@@ -56,3 +57,6 @@
       `(repeatedly (fn [] ~exp)))
      ([number exp]
       `(repeatedly ~number (fn [] ~exp)))))
+#?(:clj
+   (defmacro dequote [exp]
+     `(template ~exp)))
