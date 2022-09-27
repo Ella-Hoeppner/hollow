@@ -194,20 +194,22 @@
         (*= a g))
        t)}}))
 
-(defn random-shortcut [expression & [rand-fn]]
+(defn offset-shortcut [expression & [rand-fn]]
   (let [rand-fn (or rand-fn rand)]
     (postwalk
      (fn [subexp]
        (if (and (vector? subexp)
-                (= (first subexp) :rand))
-         (postwalk-replace
-          {:scale (* (if (> (rand-fn) 0.5) 1 -1)
-                     (+ 200 (* (rand-fn) 300)))
-           :x (- (* (rand-fn) 100) 50)
-           :y (- (* (rand-fn) 100) 50)
-           :seed-exp (second subexp)}
-          '(rand (+ (* :seed-exp :scale)
-                    (vec2 :x :y))))
+                (= (first subexp) :offset))
+         (let [[seed-exp
+                {:keys [offset-range]
+                 :or {offset-range 100}}]
+               (rest subexp)]
+           (postwalk-replace
+            {:x (* offset-range (- (* (rand-fn) 2) 1))
+             :y (* offset-range (- (* (rand-fn) 2) 1))
+             :seed-exp seed-exp}
+            '(+ :seed-exp
+                (vec2 :x :y))))
          subexp))
      expression)))
 
