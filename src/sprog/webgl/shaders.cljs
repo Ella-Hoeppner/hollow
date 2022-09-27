@@ -1,7 +1,10 @@
 (ns sprog.webgl.shaders
-  (:require [sprog.iglu.core :refer [iglu->glsl]]
+  (:require [sprog.util :as u]
+            [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks :refer [trivial-vert-source]]
-            [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]))
+            [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
+            [clojure.string :refer [split-lines
+                                    join]]))
 
 (defn create-shader [gl shader-type source]
   (let [shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
@@ -13,7 +16,11 @@
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
       shader
-      (do (js/console.log "oh on an error! -_-")
+      (do (u/log (apply str
+                        (interleave (map #(str %2 ":\t" %1)
+                                         (split-lines source)
+                                         (rest (range)))
+                                    (repeat "\n"))))
           (throw (js/Error. (str (.getShaderInfoLog gl shader))))))))
 
 (defn create-program [gl vert-shader frag-shader]
