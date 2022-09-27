@@ -12,7 +12,7 @@
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks :refer [merge-chunks
                                        rand-chunk
-                                       random-shortcut
+                                       offset-shortcut
                                        particle-vert-source-u16
                                        particle-frag-source-u16]]
             [sprog.iglu.core :refer [iglu->glsl]]))
@@ -131,7 +131,7 @@
                   0)))}})))
 
 (def agent-logic-frag-source
-  (random-shortcut
+  (offset-shortcut
    (replace-bindings
     (merge-chunks
      rand-chunk
@@ -181,13 +181,13 @@
                                  (sin newAgentAngle))))
                      "1.0"))
 
-         (=vec2 randSeed (+ pos (vec2 (mod time "3.217") 0)))
+         (=vec2 randSeed (* "400.0" (+ pos (vec2 (mod time "3.217") 0))))
 
          (= fragColor
-            (uvec4 (* (if (< [:rand randSeed] randomizeChance)
-                        (vec3 [:rand randSeed]
-                              [:rand randSeed]
-                              [:rand randSeed])
+            (uvec4 (* (if (< (rand [:offset randSeed]) randomizeChance)
+                        (vec3 (rand [:offset randSeed])
+                              (rand [:offset randSeed])
+                              (rand [:offset randSeed]))
                         (vec3 newAgentPos
                               (/ newAgentAngle :TAU)))
                       :uint16-max-f)

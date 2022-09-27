@@ -13,7 +13,8 @@
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
       shader
-      (throw (js/Error. (str (.getShaderInfoLog gl shader)))))))
+      (do (js/console.log "oh on an error! -_-")
+          (throw (js/Error. (str (.getShaderInfoLog gl shader))))))))
 
 (defn create-program [gl vert-shader frag-shader]
   (let [program (.createProgram gl)]
