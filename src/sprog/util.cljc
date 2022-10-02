@@ -52,11 +52,19 @@
 (def TAU (* Math/PI 2))
 
 #?(:clj
-   (defmacro generate
+   (defmacro gen
      ([exp]
       `(repeatedly (fn [] ~exp)))
      ([number exp]
       `(repeatedly ~number (fn [] ~exp)))))
+
+#?(:clj
+   (defmacro genv
+     ([exp]
+      `(vec (repeatedly (fn [] ~exp))))
+     ([number exp]
+      `(vec (repeatedly ~number (fn [] ~exp))))))
+
 #?(:clj
    (defmacro dequote [exp]
      `(template ~exp)))
