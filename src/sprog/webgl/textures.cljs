@@ -31,7 +31,8 @@
                       texture-type
                       & [{:keys [wrap-mode
                                  filter-mode
-                                 channels]
+                                 channels
+                                 data]
                           :or {wrap-mode :repeat
                                filter-mode :linear
                                channels 4}}]]
@@ -69,7 +70,7 @@
                    0
                    format
                    webgl-type
-                   nil))
+                   data))
     (set-texture-parameters gl tex filter-mode wrap-mode)
     tex))
 
