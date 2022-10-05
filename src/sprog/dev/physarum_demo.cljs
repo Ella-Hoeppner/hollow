@@ -260,9 +260,9 @@
                           (iglu->glsl particle-frag-source-u16)))
 
     (reset! substrate-texs-atom
-            (u/generate 2 (create-u16-tex gl substrate-resolution)))
+            (u/gen 2 (create-u16-tex gl substrate-resolution)))
     (reset! agent-texs-atom
-            (u/generate 2 (create-u16-tex gl agent-tex-resolution)))
+            (u/gen 2 (create-u16-tex gl agent-tex-resolution)))
     (reset! fb-atom (.createFramebuffer gl)))
   
   (reset! frame-atom 0)

@@ -130,7 +130,7 @@
     (reset! logic-sprog-atom (create-purefrag-sprog
                               gl
                               (iglu->glsl logic-frag-source)))
-    (reset! texs-atom (u/generate 2 (create-f8-tex gl sort-resolution)))
+    (reset! texs-atom (u/gen 2 (create-f8-tex gl sort-resolution)))
     (reset! fb-atom (.createFramebuffer gl))
 
     (reset! frame-atom 0)
