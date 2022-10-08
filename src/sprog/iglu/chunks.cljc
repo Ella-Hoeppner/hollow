@@ -2,6 +2,37 @@
   (:require [clojure.walk :refer [postwalk 
                                   postwalk-replace]]))
 
+(defn merge-chunks [& chunks]
+  (assoc (reduce (partial merge-with merge)
+                 (map #(dissoc % :version) chunks))
+         :version "300 es"))
+
+(def sympow-chunk
+  '{:signatures {sympow ([float float] float)}
+    :functions
+    {sympow
+     ([x power]
+      (* (sign x)
+         (pow (abs x)
+              power)))}})
+
+(def smoothstair-chunk
+  '{:signatures {smoothstair ([float float float] float)}
+    :functions
+    {smoothstair
+     ([x steps steepness]
+      (*= x steps)
+      (=float c (- (/ "2.0" (- "1.0" steepness)) "1.0"))
+      (=float p (mod x "1.0"))
+      (/ (+ (floor x)
+            (if (< p "0.5")
+              (/ (pow p c)
+                 (pow "0.5" (- c "1.0")))
+              (- "1.0"
+                 (/ (pow (- "1.0" p) c)
+                    (pow "0.5" (- c "1.0"))))))
+         steps))}})
+
 (def trivial-vert-source
   '{:version "300 es"
     :precision {float lowp}
@@ -11,11 +42,6 @@
     {main
      ([]
       (= gl_Position vertPos))}})
-
-(defn merge-chunks [& chunks]
-  (assoc (reduce (partial merge-with merge)
-                 (map #(dissoc % :version) chunks))
-         :version "300 es"))
 
 (def rand-chunk
   '{:signatures {rand ([vec2] float)}
