@@ -8,8 +8,7 @@
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
-            [sprog.iglu.chunks :refer [simplex-3d-chunk
-                                       get-fbm-chunk]]
+            [sprog.iglu.chunks :refer [simplex-3d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def start-time (u/now))
