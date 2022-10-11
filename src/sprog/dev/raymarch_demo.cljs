@@ -8,7 +8,8 @@
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
-            [sprog.iglu.chunks :refer [simplex-3d-chunk]]
+            [sprog.iglu.chunks :refer [simplex-3d-chunk
+                                       simplex-4d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def start-time (u/now))
@@ -25,7 +26,7 @@
     :distortion-frequency-factor "4.0"
     :time-factor "0.25"
     :TAU (.toFixed u/TAU 8)}
-   simplex-3d-chunk
+   simplex-4d-chunk
    '{:version "300 es"
      :precision {float highp
                  usampler2D highp}
@@ -41,7 +42,8 @@
       ([pos]
        (+ (* :distortion-amplitude-factor
              mouse.x
-             (snoise (* (mix "1.0" "5.0" mouse.y) pos)))
+             (snoise4D (vec4 (* (mix "1.0" "8.0" mouse.y) pos)
+                             time)))
           (- (length pos) "1.0")))
       rayNormal
       ([rayOrigin rayDirection]

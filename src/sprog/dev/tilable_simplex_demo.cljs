@@ -4,7 +4,7 @@
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
-            [sprog.iglu.chunks :refer [tilable-simplex-2d-chunk]]
+            [sprog.iglu.chunks :refer [tileable-simplex-2d-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]))
@@ -15,7 +15,7 @@
 (def frag-source
   (iglu->glsl
    nil
-   tilable-simplex-2d-chunk
+   tileable-simplex-2d-chunk
    '{:version "300 es"
      :precision {float highp}
      :uniforms {size vec2
@@ -27,10 +27,10 @@
                  ([]
                   (=vec2 pos (/ gl_FragCoord.xy size))
                   (=float noiseValue
-                          (* (+ (snoise (vec2 0)
-                                        (pow (vec2 "25.0") mouse)
-                                        (+ (* pos "3.0")
-                                           (vec2 100 -20)))
+                          (* (+ (snoiseTilable2D (vec2 0)
+                                                 (pow (vec2 "25.0") mouse)
+                                                 (+ (* pos "3.0")
+                                                    (vec2 100 -20)))
                                 "1.0")
                              "0.5"))
                   (= fragColor (vec4 noiseValue

@@ -56,12 +56,12 @@
   {:signatures '{mod289_3 ([vec3] vec3)
                  mod289 ([vec2] vec2)
                  permute ([vec3] vec3)
-                 snoise ([vec2] float)}
+                 snoise2D ([vec2] float)}
    :functions
    {'mod289_3 '([x] (- x (* (floor (/ x "289.0")) "289.0")))
     'mod289 '([x] (- x (* (floor (/ x "289.0")) "289.0")))
     'permute '([x] (mod289_3 (* x (+ "1.0" (* x "34.0")))))
-    'snoise
+    'snoise2D
     (postwalk-replace
      {:c (conj (list (/ (- 3 (Math/sqrt 3)) 6)
                      (/ (- (Math/sqrt 3) 1) 2)
@@ -113,12 +113,12 @@
 (def simplex-3d-chunk
   {:signatures '{permute ([vec4] vec4)
                  taylorInvSqrt ([vec4] vec4)
-                 snoise ([vec3] float)}
+                 snoise3D ([vec3] float)}
    :functions
    '{permute ([x] (mod (* x (+ "1.0" (* "34.0" x))) "289.0"))
      taylorInvSqrt ([r] (- "1.79284291400159"
                            (* r "0.85373472095314")))
-     snoise
+     snoise3D
      ([v]
       (=vec2 C (vec2 (/ "1.0" "6.0") (/ "1.0" "3.0")))
       (=vec4 D (vec4 "0.0" "0.5" "1.0" "2.0"))
@@ -205,7 +205,7 @@
                  taylorInvSqrt ([float] float)
                  taylorInvSqrt4 ([vec4] vec4)
                  grad4 ([float vec4] vec4)
-                 snoise ([vec4] float)}
+                 snoise4D ([vec4] float)}
     :functions
     {permute ([x] (floor (mod (* x (+ "1.0"
                                       (* x "34.0")))
@@ -229,7 +229,7 @@
       (=vec4 s (vec4 (lessThan p (vec4 0))))
       (vec4 (+ p.xyz (* s.www (- (* s.xyz "2.0") "1.0")))
             p.w))
-     snoise
+     snoise4D
      ([v]
       (=vec2 C (vec2 "0.138196601125010504" "0.309016994374947451"))
 
@@ -317,14 +317,14 @@
 
 ; based on https://gamedev.stackexchange.com/a/23639
 
-(def tilable-simplex-2d-chunk
+(def tileable-simplex-2d-chunk
   (merge-chunks
-   (postwalk-replace '{snoise snoise4D}  simplex-4d-chunk)
+   simplex-4d-chunk
    (postwalk-replace
     {:TAU (.toFixed (* Math/PI 2) 12)}
-    '{:signatures {snoise ([vec2 vec2 vec2] float)}
+    '{:signatures {snoiseTilable2D ([vec2 vec2 vec2] float)}
       :functions
-      {snoise
+      {snoiseTilable2D
        ([basePos scale pos]
         (=vec2 angles (* pos :TAU))
         (snoise4D
