@@ -9,9 +9,6 @@
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
-(def start-time (u/now))
-(defn get-time [] (/ (- (u/now) start-time) 1000))
-
 (defonce gl-atom (atom nil))
 (defonce noise-2d-sprog-atom (atom nil))
 (defonce noise-3d-sprog-atom (atom nil))
@@ -72,7 +69,7 @@
     (run-purefrag-sprog @noise-3d-sprog-atom
                         split-resolution
                         {:floats {"size" resolution
-                                  "time" (get-time)}}
+                                  "time" (u/seconds-since-startup)}}
                         {:offset [half-width 0]})
     (js/requestAnimationFrame update-page!)))
 

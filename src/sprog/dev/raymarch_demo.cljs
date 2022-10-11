@@ -12,8 +12,6 @@
                                        simplex-4d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
-(def start-time (u/now))
-
 (defonce gl-atom (atom nil))
 (defonce sprog-atom (atom nil))
 
@@ -111,7 +109,7 @@
     (run-purefrag-sprog @sprog-atom
                         resolution
                         {:floats {"size" resolution
-                                  "time" (/ (- (u/now) start-time) 1000)
+                                  "time" (u/seconds-since-startup)
                                   "mouse" (if (mouse-present?)
                                             (mouse-pos)
                                             [0 0])}})

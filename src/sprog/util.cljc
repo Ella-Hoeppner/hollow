@@ -6,6 +6,9 @@
   #?(:cljs (js/Date.now)
      :clj (System/currentTimeMillis)))
 
+(def startup-time (now))
+(defn seconds-since-startup [] (/ (- (now) startup-time) 1000))
+
 (defn map-keys [f map-keys]
   (reduce #(assoc %1
                   %2
