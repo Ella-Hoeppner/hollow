@@ -322,9 +322,9 @@
    simplex-4d-chunk
    (postwalk-replace
     {:TAU (.toFixed (* Math/PI 2) 12)}
-    '{:signatures {snoiseTilable2D ([vec2 vec2 vec2] float)}
+    '{:signatures {snoiseTileable2D ([vec2 vec2 vec2] float)}
       :functions
-      {snoiseTilable2D
+      {snoiseTileable2D
        ([basePos scale pos]
         (=vec2 angles (* pos :TAU))
         (snoise4D
@@ -334,13 +334,16 @@
                (.xyxy (/ scale :TAU))))))}})))
 
 ; fractional brownian motion
-(defn get-fbm-chunk [noise-fn & [noise-dimensions]]
+(defn get-fbm-chunk [noise-fn noise-dimensions & noise-prefix-args]
   (postwalk-replace
-   {:noise-fn noise-fn
+   {:noise-expression (concat (list noise-fn)
+                              noise-prefix-args
+                              '((* f x)))
     :vec ({1 'float
            2 'vec2
-           3 'vec3}
-          (or noise-dimensions 2))}
+           3 'vec3
+           4 'vec4}
+          noise-dimensions)}
    '{:signatures {fbm ([:vec int float] float)}
      :functions
      {fbm

@@ -21,8 +21,8 @@
   #_(sprog.dev.texture-channel-demo/init)
   #_(sprog.dev.struct-demo/init)
   #_(sprog.dev.simplex-demo/init)
-  #_(sprog.dev.tilable-simplex-demo/init)
-  (sprog.dev.macro-demo/init))
+  (sprog.dev.tilable-simplex-demo/init)
+  #_(sprog.dev.macro-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

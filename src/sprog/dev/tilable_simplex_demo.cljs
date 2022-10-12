@@ -27,10 +27,10 @@
                  ([]
                   (=vec2 pos (/ gl_FragCoord.xy size))
                   (=float noiseValue
-                          (* (+ (snoiseTilable2D (vec2 0)
-                                                 (pow (vec2 "25.0") mouse)
-                                                 (+ (* pos "3.0")
-                                                    (vec2 100 -20)))
+                          (* (+ (snoiseTileable2D (vec2 0)
+                                                  (pow (vec2 "25.0") mouse)
+                                                  (+ (* pos "3.0")
+                                                     (vec2 100 -20)))
                                 "1.0")
                              "0.5"))
                   (= fragColor (vec4 noiseValue
