@@ -1,5 +1,6 @@
 (ns sprog.iglu.core
-  (:require [sprog.iglu.glsl :refer [parsed-iglu->glsl]]
+  (:require [sprog.util :as u]
+            [sprog.iglu.glsl :refer [parsed-iglu->glsl]]
             [sprog.iglu.parse :refer [parse]]
             [sprog.iglu.chunks :refer [merge-chunks
                                        apply-macros]]
@@ -11,7 +12,7 @@
   ([replacement-and-macro-map & chunks]
    (let [{macros true
           replacements false}
-         (group-by (comp fn?) replacement-and-macro-map)]
+         (group-by (comp fn? second) replacement-and-macro-map)]
      (iglu->glsl
       (postwalk-replace (into {} replacements)
                         (apply-macros (into {} macros)

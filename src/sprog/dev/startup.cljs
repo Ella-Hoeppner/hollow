@@ -8,19 +8,21 @@
             sprog.dev.texture-channel-demo
             sprog.dev.struct-demo
             sprog.dev.simplex-demo
-            sprog.dev.tilable-simplex-demo))
+            sprog.dev.tilable-simplex-demo
+            sprog.dev.macro-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
-  (sprog.dev.raymarch-demo/init)
+  #_(sprog.dev.raymarch-demo/init)
   #_(sprog.dev.physarum-demo/init)
   #_(sprog.dev.texture-channel-demo/init)
   #_(sprog.dev.struct-demo/init)
   #_(sprog.dev.simplex-demo/init)
-  #_(sprog.dev.tilable-simplex-demo/init))
+  #_(sprog.dev.tilable-simplex-demo/init)
+  (sprog.dev.macro-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
