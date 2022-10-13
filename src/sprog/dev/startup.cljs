@@ -9,7 +9,8 @@
             sprog.dev.struct-demo
             sprog.dev.simplex-demo
             sprog.dev.tilable-simplex-demo
-            sprog.dev.macro-demo))
+            sprog.dev.macro-demo
+            sprog.dev.bilinear-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -21,8 +22,9 @@
   #_(sprog.dev.texture-channel-demo/init)
   #_(sprog.dev.struct-demo/init)
   #_(sprog.dev.simplex-demo/init)
-  (sprog.dev.tilable-simplex-demo/init)
-  #_(sprog.dev.macro-demo/init))
+  #_(sprog.dev.tilable-simplex-demo/init)
+  #_(sprog.dev.macro-demo/init)
+  (sprog.dev.bilinear-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
