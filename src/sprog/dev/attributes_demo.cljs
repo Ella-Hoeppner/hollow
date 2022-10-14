@@ -5,7 +5,6 @@
             [sprog.webgl.shaders :refer [create-sprog
                                          run-triangle-sprog]]
             [sprog.webgl.attributes :refer [create-boj!
-                                            set-boj-data!
                                             set-sprog-attributes!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
@@ -56,10 +55,14 @@
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
     (reset! sprog-atom (create-sprog gl vert-source frag-source))
-    (reset! pos-boj-atom (create-boj! gl 2))
-    (reset! color-boj-atom (create-boj! gl 3))
-    (set-boj-data! gl @pos-boj-atom (js/Float32Array. pos-buffer-data))
-    (set-boj-data! gl @color-boj-atom (js/Float32Array. color-buffer-data))
+    (reset! pos-boj-atom
+            (create-boj! gl
+                         2
+                         {:initial-data (js/Float32Array. pos-buffer-data)}))
+    (reset! color-boj-atom 
+            (create-boj! gl
+                         3
+                         {:initial-data (js/Float32Array. color-buffer-data)}))
     (set-sprog-attributes! @sprog-atom
                            {"vertexPos" @pos-boj-atom
                             "vertexColor" @color-boj-atom}))
