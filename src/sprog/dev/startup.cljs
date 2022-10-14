@@ -15,7 +15,7 @@
             sprog.dev.voronoise-demo))
 
 (defn init []
-  (sprog.dev.basic-demo/init)
+  #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
@@ -28,7 +28,7 @@
   #_(sprog.dev.macro-demo/init)
   #_(sprog.dev.bilinear-demo/init)
   #_(sprog.dev.attributes-demo/init)
-  #_(sprog.dev.voronoise-demo/init))
+  (sprog.dev.voronoise-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

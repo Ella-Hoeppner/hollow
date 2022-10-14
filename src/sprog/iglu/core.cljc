@@ -1,14 +1,24 @@
 (ns sprog.iglu.core
   (:require [sprog.util :as u]
             [sprog.iglu.glsl :refer [parsed-iglu->glsl]]
-            [sprog.iglu.parse :refer [parse]]
-            [sprog.iglu.chunks.misc :refer [apply-macros]]
-            [clojure.walk :refer [postwalk-replace]]))
+            [sprog.iglu.parse :refer [parse]] 
+            [clojure.walk :refer [postwalk-replace
+                                  postwalk]]))
 
 (defn merge-chunks [& chunks]
   (assoc (reduce (partial merge-with merge)
                  (map #(dissoc % :version) chunks))
          :version "300 es"))
+
+(defn apply-macros [macro-map expression]
+  (postwalk (fn [subexp]
+              (if (vector? subexp)
+                (let [macro-fn (macro-map (first subexp))]
+                  (if macro-fn
+                    (apply macro-fn (rest subexp))
+                    subexp))
+                subexp))
+            expression))
 
 (defn iglu->glsl
   ([shader]

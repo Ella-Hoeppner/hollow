@@ -30,18 +30,6 @@
                     (pow "0.5" (- c "1.0"))))))
          steps))}})
 
-
-
-(defn apply-macros [macro-map expression]
-  (postwalk (fn [subexp]
-              (if (vector? subexp)
-                (let [macro-fn (macro-map (first subexp))]
-                  (if macro-fn
-                    (apply macro-fn (rest subexp))
-                    subexp))
-                subexp))
-            expression))
-
 (defn offset-shortcut [expression & [rand-fn]]
   (let [rand-fn (or rand-fn rand)]
     (postwalk

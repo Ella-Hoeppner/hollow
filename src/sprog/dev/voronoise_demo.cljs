@@ -12,7 +12,6 @@
 
 (defonce gl-atom (atom nil))
 (defonce noise-2d-sprog-atom (atom nil))
-(def frame-atom (atom 0))
 
 
 
@@ -24,14 +23,13 @@
      :precision {float highp}
      :uniforms {size vec2
                 mouse vec2
-                frame int
+                time float
                 present int}
      :outputs {fragColor vec4}
      :signatures {main ([] void)}
      :functions {main
                  ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (=float time (* (float frame) ".01"))
+                  (=vec2 pos (/ gl_FragCoord.xy size)) 
                   (=float noiseValue (voronoise (+ (* pos "23.") 
                                                    (vec2 (cos time)
                                                          (sin time)))
@@ -50,14 +48,12 @@
     (maximize-gl-canvas gl)
     (target-screen! gl)
     
-    (swap! frame-atom inc)
-
     (run-purefrag-sprog @noise-2d-sprog-atom
                         resolution
                         {:floats {"size" resolution
-                                  "mouse" (mouse-pos)}
-                         :ints {"present" (if (mouse-present?) 1 0)
-                                 "frame" @frame-atom}})
+                                  "mouse" (mouse-pos)
+                                  "time" (u/seconds-since-startup)}
+                         :ints {"present" (if (mouse-present?) 1 0)}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
