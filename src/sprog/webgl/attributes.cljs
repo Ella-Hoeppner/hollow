@@ -1,13 +1,33 @@
-(ns sprog.webgl.attributes)
+(ns sprog.webgl.attributes
+  (:require [sprog.util :as u]))
 
-(defn set-buffer-data! [gl buffer data]
+(defn create-boj! [gl num-components & [{:keys [type
+                                                normalized
+                                                stride
+                                                offset
+                                                usage]
+                                         :or {type gl.FLOAT
+                                              normalized false
+                                              stride 0
+                                              offset 0
+                                              usage gl.STATIC_DRAW}}]]
+  {:buffer (.createBuffer gl)
+   :num-components num-components
+   :type type
+   :normalized normalized
+   :stride stride
+   :offset offset
+   :usage usage})
+
+(defn set-boj-data! [gl {:keys [buffer usage]} data]
+  (u/log buffer)
   (.bindBuffer gl
                gl.ARRAY_BUFFER
                buffer)
   (.bufferData gl
                gl.ARRAY_BUFFER
                data
-               gl.STATIC_DRAW))
+               usage))
 
 (defn ensure-attribute-present! [{:keys [gl program attributes-atom]} 
                                  attrib-name-str]
@@ -21,16 +41,12 @@
 
 (defn set-sprog-attribute! [{:keys [gl attributes-atom] :as sprog}
                             attrib-name
-                            buffer
-                            num-components
-                            & [{:keys [type
-                                       normalize
-                                       stride
-                                       offset]
-                                :or {type gl.FLOAT
-                                     normalize false
-                                     stride 0
-                                     offset 0}}]]
+                            {:keys [buffer
+                                    num-components
+                                    type
+                                    normalized
+                                    stride
+                                    offset]}]
   (let [attrib-name-str (str attrib-name)]
     (ensure-attribute-present! sprog attrib-name-str)
     (let [location (@attributes-atom attrib-name)]
@@ -40,6 +56,6 @@
                             location
                             num-components
                             type
-                            normalize
+                            normalized
                             stride
                             offset))))

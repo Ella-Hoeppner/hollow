@@ -4,7 +4,8 @@
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-sprog
                                          run-triangle-sprog]]
-            [sprog.webgl.attributes :refer [set-buffer-data!
+            [sprog.webgl.attributes :refer [create-boj!
+                                            set-boj-data!
                                             set-sprog-attribute!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
@@ -18,8 +19,8 @@
                         0 0 1])
 
 (defonce gl-atom (atom nil))
-(defonce pos-buffer-atom (atom nil))
-(defonce color-buffer-atom (atom nil))
+(defonce pos-boj-atom (atom nil))
+(defonce color-boj-atom (atom nil))
 (defonce sprog-atom (atom nil))
 
 (def vert-source
@@ -48,31 +49,17 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (set-sprog-attribute! @sprog-atom
-                          "vertexPos"
-                          @pos-buffer-atom
-                          2)
-    (set-sprog-attribute! @sprog-atom
-                          "vertexColor"
-                          @color-buffer-atom
-                          3)
-    (run-triangle-sprog @sprog-atom
-                        resolution
-                        {}
-                        0
-                        3)
+    (set-sprog-attribute! @sprog-atom "vertexPos" @pos-boj-atom)
+    (set-sprog-attribute! @sprog-atom "vertexColor" @color-boj-atom)
+    (run-triangle-sprog @sprog-atom resolution {} 0 3)
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
     (reset! sprog-atom (create-sprog gl vert-source frag-source))
-    (reset! pos-buffer-atom (.createBuffer gl))
-    (reset! color-buffer-atom (.createBuffer gl))
-    (set-buffer-data! gl 
-                      @pos-buffer-atom
-                      (js/Float32Array. pos-buffer-data))
-    (set-buffer-data! gl 
-                      @color-buffer-atom 
-                      (js/Float32Array. color-buffer-data)))
+    (reset! pos-boj-atom (create-boj! gl 2))
+    (reset! color-boj-atom (create-boj! gl 3))
+    (set-boj-data! gl @pos-boj-atom (js/Float32Array. pos-buffer-data))
+    (set-boj-data! gl @color-boj-atom (js/Float32Array. color-buffer-data)))
   (update-page!))
