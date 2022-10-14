@@ -11,10 +11,11 @@
             sprog.dev.tilable-simplex-demo
             sprog.dev.macro-demo
             sprog.dev.bilinear-demo
-            sprog.dev.attributes-demo))
+            sprog.dev.attributes-demo
+            sprog.dev.voronoise-demo))
 
 (defn init []
-  #_(sprog.dev.basic-demo/init)
+  (sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
@@ -26,7 +27,8 @@
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
   #_(sprog.dev.bilinear-demo/init)
-  (sprog.dev.attributes-demo/init))
+  #_(sprog.dev.attributes-demo/init)
+  #_(sprog.dev.voronoise-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

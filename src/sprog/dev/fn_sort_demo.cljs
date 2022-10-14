@@ -5,8 +5,8 @@
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
-            [sprog.iglu.chunks :refer [merge-chunks]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.iglu.core :refer [iglu->glsl
+                                     merge-chunks]]
             [clojure.walk :refer [postwalk-replace]]))
 
 (def fn-count 50)

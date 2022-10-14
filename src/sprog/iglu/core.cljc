@@ -2,9 +2,13 @@
   (:require [sprog.util :as u]
             [sprog.iglu.glsl :refer [parsed-iglu->glsl]]
             [sprog.iglu.parse :refer [parse]]
-            [sprog.iglu.chunks :refer [merge-chunks
-                                       apply-macros]]
+            [sprog.iglu.chunks.misc :refer [apply-macros]]
             [clojure.walk :refer [postwalk-replace]]))
+
+(defn merge-chunks [& chunks]
+  (assoc (reduce (partial merge-with merge)
+                 (map #(dissoc % :version) chunks))
+         :version "300 es"))
 
 (defn iglu->glsl
   ([shader]

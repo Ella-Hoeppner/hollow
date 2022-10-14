@@ -4,7 +4,7 @@
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
-            [sprog.iglu.chunks :refer [tileable-simplex-2d-chunk]]
+            [sprog.iglu.chunks.random :refer [tileable-simplex-2d-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]))

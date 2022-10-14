@@ -5,7 +5,7 @@
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
             [sprog.webgl.textures :refer [create-u16-tex]]
-            [sprog.iglu.chunks :refer [bilinear-usampler-chunk]]
+            [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
