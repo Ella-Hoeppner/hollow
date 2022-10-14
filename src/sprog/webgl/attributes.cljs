@@ -59,3 +59,8 @@
                             normalized
                             stride
                             offset))))
+
+(defn set-sprog-attributes! [sprog
+                             attrib-boj-map]
+  (doseq [[attrib-name boj] attrib-boj-map]
+    (set-sprog-attribute! sprog attrib-name boj)))
