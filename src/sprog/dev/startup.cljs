@@ -10,7 +10,8 @@
             sprog.dev.simplex-demo
             sprog.dev.tilable-simplex-demo
             sprog.dev.macro-demo
-            sprog.dev.bilinear-demo))
+            sprog.dev.bilinear-demo
+            sprog.dev.attributes-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -24,7 +25,8 @@
   #_(sprog.dev.simplex-demo/init)
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
-  (sprog.dev.bilinear-demo/init))
+  #_(sprog.dev.bilinear-demo/init)
+  (sprog.dev.attributes-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
