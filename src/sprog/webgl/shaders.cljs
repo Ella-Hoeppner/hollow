@@ -38,7 +38,8 @@
                                 (create-shader gl :frag frag-source))]
     {:program program
      :gl gl
-     :uniforms-atom (atom {})}))
+     :uniforms-atom (atom {})
+     :attributes-atom (atom {})}))
 
 (def purefrag-vert-source (iglu->glsl trivial-vert-source))
 
