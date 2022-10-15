@@ -31,9 +31,9 @@
               s (min w h)]
           (swap! mouse-atom
                  assoc
-                 :pos
-                 [(/ (- x (/ (- w s) 2)) s)
-                  (/ (- y (/ (- h s) 2)) s)]))))
+                 :pos [(/ (- x (/ (- w s) 2)) s)
+                       (/ (- y (/ (- h s) 2)) s)]
+                 :present? true))))
 
 (set! js/document.onmousedown
       (fn [_]
@@ -41,8 +41,8 @@
           (callback))
         (swap! mouse-atom
                assoc
-               :down?
-               true)))
+               :down? true
+               :present? true)))
 
 (set! js/document.onmouseup
       (fn [_]
@@ -50,8 +50,8 @@
           (callback))
         (swap! mouse-atom
                assoc
-               :down?
-               false)))
+               :down? false
+               :present? true)))
 
 (set! js/document.onmouseenter
       (fn [_]
