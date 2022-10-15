@@ -2,8 +2,6 @@
   (:require [clojure.walk :refer [postwalk 
                                   postwalk-replace]]))
 
-
-
 (def sympow-chunk
   '{:signatures {sympow ([float float] float)}
     :functions
@@ -48,8 +46,6 @@
                 (vec2 :x :y))))
          subexp))
      expression)))
-
-
 
 (defn sparse-gaussian-expression [value-fn radius sigma & [skip-factor]]
   (let [coords (conj (mapcat (fn [r]

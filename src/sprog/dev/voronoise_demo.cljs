@@ -5,15 +5,12 @@
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
             [sprog.iglu.chunks.random :refer [voronoise-chunk]]
-            [sprog.input.mouse :refer [mouse-pos
-                                       mouse-present?]]
+            [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
 (defonce noise-2d-sprog-atom (atom nil))
-
-
 
 (def noise-2d-frag-source
   (iglu->glsl
@@ -23,22 +20,18 @@
      :precision {float highp}
      :uniforms {size vec2
                 mouse vec2
-                time float
-                present int}
+                time float}
      :outputs {fragColor vec4}
      :signatures {main ([] void)}
      :functions {main
                  ([]
                   (=vec2 pos (/ gl_FragCoord.xy size)) 
-                  (=float noiseValue (voronoise (+ (* pos "23.") 
-                                                   (vec2 (cos time)
-                                                         (sin time)))
-                                                (if (== present 1)
-                                                  mouse.x
-                                                  ".5")
-                                                (if (== present 1)
-                                                  mouse.y
-                                                  ".5")))
+                  (=float noiseValue
+                          (voronoise (+ (* pos "23.")
+                                        (vec2 (cos time)
+                                              (sin time)))
+                                     mouse.x
+                                     mouse.y))
                   (= fragColor (vec4 (vec3 noiseValue) 1)))}}))
 
 (defn update-page! []
@@ -47,19 +40,16 @@
                     gl.canvas.height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    
     (run-purefrag-sprog @noise-2d-sprog-atom
                         resolution
                         {:floats {"size" resolution
                                   "mouse" (mouse-pos)
-                                  "time" (u/seconds-since-startup)}
-                         :ints {"present" (if (mouse-present?) 1 0)}})
-    (js/requestAnimationFrame update-page!)))
+                                  "time" (u/seconds-since-startup)}}))
+  (js/requestAnimationFrame update-page!))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! noise-2d-sprog-atom (create-purefrag-sprog
-                                 gl
-                                 noise-2d-frag-source)))
+    (reset! noise-2d-sprog-atom
+            (create-purefrag-sprog gl noise-2d-frag-source)))
   (update-page!))
