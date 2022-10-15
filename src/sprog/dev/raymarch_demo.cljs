@@ -8,7 +8,7 @@
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
-            [sprog.iglu.chunks.random :refer [simplex-3d-chunk
+            [sprog.iglu.chunks.noise :refer [simplex-3d-chunk
                                        simplex-4d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 

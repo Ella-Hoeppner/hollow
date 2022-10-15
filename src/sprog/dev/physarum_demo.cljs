@@ -10,7 +10,7 @@
             [sprog.webgl.framebuffers :refer [target-screen!
                                               target-textures!]]
             [sprog.webgl.textures :refer [create-u16-tex]]
-            [sprog.iglu.chunks.random :refer [rand-chunk]]
+            [sprog.iglu.chunks.noise :refer [rand-chunk]]
             [sprog.iglu.chunks.misc :refer [offset-shortcut]]
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
