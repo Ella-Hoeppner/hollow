@@ -1,4 +1,4 @@
-(ns sprog.iglu.chunks.random
+(ns sprog.iglu.chunks.noise
   (:require [clojure.walk :refer [postwalk-replace]]
   [sprog.iglu.core :refer [merge-chunks]]))
 

@@ -8,8 +8,13 @@
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
+<<<<<<< HEAD
             [sprog.iglu.chunks.random :refer [simplex-3d-chunk
                                               simplex-4d-chunk]]
+=======
+            [sprog.iglu.chunks.noise :refer [simplex-3d-chunk
+                                       simplex-4d-chunk]]
+>>>>>>> ea5713937b187030ed6b4ea36bd2d41cf3d0da33
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
