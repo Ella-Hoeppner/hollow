@@ -1,8 +1,7 @@
 (ns sprog.webgl.attributes
   (:require [sprog.util :as u]))
 
-(defn set-boj-data! [gl {:keys [buffer usage]} data]
-  (u/log buffer)
+(defn set-boj-data! [gl {:keys [buffer usage]} data] 
   (.bindBuffer gl
                gl.ARRAY_BUFFER
                buffer)

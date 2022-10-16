@@ -25,13 +25,12 @@
      :signatures {main ([] void)}
      :functions {main
                  ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size)) 
+                  (=vec2 pos (/ gl_FragCoord.xy size))
                   (=float noiseValue
-                          (voronoise (+ (* pos "23.")
-                                        (vec2 (cos time)
-                                              (sin time)))
-                                     mouse.x
-                                     mouse.y))
+                          (voronoise mouse.x
+                                     mouse.y (+ (* pos "23.")
+                                                (vec2 (cos time)
+                                                      (sin time)))))
                   (= fragColor (vec4 (vec3 noiseValue) 1)))}}))
 
 (defn update-page! []

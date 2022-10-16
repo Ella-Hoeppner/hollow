@@ -9,7 +9,7 @@
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
             [sprog.iglu.chunks.random :refer [simplex-3d-chunk
-                                       simplex-4d-chunk]]
+                                              simplex-4d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))

@@ -320,13 +320,13 @@
 ;based on www.shadertoy.com/view/Xd23Dh
 (def voronoise-chunk 
   '{:signatures {hash3 ([vec2] vec3)
-                 voronoise ([vec2 float float] float)}
+                 voronoise ([float float vec2] float)}
     :functions {hash3 ([p]
                        (=vec3 q (vec3 (dot p (vec2 "127.1" "311.7"))
                                       (dot p (vec2  "269.5" "183.3"))
                                       (dot p (vec2 "419.2" "371.9"))))
                        (fract (* (sin q) "43758.5453")))
-                voronoise ([p skew blur]
+                voronoise ([skew blur p]
                            (=float k (+ "1." (* "63." (pow (- "1." blur) "6."))))
 
                            (=vec2 i (floor p))
