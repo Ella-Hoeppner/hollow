@@ -4,13 +4,8 @@
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
-<<<<<<< HEAD
-            [sprog.iglu.chunks.random :refer [simplex-2d-chunk
-                                              simplex-3d-chunk]]
-=======
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                        simplex-3d-chunk]]
->>>>>>> ea5713937b187030ed6b4ea36bd2d41cf3d0da33
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
