@@ -1,7 +1,7 @@
-(ns sprog.dev.attributes-demo
+(ns sprog.dev.vertex-demo
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+                                        square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-sprog
                                          run-triangle-sprog]]
             [sprog.webgl.attributes :refer [create-boj!
@@ -29,10 +29,11 @@
      :inputs {vertexPos vec2
               vertexColor vec3}
      :outputs {color vec3}
+     :uniforms {rotation mat2}
      :signatures {main ([] void)}
      :functions {main ([] 
                        (= color vertexColor)
-                       (= gl_Position (vec4 vertexPos 0 1)))}}))
+                       (= gl_Position (vec4 (* vertexPos rotation) 0 1)))}}))
 
 (def frag-source
   (iglu->glsl
@@ -46,9 +47,15 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (maximize-gl-canvas gl)
+    (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-triangle-sprog @sprog-atom resolution {} 0 3)
+    (run-triangle-sprog @sprog-atom resolution
+                        {:matrices {"rotation"
+                                    (let [angle (u/seconds-since-startup)]
+                                      [(Math/cos angle) (- (Math/sin angle))
+                                       (Math/sin angle) (Math/cos angle)])}} 
+                        0
+                        3)
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

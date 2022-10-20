@@ -11,12 +11,12 @@
             sprog.dev.tilable-simplex-demo
             sprog.dev.macro-demo
             sprog.dev.bilinear-demo
-            sprog.dev.attributes-demo
+            sprog.dev.vertex-demo
             sprog.dev.voronoise-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
-  (sprog.dev.multi-texture-output-demo/init)
+  #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.raymarch-demo/init)
@@ -27,7 +27,7 @@
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
   #_(sprog.dev.bilinear-demo/init)
-  #_(sprog.dev.attributes-demo/init)
+  (sprog.dev.vertex-demo/init)
   #_(sprog.dev.voronoise-demo/init))
 
 (defn pre-init []
