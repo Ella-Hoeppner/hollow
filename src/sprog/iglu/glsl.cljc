@@ -135,24 +135,21 @@
 (defn ->varying [[name type]]
   (str "varying " (parse-type type) " " name))
 
-(defn ->inout [in-or-out layout [name type]]
-  (str (when layout
-         (let [layout-index (layout name)]
-           (when layout-index
-             (str "layout(location = "
-                  (layout name)
-                  ") "))))
+(defn ->inout [in-or-out qualifiers [name type]]
+  (str (when qualifiers
+         (let [qualifier (qualifiers name)]
+           (when qualifier (str qualifier " "))))
        in-or-out
        " "
        (parse-type type)
        " "
        name))
 
-(defn ->in [layout name-type-pair]
-  (->inout "in" layout name-type-pair))
+(defn ->in [qualifiers name-type-pair]
+  (->inout "in" qualifiers name-type-pair))
 
-(defn ->out [layout name-type-pair]
-  (->inout "out" layout name-type-pair))
+(defn ->out [qualifiers name-type-pair]
+  (->inout "out" qualifiers name-type-pair))
 
 (defn ->struct [[name fields]]
   (str "struct "
@@ -251,7 +248,7 @@
                                  varyings
                                  inputs
                                  outputs
-                                 layout
+                                 qualifiers
                                  signatures
                                  functions]}]
   (let [[fn-kind fn-val] functions
@@ -262,8 +259,8 @@
            uniforms (into (mapv ->uniform uniforms))
            attributes (into (mapv ->attribute attributes))
            varyings (into (mapv ->varying varyings))
-           inputs (into (mapv (partial ->in layout) inputs))
-           outputs (into (mapv (partial ->out layout) outputs))
+           inputs (into (mapv (partial ->in qualifiers) inputs))
+           outputs (into (mapv (partial ->out qualifiers) outputs))
            structs (into (mapv ->struct structs))
            (= fn-kind :iglu) (into (mapv (partial ->function signatures)
                                          sorted-fns)))

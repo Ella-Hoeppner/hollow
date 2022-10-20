@@ -10,7 +10,7 @@
 
 (s/def ::version string?)
 (s/def ::precision (s/map-of symbol? symbol?))
-(s/def ::layout (s/map-of symbol? integer?))
+(s/def ::qualifiers (s/map-of symbol? string?))
 (s/def ::uniforms ::declarations)
 (s/def ::attributes ::declarations)
 (s/def ::varyings ::declarations)
@@ -43,7 +43,7 @@
 
 (s/def ::shader (s/keys :opt-un [::version
                                  ::precision
-                                 ::layout
+                                 ::qualifiers
                                  ::uniforms
                                  ::attributes
                                  ::varyings

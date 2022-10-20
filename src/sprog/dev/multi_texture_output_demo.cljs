@@ -26,8 +26,8 @@
      :precision {float highp}
      :outputs {fragColor0 vec4
                fragColor1 vec4}
-     :layout {fragColor0 0
-              fragColor1 1}
+     :qualifiers {fragColor0 "layout(location = 0)"
+                  fragColor1 "layout(location = 1)"}
      :signatures {main ([] void)}
      :functions {main
                  ([]
