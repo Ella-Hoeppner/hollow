@@ -105,3 +105,23 @@
     (set-texture-parameters gl texture filter-mode wrap-mode)
     (copy-html-image-data! gl texture element-or-id)
     texture))
+
+(defn create-webcam-video-element [callback & [{:keys [width 
+                                                       height 
+                                                       brightness]
+                                                :or {width 1024
+                                                     height 1024
+                                                     brightness 2}}]]
+  (let [media-constraints (clj->js {:audio false
+                                    :video {:width width
+                                            :height height
+                                            :brightness {:ideal brightness}}})
+        video (js/document.createElement "video")]
+    (.then (js/navigator.mediaDevices.getUserMedia media-constraints)
+           (fn [media-stream]
+             (set! video.srcObject media-stream)
+             (.setAttribute video "playsinline" true)
+             (set! video.onloadedmetadata
+                   (fn [e]
+                     (.play video)
+                     (callback video)))))))

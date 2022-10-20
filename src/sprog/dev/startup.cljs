@@ -13,7 +13,8 @@
             sprog.dev.bilinear-demo
             sprog.dev.vertex-demo
             sprog.dev.voronoise-demo
-            sprog.dev.video-demo))
+            sprog.dev.video-demo
+            sprog.dev.webcam-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -30,7 +31,8 @@
   #_(sprog.dev.bilinear-demo/init)
   #_(sprog.dev.vertex-demo/init)
   #_(sprog.dev.voronoise-demo/init)
-  (sprog.dev.video-demo/init))
+  #_(sprog.dev.video-demo/init)
+  (sprog.dev.webcam-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
