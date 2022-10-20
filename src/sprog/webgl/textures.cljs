@@ -83,19 +83,25 @@
 (defn create-u32-tex [gl resolution & [options]]
   (create-texture gl resolution :u32 (merge options {:filter-mode :nearest})))
 
-(defn html-image-texture [gl img-id & [{:keys [wrap-mode
-                                               filter-mode]
-                                        :or {wrap-mode :repeat
-                                             filter-mode :linear}}]]
-  (let [texture (.createTexture gl)
-        image (.getElementById js/document img-id)]
-    (.bindTexture gl gl.TEXTURE_2D texture)
-    (set-texture-parameters gl texture filter-mode wrap-mode)
+(defn copy-html-image-data! [gl tex element-or-id]
+  (let [element (if (string? element-or-id)
+                  (.getElementById js/document element-or-id)
+                  element-or-id)]
+    (.bindTexture gl gl.TEXTURE_2D tex)
     (.texImage2D gl
                  gl.TEXTURE_2D
                  0
                  gl.RGBA
                  gl.RGBA
                  gl.UNSIGNED_BYTE
-                 image)
+                 element)))
+
+(defn html-image-texture [gl element-or-id & [{:keys [wrap-mode
+                                                      filter-mode]
+                                               :or {wrap-mode :repeat
+                                                    filter-mode :linear}}]]
+  (let [texture (.createTexture gl)]
+    (.bindTexture gl gl.TEXTURE_2D texture)
+    (set-texture-parameters gl texture filter-mode wrap-mode)
+    (copy-html-image-data! gl texture element-or-id)
     texture))

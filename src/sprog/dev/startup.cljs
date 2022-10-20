@@ -12,7 +12,8 @@
             sprog.dev.macro-demo
             sprog.dev.bilinear-demo
             sprog.dev.vertex-demo
-            sprog.dev.voronoise-demo))
+            sprog.dev.voronoise-demo
+            sprog.dev.video-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -27,8 +28,9 @@
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
   #_(sprog.dev.bilinear-demo/init)
-  (sprog.dev.vertex-demo/init)
-  #_(sprog.dev.voronoise-demo/init))
+  #_(sprog.dev.vertex-demo/init)
+  #_(sprog.dev.voronoise-demo/init)
+  (sprog.dev.video-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
