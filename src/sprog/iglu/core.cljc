@@ -2,8 +2,8 @@
   (:require [sprog.util :as u]
             [sprog.iglu.glsl :refer [parsed-iglu->glsl]]
             [sprog.iglu.parse :refer [parse]] 
-            [clojure.walk :refer [postwalk-replace
-                                  postwalk]]))
+            [clojure.walk :refer [prewalk-replace
+                                  prewalk]]))
 
 (defn merge-chunks [& chunks]
   (assoc (reduce (partial merge-with merge)
@@ -11,7 +11,7 @@
          :version "300 es"))
 
 (defn apply-macros [macro-map expression]
-  (postwalk (fn [subexp]
+  (prewalk (fn [subexp]
               (if (vector? subexp)
                 (let [macro-fn (macro-map (first subexp))]
                   (if macro-fn
@@ -28,6 +28,6 @@
           replacements false}
          (group-by (comp fn? second) replacement-and-macro-map)]
      (iglu->glsl
-      (postwalk-replace (into {} replacements)
+      (prewalk-replace (into {} replacements)
                         (apply-macros (into {} macros)
                                       (apply merge-chunks chunks)))))))
