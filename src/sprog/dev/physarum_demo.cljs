@@ -7,10 +7,10 @@
                                          run-purefrag-autosprog]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
-            [sprog.iglu.chunks.misc :refer [offset-shortcut]]
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.iglu.core :refer [iglu->glsl
+                                     merge-chunks]]))
 
 (def substrate-resolution 1000)
 (def agent-tex-resolution 100)
@@ -233,6 +233,7 @@
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
+
     (reset! substrate-texs-atom
             (u/gen 2 (create-u16-tex gl substrate-resolution)))
     (reset! agent-texs-atom
