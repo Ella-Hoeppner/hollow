@@ -18,11 +18,10 @@
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
       shader
-      (do (u/log (apply str
-                        (interleave (map #(str %2 ":\t" %1)
-                                         (split-lines source)
-                                         (rest (range)))
-                                    (repeat "\n"))))
+      (do (u/log (join "\n"
+                       (map #(str %2 ":\t" %1)
+                            (split-lines source)
+                            (rest (range)))))
           (throw (js/Error. (str (.getShaderInfoLog gl shader))))))))
 
 (defn create-program [gl vert-shader frag-shader]
