@@ -97,7 +97,8 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (run-purefrag-sprog @logic-sprog-atom
+    (run-purefrag-sprog gl
+                        @logic-sprog-atom
                         sort-resolution
                         {:floats {"size" [sort-resolution sort-resolution]
                                   "threshold" (first (mouse-pos))}
@@ -108,7 +109,8 @@
 
 
     (square-maximize-gl-canvas gl)
-    (run-purefrag-sprog @render-sprog-atom
+    (run-purefrag-sprog gl
+                        @render-sprog-atom
                         resolution
                         {:floats {"size" resolution}
                          :textures {"tex" (first @texs-atom)}})
@@ -129,7 +131,8 @@
 
     (reset! frame-atom 0)
 
-    (run-purefrag-sprog (create-purefrag-sprog
+    (run-purefrag-sprog gl
+                        (create-purefrag-sprog
                          gl
                          (iglu->glsl init-frag-source))
                         sort-resolution

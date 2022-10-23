@@ -47,7 +47,8 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog @sprog-atom
+    (run-purefrag-sprog gl
+                        @sprog-atom
                         resolution
                         {:floats {"size" resolution}})
     (js/requestAnimationFrame update-page!)))

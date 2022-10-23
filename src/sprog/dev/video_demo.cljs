@@ -35,7 +35,8 @@
     (when @time-updated?-atom
       (copy-html-image-data! gl @tex-atom @video-element-atom))
     (target-screen! gl)
-    (run-purefrag-sprog @sprog-atom
+    (run-purefrag-sprog gl
+                        @sprog-atom
                         resolution
                         {:floats {"size" resolution}
                          :textures {"tex" @tex-atom}})

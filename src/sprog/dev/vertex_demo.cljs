@@ -49,7 +49,8 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-sprog @sprog-atom resolution
+    (run-sprog gl
+               @sprog-atom resolution
                {:matrices {"rotation"
                            (let [angle (u/seconds-since-startup)]
                              [(Math/cos angle) (- (Math/sin angle))
@@ -70,7 +71,8 @@
             (create-boj! gl
                          3
                          {:initial-data (js/Float32Array. color-buffer-data)}))
-    (set-sprog-attributes! @sprog-atom
+    (set-sprog-attributes! gl
+                           @sprog-atom
                            {"vertexPos" @pos-boj-atom
                             "vertexColor" @color-boj-atom}))
   (update-page!))

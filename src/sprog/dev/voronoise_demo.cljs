@@ -39,7 +39,8 @@
                     gl.canvas.height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog @noise-2d-sprog-atom
+    (run-purefrag-sprog gl
+                        @noise-2d-sprog-atom
                         resolution
                         {:floats {"size" resolution
                                   "mouse" (mouse-pos)

@@ -38,7 +38,6 @@
                                 (create-shader gl :vert vert-source)
                                 (create-shader gl :frag frag-source))]
     {:program program
-     :gl gl
      :uniforms-atom (atom {})
      :attributes-atom (atom {})}))
 
@@ -71,11 +70,12 @@
                             0))
     sprog))
 
-(defn use-sprog [{:keys [gl program] :as sprog} uniform-map]
+(defn use-sprog [gl {:keys [program] :as sprog} uniform-map]
   (.useProgram gl program)
-  (set-sprog-uniforms! sprog uniform-map))
+  (set-sprog-uniforms! gl sprog uniform-map))
 
-(defn run-sprog [{:keys [gl] :as sprog}
+(defn run-sprog [gl
+                 sprog
                  size
                  uniform-map
                  start
@@ -87,14 +87,16 @@
   (let [[width height] (if (number? size) [size size] size)
         [x y] (if offset offset [0 0])]
     (.viewport gl x y width height)
-    (use-sprog sprog uniform-map)
+    (use-sprog gl sprog uniform-map)
     (.drawArrays gl gl.TRIANGLES start length)))
 
-(defn run-purefrag-sprog [sprog
+(defn run-purefrag-sprog [gl
+                          sprog
                           size
                           uniform-map
                           & [options]]
-  (run-sprog sprog
+  (run-sprog gl
+             sprog
              size
              uniform-map
              0

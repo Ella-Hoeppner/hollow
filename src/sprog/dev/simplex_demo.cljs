@@ -60,10 +60,12 @@
         split-resolution [half-width height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog @noise-2d-sprog-atom
+    (run-purefrag-sprog gl
+                        @noise-2d-sprog-atom
                         split-resolution
                         {:floats {"size" resolution}})
-    (run-purefrag-sprog @noise-3d-sprog-atom
+    (run-purefrag-sprog gl
+                        @noise-3d-sprog-atom
                         split-resolution
                         {:floats {"size" resolution
                                   "time" (u/seconds-since-startup)}}

@@ -193,7 +193,8 @@
   (let [gl @gl-atom
         [front-tex back-tex] @agent-texs-atom
         substrate-tex (first @substrate-texs-atom)]
-    (run-purefrag-sprog @agent-logic-sprog-atom
+    (run-purefrag-sprog gl
+                        @agent-logic-sprog-atom
                         agent-tex-resolution
                         {:floats {"randomizeChance" randomize-chance
                                   "time" @frame-atom}
@@ -206,7 +207,8 @@
   (let [gl @gl-atom
         [front-tex back-tex] @substrate-texs-atom
         agent-tex (first @agent-texs-atom)]
-    (run-sprog @particle-sprog-atom
+    (run-sprog gl
+               @particle-sprog-atom
                substrate-resolution
                {:textures {"particleTex" agent-tex}
                 :floats {"size" substrate-resolution
@@ -215,7 +217,8 @@
                (* 6 agent-tex-resolution agent-tex-resolution)
                {:targets [front-tex]})
 
-    (run-purefrag-sprog @substrate-logic-sprog-atom
+    (run-purefrag-sprog gl
+                        @substrate-logic-sprog-atom
                         substrate-resolution
                         {:textures {"substrate" front-tex}}
                         {:targets [back-tex]}))
@@ -227,7 +230,8 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
-    (run-purefrag-sprog @render-sprog-atom
+    (run-purefrag-sprog gl
+                        @render-sprog-atom
                         resolution
                         {:floats {"size" resolution}
                          :textures {"substrate" (first @substrate-texs-atom)}}))

@@ -62,11 +62,13 @@
         half-resolution (update resolution 0 (partial * 0.5))]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog @nearest-sprog-atom
+    (run-purefrag-sprog gl
+                        @nearest-sprog-atom
                         half-resolution
                         {:floats {"size" half-resolution}
                          :textures {"tex" @tex-atom}})
-    (run-purefrag-sprog @bicubic-sprog-atom
+    (run-purefrag-sprog gl
+                        @bicubic-sprog-atom
                         half-resolution
                         {:floats {"size" half-resolution
                                   "offset" [(* width 0.5) 0]}

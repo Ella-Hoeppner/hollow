@@ -46,7 +46,8 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (run-purefrag-sprog @draw-sprog-atom
+    (run-purefrag-sprog gl
+                        @draw-sprog-atom
                         resolution
                         {:floats {"size" resolution}
                          :textures {"tex" @texture-atom}})
@@ -65,7 +66,8 @@
     (let [render-sprog (create-purefrag-sprog
                         gl
                         (u/log (iglu->glsl render-frag-source)))]
-      (run-purefrag-sprog render-sprog
+      (run-purefrag-sprog gl
+                          render-sprog
                           texture-resolution
                           {}
                           {:targets [@texture-atom]})))
