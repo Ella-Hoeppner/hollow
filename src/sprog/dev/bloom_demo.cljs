@@ -4,15 +4,12 @@
                                           copy-html-image-data!]]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.iglu.chunks.misc :refer [get-bloom-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
-(defonce sprog-atom (atom nil))
 (defonce tex-atom (atom nil))
 (defonce video-element-atom (atom nil))
 (defonce time-updated?-atom (atom nil))
@@ -44,12 +41,12 @@
     (square-maximize-gl-canvas gl)
     (when @time-updated?-atom
       (copy-html-image-data! gl @tex-atom @video-element-atom))
-    (target-screen! gl)
-    (run-purefrag-sprog @sprog-atom
-                        resolution
-                        {:floats {"size" resolution
-                                  "mouse" (mouse-pos)}
-                         :textures {"tex" @tex-atom}})
+    (run-purefrag-shader! gl
+                          frag-source
+                          resolution
+                          {:floats {"size" resolution
+                                    "mouse" (mouse-pos)}
+                           :textures {"tex" @tex-atom}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
@@ -63,8 +60,5 @@
     (reset! video-element-atom video)
 
     (reset! gl-atom gl)
-    (reset! tex-atom (create-f8-tex gl 1))
-    (reset! sprog-atom (create-purefrag-sprog
-                        gl
-                        frag-source)))
+    (reset! tex-atom (create-f8-tex gl 1)))
   (update-page!))

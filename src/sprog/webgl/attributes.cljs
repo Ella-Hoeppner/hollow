@@ -1,5 +1,4 @@
-(ns sprog.webgl.attributes
-  (:require [sprog.util :as u]))
+(ns sprog.webgl.attributes)
 
 (defn set-boj-data! [gl {:keys [buffer usage]} data] 
   (.bindBuffer gl
@@ -32,7 +31,8 @@
       (set-boj-data! gl boj initial-data))
     boj))
 
-(defn ensure-attribute-present! [{:keys [gl program attributes-atom]} 
+(defn ensure-attribute-present! [gl
+                                 {:keys [program attributes-atom]} 
                                  attrib-name-str]
   (when (not (@attributes-atom attrib-name-str))
     (swap! attributes-atom 
@@ -42,7 +42,8 @@
                                program
                                attrib-name-str))))
 
-(defn set-sprog-attribute! [{:keys [gl attributes-atom] :as sprog}
+(defn set-sprog-attribute! [gl
+                            {:keys [attributes-atom] :as sprog}
                             attrib-name
                             {:keys [buffer
                                     num-components
@@ -51,7 +52,7 @@
                                     stride
                                     offset]}]
   (let [attrib-name-str (str attrib-name)]
-    (ensure-attribute-present! sprog attrib-name-str)
+    (ensure-attribute-present! gl sprog attrib-name-str)
     (let [location (@attributes-atom attrib-name)]
       (.bindBuffer gl gl.ARRAY_BUFFER buffer)
       (.enableVertexAttribArray gl location)
@@ -63,7 +64,8 @@
                             stride
                             offset))))
 
-(defn set-sprog-attributes! [sprog
+(defn set-sprog-attributes! [gl
+                             sprog
                              attrib-boj-map]
   (doseq [[attrib-name boj] attrib-boj-map]
-    (set-sprog-attribute! sprog attrib-name boj)))
+    (set-sprog-attribute! gl sprog attrib-name boj)))

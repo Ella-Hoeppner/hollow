@@ -2,18 +2,13 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
-            [clojure.walk :refer [postwalk-replace]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
-            [sprog.iglu.chunks.noise :refer [simplex-3d-chunk
-                                             simplex-4d-chunk]]
+            [sprog.iglu.chunks.noise :refer [simplex-4d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
-(defonce sprog-atom (atom nil))
 
 (def frag-glsl
   (iglu->glsl
@@ -33,8 +28,7 @@
                 mouse vec2}
      :outputs {fragColor vec4}
      :signatures {distanceEstimate ([vec3] float)
-                  rayNormal ([vec3 vec3] vec3)
-                  main ([] void)}
+                  rayNormal ([vec3 vec3] vec3)}
      :functions
      {distanceEstimate
       ([pos]
@@ -62,63 +56,58 @@
                           (- (distanceEstimate (+ finalRayPos e.yxy))
                              (distanceEstimate (- finalRayPos e.yxy)))
                           (- (distanceEstimate (+ finalRayPos e.yyx))
-                             (distanceEstimate (- finalRayPos e.yyx)))))))
-      main
-      ([]
-       (=vec2 pos (/ gl_FragCoord.xy size))
+                             (distanceEstimate (- finalRayPos e.yyx)))))))}
+     :main
+     ((=vec2 pos (/ gl_FragCoord.xy size))
 
-       (=float h (tan (/ :fov "2.0")))
-       (=float viewportSize (* h "2.0"))
+      (=float h (tan (/ :fov "2.0")))
+      (=float viewportSize (* h "2.0"))
 
-       (=float focalLength "1.0")
+      (=float focalLength "1.0")
 
-       (=vec3 cameraOrigin (vec3 0 0 -5))
-       (=vec3 cameraTarget (vec3 0 0 1))
+      (=vec3 cameraOrigin (vec3 0 0 -5))
+      (=vec3 cameraTarget (vec3 0 0 1))
 
-       (=vec3 vup (vec3 0 1 0))
+      (=vec3 vup (vec3 0 1 0))
 
-       (=vec3 w (normalize (- cameraOrigin cameraTarget)))
-       (=vec3 u (normalize (cross vup w)))
-       (=vec3 v (cross w u))
+      (=vec3 w (normalize (- cameraOrigin cameraTarget)))
+      (=vec3 u (normalize (cross vup w)))
+      (=vec3 v (cross w u))
 
-       (=vec3 horizontal (* u h "2.0"))
-       (=vec3 vertical (* v h "2.0"))
+      (=vec3 horizontal (* u h "2.0"))
+      (=vec3 vertical (* v h "2.0"))
 
-       (=vec3 lowerLeftCorner (- cameraOrigin
-                                 (+ (* "0.5" horizontal)
-                                    (* "0.5" vertical)
-                                    w)))
+      (=vec3 lowerLeftCorner (- cameraOrigin
+                                (+ (* "0.5" horizontal)
+                                   (* "0.5" vertical)
+                                   w)))
 
-       (=vec3 cameraDir (- (+ lowerLeftCorner
-                              (* pos.x horizontal)
-                              (* pos.y vertical))
-                           cameraOrigin))
-       (=vec3 surfaceNormal (rayNormal cameraOrigin cameraDir))
+      (=vec3 cameraDir (- (+ lowerLeftCorner
+                             (* pos.x horizontal)
+                             (* pos.y vertical))
+                          cameraOrigin))
+      (=vec3 surfaceNormal (rayNormal cameraOrigin cameraDir))
 
-       (= fragColor
-          (vec4 (* "0.5"
-                   (+ "1.0"
-                      surfaceNormal))
-                1)))}}))
+      (= fragColor
+         (vec4 (* "0.5"
+                  (+ "1.0"
+                     surfaceNormal))
+               1)))}))
 
 (defn update-page! []
   (let [gl @gl-atom
         resolution gl.canvas.width]
     (square-maximize-gl-canvas gl)
-    (target-screen! gl)
-    (run-purefrag-sprog @sprog-atom
-                        resolution
-                        {:floats {"size" resolution
-                                  "time" (u/seconds-since-startup)
-                                  "mouse" (if (mouse-present?)
-                                            (mouse-pos)
-                                            [0 0])}})
+    (run-purefrag-shader! gl
+                          frag-glsl
+                          resolution
+                          {:floats {"size" resolution
+                                    "time" (u/seconds-since-startup)
+                                    "mouse" (if (mouse-present?)
+                                              (mouse-pos)
+                                              [0 0])}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
-    (reset! gl-atom gl)
-    (reset! sprog-atom (create-purefrag-sprog
-                        gl
-                        frag-glsl)))
+  (reset! gl-atom (create-gl-canvas))
   (update-page!))

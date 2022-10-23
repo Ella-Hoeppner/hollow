@@ -3,24 +3,32 @@
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.particles :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
+            [sprog.webgl.framebuffers :refer [target-textures!
+                                              target-screen!]]
+            [sprog.webgl.attributes :refer [set-sprog-attributes!
+                                            set-sprog-attribute!
+                                            create-boj!]]
             [clojure.string :refer [split-lines
                                     join]]))
 
 (defn create-shader [gl shader-type source]
-  (let [shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
+  (let [source-glsl
+        (if (string? source)
+          source
+          (iglu->glsl source))
+        shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
                                        :vert gl.VERTEX_SHADER}
                                       shader-type)
                                      shader-type))]
     shader
-    (.shaderSource gl shader source)
+    (.shaderSource gl shader source-glsl)
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
       shader
-      (do (u/log (apply str
-                        (interleave (map #(str %2 ":\t" %1)
-                                         (split-lines source)
-                                         (rest (range)))
-                                    (repeat "\n"))))
+      (do (u/log (join "\n"
+                       (map #(str %2 ":\t" %1)
+                            (split-lines source-glsl)
+                            (rest (range)))))
           (throw (js/Error. (str (.getShaderInfoLog gl shader))))))))
 
 (defn create-program [gl vert-shader frag-shader]
@@ -37,55 +45,86 @@
                                 (create-shader gl :vert vert-source)
                                 (create-shader gl :frag frag-source))]
     {:program program
-     :gl gl
      :uniforms-atom (atom {})
      :attributes-atom (atom {})}))
 
-(def purefrag-vert-source (iglu->glsl trivial-vert-source))
+(def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
 
 (defn create-purefrag-sprog [gl frag-source] 
-  (let [{:keys [program] :as sprog}
-        (create-sprog gl purefrag-vert-source frag-source)]
-    (let [pos-buffer (.createBuffer gl)]
-      (.bindBuffer gl
-                   gl.ARRAY_BUFFER
-                   pos-buffer)
-      (.bufferData gl
-                   gl.ARRAY_BUFFER
-                   (js/Float32Array.
-                    (clj->js [-1 -1
-                              -1 3
-                              3 -1]))
-                   gl.STATIC_DRAW))
-    (let [attrib (.getAttribLocation gl
-                                     program
-                                     "vertPos")]
-      (.enableVertexAttribArray gl attrib)
-      (.vertexAttribPointer gl
-                            attrib
-                            2
-                            gl.FLOAT
-                            false
-                            0
-                            0))
+  (let [sprog (create-sprog gl purefrag-vert-glsl frag-source)]
+    (set-sprog-attribute! gl
+                          sprog
+                          "vertPos"
+                          (create-boj! gl
+                                       2
+                                       {:initial-data (js/Float32Array.
+                                                       (clj->js [-1 -1
+                                                                 -1 3
+                                                                 3 -1]))}))
     sprog))
 
-(defn use-sprog [{:keys [gl program] :as sprog} uniform-map]
+(defn use-sprog! [gl {:keys [program] :as sprog} uniform-map attribute-map]
   (.useProgram gl program)
-  (set-sprog-uniforms! sprog uniform-map))
+  (set-sprog-uniforms! gl sprog uniform-map)
+  (set-sprog-attributes! gl sprog attribute-map))
 
-(defn run-triangle-sprog [{:keys [gl] :as sprog} size uniform-map start length]
-  (let [[width height] (if (number? size) [size size] size)]
-    (.viewport gl 0 0 width height)
-    (use-sprog sprog uniform-map)
-    (.drawArrays gl gl.TRIANGLES start length)))
-
-(defn run-purefrag-sprog [{:keys [gl] :as sprog}
-                          size
-                          uniform-map
-                          & [{:keys [offset]}]]
+(defn run-sprog! [gl sprog size uniform-map attribute-map start length
+                  & [{:keys [target offset]}]]
+  (if target
+    (if (coll? target)
+      (apply (partial target-textures! gl) target)
+      (target-textures! gl target))
+    (target-screen! gl))
   (let [[width height] (if (number? size) [size size] size)
         [x y] (if offset offset [0 0])]
     (.viewport gl x y width height)
-    (use-sprog sprog uniform-map)
-    (.drawArrays gl gl.TRIANGLES 0 3)))
+    (use-sprog! gl sprog uniform-map attribute-map)
+    (.drawArrays gl gl.TRIANGLES start length)))
+
+(defn run-purefrag-sprog! [gl sprog size uniform-map & [options]]
+  (run-sprog! gl
+              sprog
+              size
+              uniform-map
+              nil
+              0
+              3
+              options))
+
+(defonce autosprog-cache-atom (atom {}))
+
+(defn get-autosprog [gl shader-sources]
+  (let [autosprog-key [gl shader-sources]]
+    (if-let [autosprog (@autosprog-cache-atom autosprog-key)]
+      autosprog
+      (let [autosprog (apply (partial create-sprog gl) shader-sources)]
+        (swap! autosprog-cache-atom assoc autosprog-key autosprog)
+        autosprog))))
+
+(defn run-shaders! [gl sources size uniform-map attribute-map start length
+                      & [options]]
+  (run-sprog! gl
+              (get-autosprog gl sources)
+              size
+              uniform-map
+              attribute-map
+              start
+              length
+              options))
+
+(defonce purefrag-autosprog-cache-atom (atom {}))
+
+(defn get-purefrag-autosprog [gl shader-source]
+  (let [autosprog-key [gl shader-source]]
+    (if-let [autosprog (@purefrag-autosprog-cache-atom autosprog-key)]
+      autosprog
+      (let [autosprog (create-purefrag-sprog gl shader-source)]
+        (swap! purefrag-autosprog-cache-atom assoc autosprog-key autosprog)
+        autosprog))))
+
+(defn run-purefrag-shader! [gl source size uniform-map & [options]]
+  (run-purefrag-sprog! gl
+                       (get-purefrag-autosprog gl source)
+                       size
+                       uniform-map
+                       options))
