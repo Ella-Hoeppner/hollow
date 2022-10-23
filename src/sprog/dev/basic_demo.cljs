@@ -35,7 +35,5 @@
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! sprog-atom (create-purefrag-sprog
-                        gl
-                        (iglu->glsl frag-source))))
+    (reset! sprog-atom (create-purefrag-sprog gl frag-source)))
   (update-page!))

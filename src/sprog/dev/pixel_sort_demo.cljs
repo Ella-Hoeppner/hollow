@@ -6,8 +6,7 @@
                                          run-purefrag-sprog]]
             [sprog.webgl.textures :refer [create-f8-tex
                                           html-image-texture]]
-            [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.input.mouse :refer [mouse-pos]]))
 
 (def sort-resolution 1000)
 
@@ -121,20 +120,14 @@
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! render-sprog-atom (create-purefrag-sprog
-                               gl
-                               (iglu->glsl render-frag-source)))
-    (reset! logic-sprog-atom (create-purefrag-sprog
-                              gl
-                              (iglu->glsl logic-frag-source)))
+    (reset! render-sprog-atom (create-purefrag-sprog gl render-frag-source))
+    (reset! logic-sprog-atom (create-purefrag-sprog gl logic-frag-source))
     (reset! texs-atom (u/gen 2 (create-f8-tex gl sort-resolution)))
 
     (reset! frame-atom 0)
 
     (run-purefrag-sprog gl
-                        (create-purefrag-sprog
-                         gl
-                         (iglu->glsl init-frag-source))
+                        (create-purefrag-sprog gl init-frag-source)
                         sort-resolution
                         {:floats {"size" [sort-resolution sort-resolution]}
                          :textures {"tex"

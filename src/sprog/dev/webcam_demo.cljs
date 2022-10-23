@@ -7,9 +7,7 @@
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
-            [sprog.iglu.chunks.colors :refer [hsv-to-rgb-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.webgl.framebuffers :refer [target-screen!]]))
 
 (defonce gl-atom (atom nil))
 (defonce sprog-atom (atom nil))
@@ -18,22 +16,19 @@
 (defonce time-updated?-atom (atom nil))
 
 (def frag-source
-  (iglu->glsl
-   {}
-   hsv-to-rgb-chunk
-   '{:version "300 es"
-     :precision {float highp}
-     :uniforms {size vec2
-                tex sampler2D}
-     :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (= fragColor (vec4 (.xyz (texture tex
-                                                    (vec2 pos.x
-                                                          (- "1.0" pos.y))))
-                                     1)))}}))
+  '{:version "300 es"
+    :precision {float highp}
+    :uniforms {size vec2
+               tex sampler2D}
+    :outputs {fragColor vec4}
+    :signatures {main ([] void)}
+    :functions {main
+                ([]
+                 (=vec2 pos (/ gl_FragCoord.xy size))
+                 (= fragColor (vec4 (.xyz (texture tex
+                                                   (vec2 pos.x
+                                                         (- "1.0" pos.y))))
+                                    1)))}})
 
 (defn update-page! []
   (let [gl @gl-atom
