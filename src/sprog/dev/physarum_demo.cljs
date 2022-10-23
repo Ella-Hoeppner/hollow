@@ -64,15 +64,12 @@
      :precision {float highp}
      :uniforms {size vec2}
      :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=float sampleValue
-                          (substrateSample (/ gl_FragCoord.xy size)))
-                  (= fragColor (vec4 sampleValue
-                                     sampleValue
-                                     sampleValue
-                                     1)))}}))
+     :main ((=float sampleValue
+                    (substrateSample (/ gl_FragCoord.xy size)))
+            (= fragColor (vec4 sampleValue
+                               sampleValue
+                               sampleValue
+                               1)))}))
 
 (def substrate-logic-frag-source
   (iglu-wrapper
@@ -80,11 +77,8 @@
    '{:version "300 es"
      :precision {float highp}
      :outputs {fragColor uvec4}
-     :signatures {main ([] void)}
-     :functions
-     {main
-      ([]
-       (=float centerSample (substrateSample (/ gl_FragCoord.xy
+     :main
+      ((=float centerSample (substrateSample (/ gl_FragCoord.xy
                                                 :substrate-resolution-f)))
        (=float averageNeightborSample
                (/ (float
@@ -105,7 +99,6 @@
                       (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 1))
                                           :substrate-resolution-f))))
                   "8.0"))
-
        (= fragColor
           (uvec4 (* (* (mix centerSample
                             averageNeightborSample
@@ -114,7 +107,7 @@
                     :uint16-max-f)
                  0
                  0
-                 0)))}}))
+                 0)))}))
 
 (def agent-logic-frag-source
   (iglu-wrapper
@@ -126,57 +119,54 @@
                 randomizeChance float
                 time float}
      :outputs {fragColor uvec4}
-     :signatures {main ([] void)}
-     :functions
-     {main
-      ([]
-       (=vec2 pos (/ gl_FragCoord.xy :agent-tex-resolution-f))
-       (=uvec4 oldFragColor (texture agentTex pos))
+     :main
+     ((=vec2 pos (/ gl_FragCoord.xy :agent-tex-resolution-f))
+      (=uvec4 oldFragColor (texture agentTex pos))
 
-       (=vec2 agentPos (/ (vec2 oldFragColor.xy) :uint16-max-f))
-       (=float agentAngle (* :TAU (/ (float oldFragColor.z) :uint16-max-f)))
+      (=vec2 agentPos (/ (vec2 oldFragColor.xy) :uint16-max-f))
+      (=float agentAngle (* :TAU (/ (float oldFragColor.z) :uint16-max-f)))
 
-       (=float clockwiseAngle (+ agentAngle :sensor-spread))
-       (=float clockwiseSensorSample
-               (substrateSample
-                (+ agentPos
-                   (* :sensor-distance
-                      (vec2 (cos clockwiseAngle)
-                            (sin clockwiseAngle))))))
+      (=float clockwiseAngle (+ agentAngle :sensor-spread))
+      (=float clockwiseSensorSample
+              (substrateSample
+               (+ agentPos
+                  (* :sensor-distance
+                     (vec2 (cos clockwiseAngle)
+                           (sin clockwiseAngle))))))
 
-       (=float counterclockwiseAngle (- agentAngle :sensor-spread))
-       (=float counterclockwiseSensorSample
-               (substrateSample
-                (+ agentPos
-                   (* :sensor-distance
-                      (vec2 (cos counterclockwiseAngle)
-                            (sin counterclockwiseAngle))))))
+      (=float counterclockwiseAngle (- agentAngle :sensor-spread))
+      (=float counterclockwiseSensorSample
+              (substrateSample
+               (+ agentPos
+                  (* :sensor-distance
+                     (vec2 (cos counterclockwiseAngle)
+                           (sin counterclockwiseAngle))))))
 
-       (=float newAgentAngle
-               (mod (+ agentAngle
-                       (* :agent-turn-factor
-                          (- clockwiseSensorSample
-                             counterclockwiseSensorSample)))
-                    :TAU))
-       (=vec2 newAgentPos
-              (mod (+ agentPos
-                      (* :agent-speed-factor
-                         (vec2 (cos newAgentAngle)
-                               (sin newAgentAngle))))
-                   "1.0"))
+      (=float newAgentAngle
+              (mod (+ agentAngle
+                      (* :agent-turn-factor
+                         (- clockwiseSensorSample
+                            counterclockwiseSensorSample)))
+                   :TAU))
+      (=vec2 newAgentPos
+             (mod (+ agentPos
+                     (* :agent-speed-factor
+                        (vec2 (cos newAgentAngle)
+                              (sin newAgentAngle))))
+                  "1.0"))
 
-       (=vec2 randSeed (* "400.0" (+ pos (vec2 (mod time "3.217") 0))))
+      (=vec2 randSeed (* "400.0" (+ pos (vec2 (mod time "3.217") 0))))
 
-       (= fragColor
-          (uvec4 (* (if (< (rand (+ randSeed [:rand -100 100]))
-                           randomizeChance)
-                      (vec3 (rand (+ randSeed [:rand -100 100]))
-                            (rand (+ randSeed [:rand -100 100]))
-                            (rand (+ randSeed [:rand -100 100])))
-                      (vec3 newAgentPos
-                            (/ newAgentAngle :TAU)))
-                    :uint16-max-f)
-                 0)))}}))
+      (= fragColor
+         (uvec4 (* (if (< (rand (+ randSeed [:rand -100 100]))
+                          randomizeChance)
+                     (vec3 (rand (+ randSeed [:rand -100 100]))
+                           (rand (+ randSeed [:rand -100 100]))
+                           (rand (+ randSeed [:rand -100 100])))
+                     (vec3 newAgentPos
+                           (/ newAgentAngle :TAU)))
+                   :uint16-max-f)
+                0)))}))
 
 (defn update-agents! [randomize-chance]
   (let [gl @gl-atom

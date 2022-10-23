@@ -37,9 +37,7 @@
 
 (s/def ::body (s/+ (s/spec ::subexpression)))
 (s/def ::function (s/cat :args (s/coll-of symbol?) :body ::body))
-(s/def ::functions (s/or
-                    :iglu (s/map-of symbol? ::function)
-                    :glsl string?))
+(s/def ::functions (s/map-of symbol? ::function))
 (s/def ::main ::body)
 
 (s/def ::shader (s/keys :opt-un [::version

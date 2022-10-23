@@ -18,11 +18,8 @@
    '{:version "300 es"
      :precision {float highp}
      :outputs {fragColor vec2}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy :texture-resolution-f))
-                  (= fragColor (vec2 pos)))}}))
+     :main ((=vec2 pos (/ gl_FragCoord.xy :texture-resolution-f))
+            (= fragColor (vec2 pos)))}))
 
 (def draw-frag-source
   '{:version "300 es"
@@ -31,12 +28,9 @@
     :uniforms {size vec2
                tex sampler2D}
     :outputs {fragColor vec4}
-    :signatures {main ([] void)}
-    :functions {main
-                ([]
-                 (=vec2 pos (/ gl_FragCoord.xy size))
-                 (=vec4 textureColor (texture tex pos))
-                 (= fragColor (vec4 textureColor.xy 0 1)))}})
+    :main ((=vec2 pos (/ gl_FragCoord.xy size))
+           (=vec4 textureColor (texture tex pos))
+           (= fragColor (vec4 textureColor.xy 0 1)))})
 
 (defn update-page! []
   (let [gl @gl-atom

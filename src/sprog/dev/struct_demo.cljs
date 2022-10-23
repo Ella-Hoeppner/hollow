@@ -16,22 +16,19 @@
                     c float
                     d float
                     e float]}
-    :signatures {main ([] void)
-                 vec5dot ([vec5 vec5] float)}
+    :signatures {vec5dot ([vec5 vec5] float)}
     :functions {vec5dot
                 ([v1 v2]
                  (+ (* v1.a v2.a)
                     (* v1.b v2.b)
                     (* v1.c v2.c)
                     (* v1.d v2.d)
-                    (* v1.e v2.e)))
-                main
-                ([]
-                 (=vec2 pos (/ gl_FragCoord.xy size))
-                 (=vec5 v1 (vec5 "0.0" "1.0" "2.0" "3.0" "4.0"))
-                 (=vec5 v2 (vec5 "0.0" "1.0" "2.0" "3.0" "4.0"))
-                 (=float dotProduct (vec5dot v1 v2))
-                 (= fragColor (vec4 (/ dotProduct "60.0") 0 0 1)))}})
+                    (* v1.e v2.e)))}
+    :main ((=vec2 pos (/ gl_FragCoord.xy size))
+           (=vec5 v1 (vec5 "0.0" "1.0" "2.0" "3.0" "4.0"))
+           (=vec5 v2 (vec5 "0.0" "1.0" "2.0" "3.0" "4.0"))
+           (=float dotProduct (vec5dot v1 v2))
+           (= fragColor (vec4 (/ dotProduct "60.0") 0 0 1)))})
 
 (defn update-page! []
   (let [gl @gl-atom

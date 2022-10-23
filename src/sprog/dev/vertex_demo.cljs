@@ -25,18 +25,15 @@
              vertexColor vec3}
     :outputs {color vec3}
     :uniforms {rotation mat2}
-    :signatures {main ([] void)}
-    :functions {main ([]
-                      (= color vertexColor)
-                      (= gl_Position (vec4 (* vertexPos rotation) 0 1)))}})
+    :main ((= color vertexColor)
+           (= gl_Position (vec4 (* vertexPos rotation) 0 1)))})
 
 (def frag-source
   '{:version "300 es"
     :precision {float highp}
     :inputs {color vec3}
     :outputs {fragColor vec4}
-    :signatures {main ([] void)}
-    :functions {main ([] (= fragColor (vec4 color 1)))}})
+    :main ((= fragColor (vec4 color 1)))})
 
 (defn update-page! []
   (let [gl @gl-atom

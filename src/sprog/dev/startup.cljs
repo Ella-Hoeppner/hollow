@@ -17,12 +17,12 @@
             sprog.dev.webcam-demo))
 
 (defn init []
-  #_(sprog.dev.basic-demo/init)
+  (sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.raymarch-demo/init)
-  (sprog.dev.physarum-demo/init)
+  #_(sprog.dev.physarum-demo/init)
   #_(sprog.dev.texture-channel-demo/init)
   #_(sprog.dev.struct-demo/init)
   #_(sprog.dev.simplex-demo/init)

@@ -22,16 +22,13 @@
                fragColor1 vec4}
      :qualifiers {fragColor0 "layout(location = 0)"
                   fragColor1 "layout(location = 1)"}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy :texture-resolution-f))
-                  (= fragColor0 (vec4 pos
-                                      0
-                                      1))
-                  (= fragColor1 (vec4 0
-                                      pos
-                                      1)))}}))
+     :main ((=vec2 pos (/ gl_FragCoord.xy :texture-resolution-f))
+            (= fragColor0 (vec4 pos
+                                0
+                                1))
+            (= fragColor1 (vec4 0
+                                pos
+                                1)))}))
 
 (def draw-frag-source
   '{:version "300 es"
@@ -41,15 +38,12 @@
                tex1 sampler2D
                tex2 sampler2D}
     :outputs {fragColor vec4}
-    :signatures {main ([] void)}
-    :functions {main
-                ([]
-                 (=vec2 pos (/ gl_FragCoord.xy size))
-                 (= fragColor
-                    (if (< pos.x "0.5")
-                      (texture tex1 (* pos (vec2 "2.0" "1.0")))
-                      (texture tex2 (* (- pos (vec2 "0.5" "0.0"))
-                                       (vec2 "2.0" "1.0"))))))}})
+    :main ((=vec2 pos (/ gl_FragCoord.xy size))
+           (= fragColor
+              (if (< pos.x "0.5")
+                (texture tex1 (* pos (vec2 "2.0" "1.0")))
+                (texture tex2 (* (- pos (vec2 "0.5" "0.0"))
+                                 (vec2 "2.0" "1.0"))))))})
 
 (defn update-page! []
   (let [gl @gl-atom

@@ -19,13 +19,7 @@
              :precision {float highp}
              :uniforms {size vec2}
              :outputs {fragColor vec4}
-             :signatures {main ([] void)}
-             :functions {main
-                         ([]
-                          (= fragColor (vec4 (:final-fn-name "0.0")
-                                             0
-                                             0
-                                             1)))}})
+             :main ((= fragColor (vec4 (:final-fn-name "0.0") 0 0 1)))})
           (map (fn [i]
                  (postwalk-replace
                   {:fn-name (symbol (str "f" (inc i)))

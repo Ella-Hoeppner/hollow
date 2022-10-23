@@ -27,11 +27,8 @@
      :uniforms {size vec2
                 tex usampler2D}
      :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (= fragColor (/ (vec4 (texture tex pos)) :u16-max-f)))}}))
+     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+            (= fragColor (/ (vec4 (texture tex pos)) :u16-max-f)))}))
 
 (def bicubic-frag-source
   (iglu->glsl
@@ -44,11 +41,8 @@
                 offset vec2
                 tex usampler2D}
      :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ (- gl_FragCoord.xy offset) size))
-                  (= fragColor (/ (textureBilinear tex pos) :u16-max-f)))}}))
+     :main ((=vec2 pos (/ (- gl_FragCoord.xy offset) size))
+            (= fragColor (/ (textureBilinear tex pos) :u16-max-f)))}))
 
 (defn update-page! []
   (let [gl @gl-atom

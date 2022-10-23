@@ -19,17 +19,14 @@
                 time float
                 mouse vec2}
      :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (=float dist (distance pos
-                                         (vec2 [:rand]
-                                               [:rand])))
-                  (= fragColor
-                     (if (> dist [:rand 0.1 0.5])
-                       (vec4 1)
-                       (vec4 0 0 0 1))))}}))
+     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+            (=float dist (distance pos
+                                   (vec2 [:rand]
+                                         [:rand])))
+            (= fragColor
+               (if (> dist [:rand 0.1 0.5])
+                 (vec4 1)
+                 (vec4 0 0 0 1))))}))
 
 (defn update-page! []
   (let [gl @gl-atom

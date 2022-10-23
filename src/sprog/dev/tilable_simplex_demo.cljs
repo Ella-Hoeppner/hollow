@@ -19,21 +19,18 @@
                 time float
                 mouse vec2}
      :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (=float noiseValue
-                          (* (+ (snoiseTileable2D (vec2 0)
-                                                  (pow (vec2 "25.0") mouse)
-                                                  (+ (* pos "3.0")
-                                                     (vec2 100 -20)))
-                                "1.0")
-                             "0.5"))
-                  (= fragColor (vec4 noiseValue
-                                     noiseValue
-                                     noiseValue
-                                     1)))}}))
+     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+            (=float noiseValue
+                    (* (+ (snoiseTileable2D (vec2 0)
+                                            (pow (vec2 "25.0") mouse)
+                                            (+ (* pos "3.0")
+                                               (vec2 100 -20)))
+                          "1.0")
+                       "0.5"))
+            (= fragColor (vec4 noiseValue
+                               noiseValue
+                               noiseValue
+                               1)))}))
 
 (defn update-page! []
   (let [gl @gl-atom

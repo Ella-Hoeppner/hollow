@@ -19,16 +19,13 @@
                 mouse vec2
                 time float}
      :outputs {fragColor vec4}
-     :signatures {main ([] void)}
-     :functions {main
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (=float noiseValue
-                          (voronoise mouse.x
-                                     mouse.y (+ (* pos "23.")
-                                                (vec2 (cos time)
-                                                      (sin time)))))
-                  (= fragColor (vec4 (vec3 noiseValue) 1)))}}))
+     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+            (=float noiseValue
+                    (voronoise mouse.x
+                               mouse.y (+ (* pos "23.")
+                                          (vec2 (cos time)
+                                                (sin time)))))
+            (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
 (defn update-page! []
   (let [gl @gl-atom

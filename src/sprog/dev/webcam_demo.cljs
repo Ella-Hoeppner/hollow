@@ -24,16 +24,13 @@
                             :uniforms {size vec2
                                        tex sampler2D}
                             :outputs {fragColor vec4}
-                            :signatures {main ([] void)}
-                            :functions
-                            {main
-                             ([]
-                              (=vec2 pos (/ gl_FragCoord.xy size))
-                              (= fragColor
-                                 (vec4 (.xyz (texture tex
+                            :main ((=vec2 pos (/ gl_FragCoord.xy size))
+                                   (= fragColor
+                                      (vec4 (.xyz
+                                             (texture tex
                                                       (vec2 pos.x
                                                             (- "1.0" pos.y))))
-                                       1)))}}
+                                            1)))}
                           resolution
                           {:floats {"size" resolution}
                            :textures {"tex" @tex-atom}})

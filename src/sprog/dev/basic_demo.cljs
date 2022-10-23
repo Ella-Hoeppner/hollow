@@ -15,11 +15,8 @@
                             :precision {float highp}
                             :uniforms {size vec2}
                             :outputs {fragColor vec4}
-                            :signatures {main ([] void)}
-                            :functions {main
-                                        ([]
-                                         (=vec2 pos (/ gl_FragCoord.xy size))
-                                         (= fragColor (vec4 pos 0 1)))}}
+                            :main ((=vec2 pos (/ gl_FragCoord.xy size))
+                                   (= fragColor (vec4 pos 0 1)))}
                           resolution
                           {:floats {"size" resolution}})
     (js/requestAnimationFrame update-page!)))
