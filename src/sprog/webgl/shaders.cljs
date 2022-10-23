@@ -78,12 +78,7 @@
   (.useProgram gl program)
   (set-sprog-uniforms! gl sprog uniform-map))
 
-(defn run-sprog [gl
-                 sprog
-                 size
-                 uniform-map
-                 start
-                 length
+(defn run-sprog [gl sprog size uniform-map start length
                  & [{:keys [targets offset]}]]
   (if targets
     (apply (partial target-textures! gl) targets)
@@ -94,11 +89,7 @@
     (use-sprog gl sprog uniform-map)
     (.drawArrays gl gl.TRIANGLES start length)))
 
-(defn run-purefrag-sprog [gl
-                          sprog
-                          size
-                          uniform-map
-                          & [options]]
+(defn run-purefrag-sprog [gl sprog size uniform-map & [options]]
   (run-sprog gl
              sprog
              size
@@ -106,3 +97,39 @@
              0
              3
              options))
+
+(defonce autosprog-cache-atom (atom {}))
+
+(defn get-autosprog [gl shader-sources]
+  (let [autosprog-key [gl shader-sources]]
+    (if-let [autosprog (@autosprog-cache-atom autosprog-key)]
+      autosprog
+      (let [autosprog (apply (partial create-sprog gl) shader-sources)]
+        (swap! autosprog-cache-atom assoc autosprog-key autosprog)
+        autosprog))))
+
+(defn run-autosprog [gl sources size uniform-map start length & [options]]
+  (run-sprog gl 
+             (get-autosprog gl sources)
+             size
+             uniform-map
+             start
+             length
+             options))
+
+(defonce purefrag-autosprog-cache-atom (atom {}))
+
+(defn get-purefrag-autosprog [gl shader-source]
+  (let [autosprog-key [gl shader-source]]
+    (if-let [autosprog (@purefrag-autosprog-cache-atom autosprog-key)]
+      autosprog
+      (let [autosprog (create-purefrag-sprog gl shader-source)]
+        (swap! purefrag-autosprog-cache-atom assoc autosprog-key autosprog)
+        autosprog))))
+
+(defn run-purefrag-autosprog [gl source size uniform-map & [options]]
+  (run-purefrag-sprog gl 
+                      (get-purefrag-autosprog gl source)
+                      size
+                      uniform-map
+                      options))

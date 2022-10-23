@@ -2,8 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
@@ -18,8 +17,6 @@
    0 0 0 u16-max])
 
 (defonce gl-atom (atom nil))
-(defonce nearest-sprog-atom (atom nil))
-(defonce bicubic-sprog-atom (atom nil))
 (defonce tex-atom (atom nil))
 
 (def nearest-frag-source
@@ -62,29 +59,23 @@
         half-resolution (update resolution 0 (partial * 0.5))]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog gl
-                        @nearest-sprog-atom
-                        half-resolution
-                        {:floats {"size" half-resolution}
-                         :textures {"tex" @tex-atom}})
-    (run-purefrag-sprog gl
-                        @bicubic-sprog-atom
-                        half-resolution
-                        {:floats {"size" half-resolution
-                                  "offset" [(* width 0.5) 0]}
-                         :textures {"tex" @tex-atom}}
-                        {:offset [(* width 0.5) 0]})
+    (run-purefrag-autosprog gl
+                            nearest-frag-source
+                            half-resolution
+                            {:floats {"size" half-resolution}
+                             :textures {"tex" @tex-atom}})
+    (run-purefrag-autosprog gl
+                            bicubic-frag-source
+                            half-resolution
+                            {:floats {"size" half-resolution
+                                      "offset" [(* width 0.5) 0]}
+                             :textures {"tex" @tex-atom}}
+                            {:offset [(* width 0.5) 0]})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! nearest-sprog-atom (create-purefrag-sprog
-                                gl
-                                nearest-frag-source))
-    (reset! bicubic-sprog-atom (create-purefrag-sprog
-                                gl
-                                bicubic-frag-source))
     (reset! tex-atom (create-u16-tex gl 2 {:wrap-mode :clamp
                                            :data (js/Uint16Array. pixel-data)})))
   (update-page!))

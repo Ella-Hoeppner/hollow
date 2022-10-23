@@ -1,12 +1,10 @@
 (ns sprog.dev.physarum-demo
-  (:require [clojure.walk :refer [postwalk-replace]]
-            [sprog.util :as u]
+  (:require [sprog.util :as u]
+            [clojure.walk :refer [postwalk-replace]]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-sprog
-                                         run-sprog
-                                         create-purefrag-sprog
-                                         run-purefrag-sprog]]
+            [sprog.webgl.shaders :refer [run-autosprog
+                                         run-purefrag-autosprog]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
             [sprog.iglu.chunks.misc :refer [offset-shortcut]]
@@ -31,10 +29,6 @@
 (def ambient-randomize-chance 0)
 
 (defonce gl-atom (atom nil))
-(defonce render-sprog-atom (atom nil))
-(defonce substrate-logic-sprog-atom (atom nil))
-(defonce agent-logic-sprog-atom (atom nil))
-(defonce particle-sprog-atom (atom nil))
 
 (defonce substrate-texs-atom (atom nil))
 (defonce agent-texs-atom (atom nil))
@@ -192,35 +186,35 @@
   (let [gl @gl-atom
         [front-tex back-tex] @agent-texs-atom
         substrate-tex (first @substrate-texs-atom)]
-    (run-purefrag-sprog gl
-                        @agent-logic-sprog-atom
-                        agent-tex-resolution
-                        {:floats {"randomizeChance" randomize-chance
-                                  "time" @frame-atom}
-                         :textures {"substrate" substrate-tex
-                                    "agentTex" front-tex}}
-                        {:targets [back-tex]}))
+    (run-purefrag-autosprog gl
+                            agent-logic-frag-source
+                            agent-tex-resolution
+                            {:floats {"randomizeChance" randomize-chance
+                                      "time" @frame-atom}
+                             :textures {"substrate" substrate-tex
+                                        "agentTex" front-tex}}
+                            {:targets [back-tex]}))
   (swap! agent-texs-atom reverse))
 
 (defn update-substrate! []
   (let [gl @gl-atom
         [front-tex back-tex] @substrate-texs-atom
         agent-tex (first @agent-texs-atom)]
-    (run-sprog gl
-               @particle-sprog-atom
-               substrate-resolution
-               {:textures {"particleTex" agent-tex}
-                :floats {"size" substrate-resolution
-                         "radius" agent-radius}}
-               0
-               (* 6 agent-tex-resolution agent-tex-resolution)
-               {:targets [front-tex]})
+    (run-autosprog gl
+                   [particle-vert-source-u16 particle-frag-source-u16]
+                   substrate-resolution
+                   {:textures {"particleTex" agent-tex}
+                    :floats {"size" substrate-resolution
+                             "radius" agent-radius}}
+                   0
+                   (* 6 agent-tex-resolution agent-tex-resolution)
+                   {:targets [front-tex]})
 
-    (run-purefrag-sprog gl
-                        @substrate-logic-sprog-atom
-                        substrate-resolution
-                        {:textures {"substrate" front-tex}}
-                        {:targets [back-tex]}))
+    (run-purefrag-autosprog gl
+                            substrate-logic-frag-source
+                            substrate-resolution
+                            {:textures {"substrate" front-tex}}
+                            {:targets [back-tex]}))
   (swap! substrate-texs-atom reverse))
 
 (defn update-page! []
@@ -229,26 +223,18 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
-    (run-purefrag-sprog gl
-                        @render-sprog-atom
-                        resolution
-                        {:floats {"size" resolution}
-                         :textures {"substrate" (first @substrate-texs-atom)}}))
+    (run-purefrag-autosprog
+     gl
+     render-frag-source
+     resolution
+     {:floats {"size" resolution}
+      :textures {"substrate" (first @substrate-texs-atom)}}))
   (swap! frame-atom inc)
   (js/requestAnimationFrame update-page!))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! render-sprog-atom
-            (create-purefrag-sprog gl render-frag-source))
-    (reset! substrate-logic-sprog-atom
-            (create-purefrag-sprog gl substrate-logic-frag-source))
-    (reset! agent-logic-sprog-atom
-            (create-purefrag-sprog gl agent-logic-frag-source))
-    (reset! particle-sprog-atom
-            (create-sprog gl particle-vert-source-u16 particle-frag-source-u16))
-
     (reset! substrate-texs-atom
             (u/gen 2 (create-u16-tex gl substrate-resolution)))
     (reset! agent-texs-atom

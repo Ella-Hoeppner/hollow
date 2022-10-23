@@ -2,8 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
             [sprog.webgl.textures :refer [create-f8-tex
                                           html-image-texture]]
             [sprog.input.mouse :refer [mouse-pos]]))
@@ -11,37 +10,10 @@
 (def sort-resolution 1000)
 
 (defonce gl-atom (atom nil))
-(defonce render-sprog-atom (atom nil))
-(defonce logic-sprog-atom (atom nil))
 
 (defonce frame-atom (atom nil))
 
 (defonce texs-atom (atom nil))
-
-(def render-frag-source
-  '{:version "300 es"
-    :precision {float highp}
-    :uniforms {size vec2
-               tex sampler2D}
-    :outputs {fragColor vec4}
-    :signatures {main ([] void)}
-    :functions {main
-                ([]
-                 (=vec2 pos (/ gl_FragCoord.xy size))
-                 (= fragColor (texture tex pos)))}})
-
-(def init-frag-source
-  '{:version "300 es"
-    :precision {float highp}
-    :uniforms {size vec2
-               tex sampler2D}
-    :outputs {fragColor vec4}
-    :signatures {main ([] void)}
-    :functions {main
-                ([]
-                 (=vec2 pos (/ gl_FragCoord.xy size))
-                 (= pos.y (- "1.0" pos.y))
-                 (= fragColor (texture tex pos)))}})
 
 ; adapted from https://www.shadertoy.com/view/wsSczw
 (def logic-frag-source
@@ -96,23 +68,32 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (run-purefrag-sprog gl
-                        @logic-sprog-atom
-                        sort-resolution
-                        {:floats {"size" [sort-resolution sort-resolution]
-                                  "threshold" (first (mouse-pos))}
-                         :textures {"tex" (first @texs-atom)}
-                         :ints {"frame" @frame-atom}}
-                        {:targets [(second @texs-atom)]})
+    (run-purefrag-autosprog gl
+                            logic-frag-source
+                            sort-resolution
+                            {:floats {"size" [sort-resolution sort-resolution]
+                                      "threshold" (first (mouse-pos))}
+                             :textures {"tex" (first @texs-atom)}
+                             :ints {"frame" @frame-atom}}
+                            {:targets [(second @texs-atom)]})
     (swap! texs-atom reverse)
 
 
     (square-maximize-gl-canvas gl)
-    (run-purefrag-sprog gl
-                        @render-sprog-atom
-                        resolution
-                        {:floats {"size" resolution}
-                         :textures {"tex" (first @texs-atom)}})
+    (run-purefrag-autosprog gl
+                            '{:version "300 es"
+                              :precision {float highp}
+                              :uniforms {size vec2
+                                         tex sampler2D}
+                              :outputs {fragColor vec4}
+                              :signatures {main ([] void)}
+                              :functions {main
+                                          ([]
+                                           (=vec2 pos (/ gl_FragCoord.xy size))
+                                           (= fragColor (texture tex pos)))}}
+                            resolution
+                            {:floats {"size" resolution}
+                             :textures {"tex" (first @texs-atom)}})
 
     (swap! frame-atom inc))
   (js/requestAnimationFrame update-page!))
@@ -120,17 +101,23 @@
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! render-sprog-atom (create-purefrag-sprog gl render-frag-source))
-    (reset! logic-sprog-atom (create-purefrag-sprog gl logic-frag-source))
     (reset! texs-atom (u/gen 2 (create-f8-tex gl sort-resolution)))
-
     (reset! frame-atom 0)
-
-    (run-purefrag-sprog gl
-                        (create-purefrag-sprog gl init-frag-source)
-                        sort-resolution
-                        {:floats {"size" [sort-resolution sort-resolution]}
-                         :textures {"tex"
-                                    (html-image-texture gl "img")}}
-                        {:targets [(first @texs-atom)]}))
+    (run-purefrag-autosprog gl
+                            '{:version "300 es"
+                              :precision {float highp}
+                              :uniforms {size vec2
+                                         tex sampler2D}
+                              :outputs {fragColor vec4}
+                              :signatures {main ([] void)}
+                              :functions {main
+                                          ([]
+                                           (=vec2 pos (/ gl_FragCoord.xy size))
+                                           (= pos.y (- "1.0" pos.y))
+                                           (= fragColor (texture tex pos)))}}
+                            sort-resolution
+                            {:floats {"size" [sort-resolution sort-resolution]}
+                             :textures {"tex"
+                                        (html-image-texture gl "img")}}
+                            {:targets [(first @texs-atom)]}))
   (update-page!))

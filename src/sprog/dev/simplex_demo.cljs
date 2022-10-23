@@ -2,16 +2,13 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
-                                       simplex-3d-chunk]]
+                                             simplex-3d-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
-(defonce noise-2d-sprog-atom (atom nil))
-(defonce noise-3d-sprog-atom (atom nil))
 
 (def noise-2d-frag-source
   (iglu->glsl
@@ -60,25 +57,18 @@
         split-resolution [half-width height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog gl
-                        @noise-2d-sprog-atom
-                        split-resolution
-                        {:floats {"size" resolution}})
-    (run-purefrag-sprog gl
-                        @noise-3d-sprog-atom
-                        split-resolution
-                        {:floats {"size" resolution
-                                  "time" (u/seconds-since-startup)}}
-                        {:offset [half-width 0]})
+    (run-purefrag-autosprog gl
+                            noise-2d-frag-source
+                            split-resolution
+                            {:floats {"size" resolution}})
+    (run-purefrag-autosprog gl
+                            noise-3d-frag-source
+                            split-resolution
+                            {:floats {"size" resolution
+                                      "time" (u/seconds-since-startup)}}
+                            {:offset [half-width 0]})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
-    (reset! gl-atom gl)
-    (reset! noise-2d-sprog-atom (create-purefrag-sprog
-                                 gl
-                                 noise-2d-frag-source))
-    (reset! noise-3d-sprog-atom (create-purefrag-sprog
-                                 gl
-                                 noise-3d-frag-source)))
+  (reset! gl-atom (create-gl-canvas))
   (update-page!))

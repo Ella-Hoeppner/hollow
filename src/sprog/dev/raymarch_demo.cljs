@@ -2,18 +2,14 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
-            [clojure.walk :refer [postwalk-replace]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
-            [sprog.iglu.chunks.noise :refer [simplex-3d-chunk
-                                             simplex-4d-chunk]]
+            [sprog.iglu.chunks.noise :refer [simplex-4d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
-(defonce sprog-atom (atom nil))
 
 (def frag-glsl
   (iglu->glsl
@@ -106,20 +102,16 @@
         resolution gl.canvas.width]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-sprog gl
-                        @sprog-atom
-                        resolution
-                        {:floats {"size" resolution
-                                  "time" (u/seconds-since-startup)
-                                  "mouse" (if (mouse-present?)
-                                            (mouse-pos)
-                                            [0 0])}})
+    (run-purefrag-autosprog gl
+                            frag-glsl
+                            resolution
+                            {:floats {"size" resolution
+                                      "time" (u/seconds-since-startup)
+                                      "mouse" (if (mouse-present?)
+                                                (mouse-pos)
+                                                [0 0])}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
-    (reset! gl-atom gl)
-    (reset! sprog-atom (create-purefrag-sprog
-                        gl
-                        frag-glsl)))
+  (reset! gl-atom (create-gl-canvas))
   (update-page!))

@@ -1,17 +1,14 @@
 (ns sprog.dev.texture-channel-demo
-  (:require [clojure.walk :refer [postwalk-replace]]
-            [sprog.util :as u]
+  (:require [sprog.util :as u]
+            [clojure.walk :refer [postwalk-replace]]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
             [sprog.webgl.textures :refer [create-f8-tex]]))
 
 (def texture-resolution 8)
 
 (defonce gl-atom (atom nil))
-
-(defonce draw-sprog-atom (atom nil))
 
 (defonce texture-atom (atom nil))
 
@@ -45,25 +42,23 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (run-purefrag-sprog gl
-                        @draw-sprog-atom
-                        resolution
-                        {:floats {"size" resolution}
-                         :textures {"tex" @texture-atom}})
+    (run-purefrag-autosprog gl
+                            draw-frag-source
+                            resolution
+                            {:floats {"size" resolution}
+                             :textures {"tex" @texture-atom}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! draw-sprog-atom (create-purefrag-sprog gl draw-frag-source))
     (reset! texture-atom (create-f8-tex gl
                                         texture-resolution
                                         {:filter-mode :nearest
                                          :channels 2}))
-    (let [render-sprog (create-purefrag-sprog gl render-frag-source)]
-      (run-purefrag-sprog gl
-                          render-sprog
-                          texture-resolution
-                          {}
-                          {:targets [@texture-atom]})))
+    (run-purefrag-autosprog gl
+                            render-frag-source
+                            texture-resolution
+                            {}
+                            {:targets [@texture-atom]}))
   (update-page!))
