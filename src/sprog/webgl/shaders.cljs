@@ -3,6 +3,8 @@
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.particles :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
+            [sprog.webgl.framebuffers :refer [target-textures!
+                                              target-screen!]]
             [clojure.string :refer [split-lines
                                     join]]))
 
@@ -79,7 +81,10 @@
                  uniform-map
                  start
                  length
-                 & [{:keys [offset]}]]
+                 & [{:keys [targets offset]}]]
+  (if targets
+    (apply (partial target-textures! gl) targets)
+    (target-screen! gl))
   (let [[width height] (if (number? size) [size size] size)
         [x y] (if offset offset [0 0])]
     (.viewport gl x y width height)

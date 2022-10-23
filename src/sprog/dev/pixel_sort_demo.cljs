@@ -4,8 +4,6 @@
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
-            [sprog.webgl.framebuffers :refer [target-screen!
-                                              target-textures!]]
             [sprog.webgl.textures :refer [create-f8-tex
                                           html-image-texture]]
             [sprog.input.mouse :refer [mouse-pos]]
@@ -99,18 +97,17 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (target-textures! gl (second @texs-atom))
     (run-purefrag-sprog @logic-sprog-atom
                         sort-resolution
                         {:floats {"size" [sort-resolution sort-resolution]
                                   "threshold" (first (mouse-pos))}
                          :textures {"tex" (first @texs-atom)}
-                         :ints {"frame" @frame-atom}})
+                         :ints {"frame" @frame-atom}}
+                        {:targets [(second @texs-atom)]})
     (swap! texs-atom reverse)
 
 
     (square-maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-sprog @render-sprog-atom
                         resolution
                         {:floats {"size" resolution}
@@ -132,12 +129,12 @@
 
     (reset! frame-atom 0)
 
-    (target-textures! gl (first @texs-atom))
     (run-purefrag-sprog (create-purefrag-sprog
                          gl
                          (iglu->glsl init-frag-source))
                         sort-resolution
                         {:floats {"size" [sort-resolution sort-resolution]}
                          :textures {"tex"
-                                    (html-image-texture gl "img")}}))
+                                    (html-image-texture gl "img")}}
+                        {:targets [(first @texs-atom)]}))
   (update-page!))

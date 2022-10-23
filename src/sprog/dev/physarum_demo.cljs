@@ -7,8 +7,6 @@
                                          run-sprog
                                          create-purefrag-sprog
                                          run-purefrag-sprog]]
-            [sprog.webgl.framebuffers :refer [target-screen!
-                                              target-textures!]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
             [sprog.iglu.chunks.misc :refer [offset-shortcut]]
@@ -195,32 +193,32 @@
   (let [gl @gl-atom
         [front-tex back-tex] @agent-texs-atom
         substrate-tex (first @substrate-texs-atom)]
-    (target-textures! gl back-tex)
     (run-purefrag-sprog @agent-logic-sprog-atom
                         agent-tex-resolution
                         {:floats {"randomizeChance" randomize-chance
                                   "time" @frame-atom}
                          :textures {"substrate" substrate-tex
-                                    "agentTex" front-tex}}))
+                                    "agentTex" front-tex}}
+                        {:targets [back-tex]}))
   (swap! agent-texs-atom reverse))
 
 (defn update-substrate! []
   (let [gl @gl-atom
         [front-tex back-tex] @substrate-texs-atom
         agent-tex (first @agent-texs-atom)]
-    (target-textures! gl front-tex)
     (run-sprog @particle-sprog-atom
                substrate-resolution
                {:textures {"particleTex" agent-tex}
                 :floats {"size" substrate-resolution
                          "radius" agent-radius}}
                0
-               (* 6 agent-tex-resolution agent-tex-resolution))
+               (* 6 agent-tex-resolution agent-tex-resolution)
+               {:targets [front-tex]})
 
-    (target-textures! gl back-tex)
     (run-purefrag-sprog @substrate-logic-sprog-atom
                         substrate-resolution
-                        {:textures {"substrate" front-tex}}))
+                        {:textures {"substrate" front-tex}}
+                        {:targets [back-tex]}))
   (swap! substrate-texs-atom reverse))
 
 (defn update-page! []
@@ -229,7 +227,6 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-sprog @render-sprog-atom
                         resolution
                         {:floats {"size" resolution}

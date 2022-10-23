@@ -32,7 +32,7 @@
   #_(sprog.dev.vertex-demo/init)
   #_(sprog.dev.voronoise-demo/init)
   #_(sprog.dev.video-demo/init)
-  #_(sprog.dev.webcam-demo/init))
+  (sprog.dev.webcam-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

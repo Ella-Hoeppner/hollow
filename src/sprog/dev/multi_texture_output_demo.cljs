@@ -6,8 +6,6 @@
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
             [sprog.webgl.textures :refer [create-f8-tex]]
-            [sprog.webgl.framebuffers :refer [target-screen!
-                                              target-textures!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def texture-resolution 8)
@@ -61,7 +59,6 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-sprog @draw-sprog-atom
                         resolution
                         {:floats {"size" resolution}
@@ -83,10 +80,8 @@
     (let [render-sprog (create-purefrag-sprog
                         gl
                         (u/log (iglu->glsl render-frag-source)))]
-      (target-textures! gl
-                        @texture-1-atom
-                        @texture-2-atom)
       (run-purefrag-sprog render-sprog
                           texture-resolution
-                          {})))
+                          {}
+                          {:targets [@texture-1-atom @texture-2-atom]})))
   (update-page!))
