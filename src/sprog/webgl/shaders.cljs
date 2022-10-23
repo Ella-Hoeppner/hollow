@@ -5,7 +5,9 @@
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
             [sprog.webgl.framebuffers :refer [target-textures!
                                               target-screen!]]
-            [sprog.webgl.attributes :refer [set-sprog-attributes!]]
+            [sprog.webgl.attributes :refer [set-sprog-attributes!
+                                            set-sprog-attribute!
+                                            create-boj!]]
             [clojure.string :refer [split-lines
                                     join]]))
 
@@ -49,30 +51,16 @@
 (def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
 
 (defn create-purefrag-sprog [gl frag-source] 
-  (let [{:keys [program] :as sprog}
-        (create-sprog gl purefrag-vert-glsl frag-source)]
-    (let [pos-buffer (.createBuffer gl)]
-      (.bindBuffer gl
-                   gl.ARRAY_BUFFER
-                   pos-buffer)
-      (.bufferData gl
-                   gl.ARRAY_BUFFER
-                   (js/Float32Array.
-                    (clj->js [-1 -1
-                              -1 3
-                              3 -1]))
-                   gl.STATIC_DRAW))
-    (let [attrib (.getAttribLocation gl
-                                     program
-                                     "vertPos")]
-      (.enableVertexAttribArray gl attrib)
-      (.vertexAttribPointer gl
-                            attrib
-                            2
-                            gl.FLOAT
-                            false
-                            0
-                            0))
+  (let [sprog (create-sprog gl purefrag-vert-glsl frag-source)]
+    (set-sprog-attribute! gl
+                          sprog
+                          "vertPos"
+                          (create-boj! gl
+                                       2
+                                       {:initial-data (js/Float32Array.
+                                                       (clj->js [-1 -1
+                                                                 -1 3
+                                                                 3 -1]))}))
     sprog))
 
 (defn use-sprog! [gl {:keys [program] :as sprog} uniform-map attribute-map]
