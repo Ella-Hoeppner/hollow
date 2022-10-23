@@ -2,12 +2,9 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-sprog
-                                         run-sprog]]
-            [sprog.webgl.attributes :refer [create-boj!
-                                            set-sprog-attributes!]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.webgl.shaders :refer [run-autosprog]]
+            [sprog.webgl.attributes :refer [create-boj!]]
+            [sprog.webgl.framebuffers :refer [target-screen!]]))
 
 (def pos-buffer-data [0 0
                       1 0
@@ -18,9 +15,9 @@
                         0 0 1])
 
 (defonce gl-atom (atom nil))
+
 (defonce pos-boj-atom (atom nil))
 (defonce color-boj-atom (atom nil))
-(defonce sprog-atom (atom nil))
 
 (def vert-source
   '{:version "300 es"
@@ -47,20 +44,22 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-sprog gl
-               @sprog-atom resolution
-               {:matrices {"rotation"
-                           (let [angle (u/seconds-since-startup)]
-                             [(Math/cos angle) (- (Math/sin angle))
-                              (Math/sin angle) (Math/cos angle)])}}
-               0
-               3)
+    (run-autosprog gl
+                   [vert-source frag-source]
+                   resolution
+                   {:matrices {"rotation"
+                               (let [angle (u/seconds-since-startup)]
+                                 [(Math/cos angle) (- (Math/sin angle))
+                                  (Math/sin angle) (Math/cos angle)])}}
+                   {"vertexPos" @pos-boj-atom
+                    "vertexColor" @color-boj-atom}
+                   0
+                   3)
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! sprog-atom (create-sprog gl vert-source frag-source))
     (reset! pos-boj-atom
             (create-boj! gl
                          2
@@ -68,9 +67,5 @@
     (reset! color-boj-atom 
             (create-boj! gl
                          3
-                         {:initial-data (js/Float32Array. color-buffer-data)}))
-    (set-sprog-attributes! gl
-                           @sprog-atom
-                           {"vertexPos" @pos-boj-atom
-                            "vertexColor" @color-boj-atom}))
+                         {:initial-data (js/Float32Array. color-buffer-data)})))
   (update-page!))

@@ -1,6 +1,5 @@
 (ns sprog.dev.physarum-demo
   (:require [sprog.util :as u]
-            [clojure.walk :refer [postwalk-replace]]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [run-autosprog
@@ -9,8 +8,7 @@
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
-            [sprog.iglu.core :refer [iglu->glsl
-                                     merge-chunks]]))
+            [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def substrate-resolution 1000)
 (def agent-tex-resolution 100)
@@ -204,6 +202,7 @@
                    {:textures {"particleTex" agent-tex}
                     :floats {"size" substrate-resolution
                              "radius" agent-radius}}
+                   {}
                    0
                    (* 6 agent-tex-resolution agent-tex-resolution)
                    {:target front-tex})
