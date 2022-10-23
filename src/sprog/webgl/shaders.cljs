@@ -113,7 +113,7 @@
         (swap! autosprog-cache-atom assoc autosprog-key autosprog)
         autosprog))))
 
-(defn run-autosprog! [gl sources size uniform-map attribute-map start length
+(defn run-shaders! [gl sources size uniform-map attribute-map start length
                       & [options]]
   (run-sprog! gl
               (get-autosprog gl sources)
@@ -134,7 +134,7 @@
         (swap! purefrag-autosprog-cache-atom assoc autosprog-key autosprog)
         autosprog))))
 
-(defn run-purefrag-autosprog! [gl source size uniform-map & [options]]
+(defn run-purefrag-shader! [gl source size uniform-map & [options]]
   (run-purefrag-sprog! gl
                        (get-purefrag-autosprog gl source)
                        size

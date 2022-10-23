@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
@@ -37,7 +37,7 @@
                     gl.canvas.height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog! gl
+    (run-purefrag-shader! gl
                             noise-2d-frag-source
                             resolution
                             {:floats {"size" resolution

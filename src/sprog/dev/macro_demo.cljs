@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
@@ -39,10 +39,10 @@
         resolution [width height]]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog! gl
-                             frag-source
-                             resolution
-                             {:floats {"size" resolution}})
+    (run-purefrag-shader! gl
+                          frag-source
+                          resolution
+                          {:floats {"size" resolution}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

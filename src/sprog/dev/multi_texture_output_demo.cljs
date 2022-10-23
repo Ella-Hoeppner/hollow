@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-f8-tex]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
@@ -55,12 +55,12 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (run-purefrag-autosprog! gl
-                             draw-frag-source
-                             resolution
-                             {:floats {"size" resolution}
-                              :textures {"tex1" @texture-1-atom
-                                         "tex2" @texture-2-atom}})
+    (run-purefrag-shader! gl
+                          draw-frag-source
+                          resolution
+                          {:floats {"size" resolution}
+                           :textures {"tex1" @texture-1-atom
+                                      "tex2" @texture-2-atom}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
@@ -71,9 +71,9 @@
       (reset! tex-atom (create-f8-tex gl
                                       texture-resolution
                                       {:filter-mode :nearest})))
-    (run-purefrag-autosprog! gl
-                             render-frag-source
-                             texture-resolution
-                             {}
-                             {:target [@texture-1-atom @texture-2-atom]}))
+    (run-purefrag-shader! gl
+                          render-frag-source
+                          texture-resolution
+                          {}
+                          {:target [@texture-1-atom @texture-2-atom]}))
   (update-page!))

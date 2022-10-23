@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-autosprog!]]
+            [sprog.webgl.shaders :refer [run-shaders!]]
             [sprog.webgl.attributes :refer [create-boj!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]))
 
@@ -44,17 +44,17 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-autosprog! gl
-                    [vert-source frag-source]
-                    resolution
-                    {:matrices {"rotation"
-                                (let [angle (u/seconds-since-startup)]
-                                  [(Math/cos angle) (- (Math/sin angle))
-                                   (Math/sin angle) (Math/cos angle)])}}
-                    {"vertexPos" @pos-boj-atom
-                     "vertexColor" @color-boj-atom}
-                    0
-                    3)
+    (run-shaders! gl
+                  [vert-source frag-source]
+                  resolution
+                  {:matrices {"rotation"
+                              (let [angle (u/seconds-since-startup)]
+                                [(Math/cos angle) (- (Math/sin angle))
+                                 (Math/sin angle) (Math/cos angle)])}}
+                  {"vertexPos" @pos-boj-atom
+                   "vertexColor" @color-boj-atom}
+                  0
+                  3)
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
