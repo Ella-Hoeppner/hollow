@@ -40,6 +40,7 @@
 (s/def ::functions (s/or
                     :iglu (s/map-of symbol? ::function)
                     :glsl string?))
+(s/def ::main ::body)
 
 (s/def ::shader (s/keys :opt-un [::version
                                  ::precision
@@ -49,8 +50,9 @@
                                  ::varyings
                                  ::inputs
                                  ::outputs
-                                 ::signatures]
-                        :req-un [::functions]))
+                                 ::signatures
+                                 ::main
+                                 ::functions]))
 
 (defn parse [content]
   (let [parsed-content (s/conform ::shader content)]
