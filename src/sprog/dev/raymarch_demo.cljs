@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
@@ -102,14 +102,14 @@
         resolution gl.canvas.width]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog gl
-                            frag-glsl
-                            resolution
-                            {:floats {"size" resolution
-                                      "time" (u/seconds-since-startup)
-                                      "mouse" (if (mouse-present?)
-                                                (mouse-pos)
-                                                [0 0])}})
+    (run-purefrag-autosprog! gl
+                             frag-glsl
+                             resolution
+                             {:floats {"size" resolution
+                                       "time" (u/seconds-since-startup)
+                                       "mouse" (if (mouse-present?)
+                                                 (mouse-pos)
+                                                 [0 0])}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

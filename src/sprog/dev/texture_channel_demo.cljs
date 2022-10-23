@@ -3,7 +3,7 @@
             [clojure.walk :refer [postwalk-replace]]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.webgl.textures :refer [create-f8-tex]]))
 
 (def texture-resolution 8)
@@ -42,11 +42,11 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (run-purefrag-autosprog gl
-                            draw-frag-source
-                            resolution
-                            {:floats {"size" resolution}
-                             :textures {"tex" @texture-atom}})
+    (run-purefrag-autosprog! gl
+                             draw-frag-source
+                             resolution
+                             {:floats {"size" resolution}
+                              :textures {"tex" @texture-atom}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
@@ -56,9 +56,9 @@
                                         texture-resolution
                                         {:filter-mode :nearest
                                          :channels 2}))
-    (run-purefrag-autosprog gl
-                            render-frag-source
-                            texture-resolution
-                            {}
-                            {:target @texture-atom}))
+    (run-purefrag-autosprog! gl
+                             render-frag-source
+                             texture-resolution
+                             {}
+                             {:target @texture-atom}))
   (update-page!))

@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
@@ -59,18 +59,18 @@
         half-resolution (update resolution 0 (partial * 0.5))]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog gl
-                            nearest-frag-source
-                            half-resolution
-                            {:floats {"size" half-resolution}
-                             :textures {"tex" @tex-atom}})
-    (run-purefrag-autosprog gl
-                            bicubic-frag-source
-                            half-resolution
-                            {:floats {"size" half-resolution
-                                      "offset" [(* width 0.5) 0]}
-                             :textures {"tex" @tex-atom}}
-                            {:offset [(* width 0.5) 0]})
+    (run-purefrag-autosprog! gl
+                             nearest-frag-source
+                             half-resolution
+                             {:floats {"size" half-resolution}
+                              :textures {"tex" @tex-atom}})
+    (run-purefrag-autosprog! gl
+                             bicubic-frag-source
+                             half-resolution
+                             {:floats {"size" half-resolution
+                                       "offset" [(* width 0.5) 0]}
+                              :textures {"tex" @tex-atom}}
+                             {:offset [(* width 0.5) 0]})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

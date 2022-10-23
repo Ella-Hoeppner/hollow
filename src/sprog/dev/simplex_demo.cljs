@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                              simplex-3d-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
@@ -57,16 +57,16 @@
         split-resolution [half-width height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog gl
-                            noise-2d-frag-source
-                            split-resolution
-                            {:floats {"size" resolution}})
-    (run-purefrag-autosprog gl
-                            noise-3d-frag-source
-                            split-resolution
-                            {:floats {"size" resolution
-                                      "time" (u/seconds-since-startup)}}
-                            {:offset [half-width 0]})
+    (run-purefrag-autosprog! gl
+                             noise-2d-frag-source
+                             split-resolution
+                             {:floats {"size" resolution}})
+    (run-purefrag-autosprog! gl
+                             noise-3d-frag-source
+                             split-resolution
+                             {:floats {"size" resolution
+                                       "time" (u/seconds-since-startup)}}
+                             {:offset [half-width 0]})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

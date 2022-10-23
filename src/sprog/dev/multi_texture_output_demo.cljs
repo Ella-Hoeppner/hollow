@@ -2,9 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [create-purefrag-sprog
-                                         run-purefrag-sprog
-                                         run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.webgl.textures :refer [create-f8-tex]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
@@ -51,18 +49,18 @@
                     (if (< pos.x "0.5")
                       (texture tex1 (* pos (vec2 "2.0" "1.0")))
                       (texture tex2 (* (- pos (vec2 "0.5" "0.0"))
-                                      (vec2 "2.0" "1.0"))))))}})
+                                       (vec2 "2.0" "1.0"))))))}})
 
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (run-purefrag-autosprog gl
-                            draw-frag-source
-                            resolution
-                            {:floats {"size" resolution}
-                             :textures {"tex1" @texture-1-atom
-                                        "tex2" @texture-2-atom}})
+    (run-purefrag-autosprog! gl
+                             draw-frag-source
+                             resolution
+                             {:floats {"size" resolution}
+                              :textures {"tex1" @texture-1-atom
+                                         "tex2" @texture-2-atom}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
@@ -73,9 +71,9 @@
       (reset! tex-atom (create-f8-tex gl
                                       texture-resolution
                                       {:filter-mode :nearest})))
-    (run-purefrag-autosprog gl
-                            render-frag-source
-                            texture-resolution
-                            {}
-                            {:target [@texture-1-atom @texture-2-atom]}))
+    (run-purefrag-autosprog! gl
+                             render-frag-source
+                             texture-resolution
+                             {}
+                             {:target [@texture-1-atom @texture-2-atom]}))
   (update-page!))

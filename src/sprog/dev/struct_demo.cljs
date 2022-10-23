@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]))
 
 (defonce gl-atom (atom nil))
@@ -39,10 +39,10 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog gl
-                            frag-source
-                            resolution
-                            {:floats {"size" resolution}})
+    (run-purefrag-autosprog! gl
+                             frag-source
+                             resolution
+                             {:floats {"size" resolution}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

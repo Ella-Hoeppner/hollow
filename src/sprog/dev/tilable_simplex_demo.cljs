@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-autosprog]]
+            [sprog.webgl.shaders :refer [run-purefrag-autosprog!]]
             [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]
@@ -43,7 +43,7 @@
         resolution [width height]]
     (maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-purefrag-autosprog gl
+    (run-purefrag-autosprog! gl
                         frag-source
                         resolution
                         {:floats {"size" resolution

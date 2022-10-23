@@ -75,13 +75,13 @@
                             0))
     sprog))
 
-(defn use-sprog [gl {:keys [program] :as sprog} uniform-map attribute-map]
+(defn use-sprog! [gl {:keys [program] :as sprog} uniform-map attribute-map]
   (.useProgram gl program)
   (set-sprog-uniforms! gl sprog uniform-map)
   (set-sprog-attributes! gl sprog attribute-map))
 
-(defn run-sprog [gl sprog size uniform-map attribute-map start length
-                 & [{:keys [target offset]}]]
+(defn run-sprog! [gl sprog size uniform-map attribute-map start length
+                  & [{:keys [target offset]}]]
   (if target
     (if (coll? target)
       (apply (partial target-textures! gl) target)
@@ -90,18 +90,18 @@
   (let [[width height] (if (number? size) [size size] size)
         [x y] (if offset offset [0 0])]
     (.viewport gl x y width height)
-    (use-sprog gl sprog uniform-map attribute-map)
+    (use-sprog! gl sprog uniform-map attribute-map)
     (.drawArrays gl gl.TRIANGLES start length)))
 
-(defn run-purefrag-sprog [gl sprog size uniform-map & [options]]
-  (run-sprog gl
-             sprog
-             size
-             uniform-map
-             nil
-             0
-             3
-             options))
+(defn run-purefrag-sprog! [gl sprog size uniform-map & [options]]
+  (run-sprog! gl
+              sprog
+              size
+              uniform-map
+              nil
+              0
+              3
+              options))
 
 (defonce autosprog-cache-atom (atom {}))
 
@@ -113,16 +113,16 @@
         (swap! autosprog-cache-atom assoc autosprog-key autosprog)
         autosprog))))
 
-(defn run-autosprog [gl sources size uniform-map attribute-map start length 
-                     & [options]]
-  (run-sprog gl 
-             (get-autosprog gl sources)
-             size
-             uniform-map
-             attribute-map
-             start
-             length
-             options))
+(defn run-autosprog! [gl sources size uniform-map attribute-map start length
+                      & [options]]
+  (run-sprog! gl
+              (get-autosprog gl sources)
+              size
+              uniform-map
+              attribute-map
+              start
+              length
+              options))
 
 (defonce purefrag-autosprog-cache-atom (atom {}))
 
@@ -134,9 +134,9 @@
         (swap! purefrag-autosprog-cache-atom assoc autosprog-key autosprog)
         autosprog))))
 
-(defn run-purefrag-autosprog [gl source size uniform-map & [options]]
-  (run-purefrag-sprog gl 
-                      (get-purefrag-autosprog gl source)
-                      size
-                      uniform-map
-                      options))
+(defn run-purefrag-autosprog! [gl source size uniform-map & [options]]
+  (run-purefrag-sprog! gl
+                       (get-purefrag-autosprog gl source)
+                       size
+                       uniform-map
+                       options))
