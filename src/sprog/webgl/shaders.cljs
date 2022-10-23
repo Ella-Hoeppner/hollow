@@ -74,18 +74,25 @@
   (.useProgram gl program)
   (set-sprog-uniforms! sprog uniform-map))
 
-(defn run-triangle-sprog [{:keys [gl] :as sprog} size uniform-map start length]
-  (let [[width height] (if (number? size) [size size] size)]
-    (.viewport gl 0 0 width height)
-    (use-sprog sprog uniform-map)
-    (.drawArrays gl gl.TRIANGLES start length)))
-
-(defn run-purefrag-sprog [{:keys [gl] :as sprog}
-                          size
-                          uniform-map
-                          & [{:keys [offset]}]]
+(defn run-sprog [{:keys [gl] :as sprog}
+                 size
+                 uniform-map
+                 start
+                 length
+                 & [{:keys [offset]}]]
   (let [[width height] (if (number? size) [size size] size)
         [x y] (if offset offset [0 0])]
     (.viewport gl x y width height)
     (use-sprog sprog uniform-map)
-    (.drawArrays gl gl.TRIANGLES 0 3)))
+    (.drawArrays gl gl.TRIANGLES start length)))
+
+(defn run-purefrag-sprog [sprog
+                          size
+                          uniform-map
+                          & [options]]
+  (run-sprog sprog
+             size
+             uniform-map
+             0
+             3
+             options))

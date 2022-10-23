@@ -3,7 +3,7 @@
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-sprog
-                                         run-triangle-sprog]]
+                                         run-sprog]]
             [sprog.webgl.attributes :refer [create-boj!
                                             set-sprog-attributes!]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
@@ -49,13 +49,13 @@
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
     (target-screen! gl)
-    (run-triangle-sprog @sprog-atom resolution
-                        {:matrices {"rotation"
-                                    (let [angle (u/seconds-since-startup)]
-                                      [(Math/cos angle) (- (Math/sin angle))
-                                       (Math/sin angle) (Math/cos angle)])}} 
-                        0
-                        3)
+    (run-sprog @sprog-atom resolution
+               {:matrices {"rotation"
+                           (let [angle (u/seconds-since-startup)]
+                             [(Math/cos angle) (- (Math/sin angle))
+                              (Math/sin angle) (Math/cos angle)])}}
+               0
+               3)
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

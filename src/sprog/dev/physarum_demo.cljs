@@ -4,7 +4,7 @@
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-sprog
-                                         run-triangle-sprog
+                                         run-sprog
                                          create-purefrag-sprog
                                          run-purefrag-sprog]]
             [sprog.webgl.framebuffers :refer [target-screen!
@@ -209,13 +209,13 @@
         [front-tex back-tex] @substrate-texs-atom
         agent-tex (first @agent-texs-atom)]
     (target-textures! gl front-tex)
-    (run-triangle-sprog @particle-sprog-atom
-                        substrate-resolution
-                        {:textures {"particleTex" agent-tex}
-                         :floats {"size" substrate-resolution
-                                  "radius" agent-radius}}
-                        0
-                        (* 6 agent-tex-resolution agent-tex-resolution))
+    (run-sprog @particle-sprog-atom
+               substrate-resolution
+               {:textures {"particleTex" agent-tex}
+                :floats {"size" substrate-resolution
+                         "radius" agent-radius}}
+               0
+               (* 6 agent-tex-resolution agent-tex-resolution))
 
     (target-textures! gl back-tex)
     (run-purefrag-sprog @substrate-logic-sprog-atom
