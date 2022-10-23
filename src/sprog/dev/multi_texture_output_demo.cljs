@@ -1,6 +1,5 @@
 (ns sprog.dev.multi-texture-output-demo
-  (:require [clojure.walk :refer [postwalk-replace]]
-            [sprog.util :as u]
+  (:require [sprog.util :as u]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [create-purefrag-sprog
@@ -18,7 +17,7 @@
 (defonce texture-2-atom (atom nil))
 
 (def render-frag-source
-  (postwalk-replace
+  (iglu->glsl
    {:texture-resolution-f (.toFixed texture-resolution 1)}
    '{:version "300 es"
      :precision {float highp}
@@ -70,17 +69,13 @@
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! draw-sprog-atom (create-purefrag-sprog
-                             gl
-                             (iglu->glsl draw-frag-source)))
+    (reset! draw-sprog-atom (create-purefrag-sprog gl draw-frag-source))
     (doseq [tex-atom [texture-1-atom
                       texture-2-atom]]
       (reset! tex-atom (create-f8-tex gl
                                       texture-resolution
                                       {:filter-mode :nearest})))
-    (let [render-sprog (create-purefrag-sprog
-                        gl
-                        (u/log (iglu->glsl render-frag-source)))]
+    (let [render-sprog (create-purefrag-sprog gl render-frag-source)]
       (run-purefrag-sprog gl
                           render-sprog
                           texture-resolution

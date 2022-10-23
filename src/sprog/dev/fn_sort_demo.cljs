@@ -5,8 +5,7 @@
             [sprog.webgl.shaders :refer [create-purefrag-sprog
                                          run-purefrag-sprog]]
             [sprog.webgl.framebuffers :refer [target-screen!]]
-            [sprog.iglu.core :refer [iglu->glsl
-                                     merge-chunks]]
+            [sprog.iglu.core :refer [merge-chunks]]
             [clojure.walk :refer [postwalk-replace]]))
 
 (def fn-count 50)
@@ -56,7 +55,5 @@
 (defn init []
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
-    (reset! sprog-atom (create-purefrag-sprog
-                        gl
-                        (iglu->glsl frag-source))))
+    (reset! sprog-atom (create-purefrag-sprog gl frag-source)))
   (update-page!))

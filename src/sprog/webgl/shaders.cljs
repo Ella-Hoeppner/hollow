@@ -9,18 +9,22 @@
                                     join]]))
 
 (defn create-shader [gl shader-type source]
-  (let [shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
+  (let [source-glsl
+        (if (string? source)
+          source
+          (iglu->glsl source))
+        shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
                                        :vert gl.VERTEX_SHADER}
                                       shader-type)
                                      shader-type))]
     shader
-    (.shaderSource gl shader source)
+    (.shaderSource gl shader source-glsl)
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
       shader
       (do (u/log (join "\n"
                        (map #(str %2 ":\t" %1)
-                            (split-lines source)
+                            (split-lines source-glsl)
                             (rest (range)))))
           (throw (js/Error. (str (.getShaderInfoLog gl shader))))))))
 
@@ -41,11 +45,11 @@
      :uniforms-atom (atom {})
      :attributes-atom (atom {})}))
 
-(def purefrag-vert-source (iglu->glsl trivial-vert-source))
+(def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
 
 (defn create-purefrag-sprog [gl frag-source] 
   (let [{:keys [program] :as sprog}
-        (create-sprog gl purefrag-vert-source frag-source)]
+        (create-sprog gl purefrag-vert-glsl frag-source)]
     (let [pos-buffer (.createBuffer gl)]
       (.bindBuffer gl
                    gl.ARRAY_BUFFER

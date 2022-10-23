@@ -12,8 +12,7 @@
             [sprog.iglu.chunks.misc :refer [offset-shortcut]]
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
-            [sprog.iglu.core :refer [iglu->glsl
-                                     merge-chunks]]))
+            [sprog.iglu.core :refer [merge-chunks]]))
 
 (def substrate-resolution 1000)
 (def agent-tex-resolution 100)
@@ -242,21 +241,13 @@
   (let [gl (create-gl-canvas)]
     (reset! gl-atom gl)
     (reset! render-sprog-atom
-            (create-purefrag-sprog
-             gl
-             (iglu->glsl render-frag-source)))
+            (create-purefrag-sprog gl render-frag-source))
     (reset! substrate-logic-sprog-atom
-            (create-purefrag-sprog
-             gl
-             (iglu->glsl substrate-logic-frag-source)))
+            (create-purefrag-sprog gl substrate-logic-frag-source))
     (reset! agent-logic-sprog-atom
-            (create-purefrag-sprog
-             gl
-             (iglu->glsl agent-logic-frag-source)))
+            (create-purefrag-sprog gl agent-logic-frag-source))
     (reset! particle-sprog-atom
-            (create-sprog gl
-                          (iglu->glsl particle-vert-source-u16)
-                          (iglu->glsl particle-frag-source-u16)))
+            (create-sprog gl particle-vert-source-u16 particle-frag-source-u16))
 
     (reset! substrate-texs-atom
             (u/gen 2 (create-u16-tex gl substrate-resolution)))
