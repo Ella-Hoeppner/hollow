@@ -5,7 +5,6 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
@@ -36,7 +35,6 @@
         resolution [gl.canvas.width
                     gl.canvas.height]]
     (maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-shader! gl
                             noise-2d-frag-source
                             resolution

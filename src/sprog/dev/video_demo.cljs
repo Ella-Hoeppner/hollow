@@ -4,8 +4,7 @@
                                           copy-html-image-data!]]
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]))
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]))
 
 (defonce gl-atom (atom nil))
 (defonce tex-atom (atom nil))
@@ -18,7 +17,6 @@
     (square-maximize-gl-canvas gl)
     (when @time-updated?-atom
       (copy-html-image-data! gl @tex-atom @video-element-atom))
-    (target-screen! gl)
     (run-purefrag-shader! gl
                           '{:version "300 es"
                             :precision {float highp}

@@ -3,8 +3,7 @@
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [run-shaders!]]
-            [sprog.webgl.attributes :refer [create-boj!]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]))
+            [sprog.webgl.attributes :refer [create-boj!]]))
 
 (def pos-buffer-data [0 0
                       1 0
@@ -43,7 +42,6 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-shaders! gl
                   [vert-source frag-source]
                   resolution

@@ -4,7 +4,6 @@
                                         maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]))
 
@@ -42,7 +41,6 @@
         height gl.canvas.height
         resolution [width height]]
     (maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-shader! gl
                           frag-source
                           resolution

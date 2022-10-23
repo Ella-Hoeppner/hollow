@@ -3,7 +3,6 @@
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
@@ -38,7 +37,6 @@
         height gl.canvas.height
         resolution [width height]]
     (square-maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-shader! gl
                           frag-source
                           resolution

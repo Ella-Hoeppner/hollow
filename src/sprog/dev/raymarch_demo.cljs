@@ -3,7 +3,6 @@
             [sprog.webgl.canvas :refer [create-gl-canvas
                                         square-maximize-gl-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
             [sprog.iglu.chunks.noise :refer [simplex-4d-chunk]]
@@ -101,7 +100,6 @@
   (let [gl @gl-atom
         resolution gl.canvas.width]
     (square-maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-shader! gl
                           frag-glsl
                           resolution

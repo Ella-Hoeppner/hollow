@@ -5,7 +5,6 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
-            [sprog.webgl.framebuffers :refer [target-screen!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def u16-max (dec (Math/pow 2 16)))
@@ -58,7 +57,6 @@
         resolution [width height]
         half-resolution (update resolution 0 (partial * 0.5))]
     (maximize-gl-canvas gl)
-    (target-screen! gl)
     (run-purefrag-shader! gl
                           nearest-frag-source
                           half-resolution
