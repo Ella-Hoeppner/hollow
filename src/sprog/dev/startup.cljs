@@ -19,7 +19,7 @@
 (defn init []
   #_(sprog.dev.basic-demo/init) 
   #_(sprog.dev.multi-texture-output-demo/init)
-  #_(sprog.dev.fn-sort-demo/init)
+  #_(sprog.dev.fn-sort-demo/init) 
   #_(sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.raymarch-demo/init)
   #_(sprog.dev.physarum-demo/init) 

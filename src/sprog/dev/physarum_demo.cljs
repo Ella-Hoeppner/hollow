@@ -191,7 +191,7 @@
                                       "time" @frame-atom}
                              :textures {"substrate" substrate-tex
                                         "agentTex" front-tex}}
-                            {:targets [back-tex]}))
+                            {:target back-tex}))
   (swap! agent-texs-atom reverse))
 
 (defn update-substrate! []
@@ -206,13 +206,13 @@
                              "radius" agent-radius}}
                    0
                    (* 6 agent-tex-resolution agent-tex-resolution)
-                   {:targets [front-tex]})
+                   {:target front-tex})
 
     (run-purefrag-autosprog gl
                             substrate-logic-frag-source
                             substrate-resolution
                             {:textures {"substrate" front-tex}}
-                            {:targets [back-tex]}))
+                            {:target back-tex}))
   (swap! substrate-texs-atom reverse))
 
 (defn update-page! []

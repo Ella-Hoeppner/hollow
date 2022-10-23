@@ -77,5 +77,5 @@
                             render-frag-source
                             texture-resolution
                             {}
-                            {:targets [@texture-1-atom @texture-2-atom]}))
+                            {:target [@texture-1-atom @texture-2-atom]}))
   (update-page!))

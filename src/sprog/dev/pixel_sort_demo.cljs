@@ -75,7 +75,7 @@
                                       "threshold" (first (mouse-pos))}
                              :textures {"tex" (first @texs-atom)}
                              :ints {"frame" @frame-atom}}
-                            {:targets [(second @texs-atom)]})
+                            {:target (second @texs-atom)})
     (swap! texs-atom reverse)
 
 
@@ -119,5 +119,5 @@
                             {:floats {"size" [sort-resolution sort-resolution]}
                              :textures {"tex"
                                         (html-image-texture gl "img")}}
-                            {:targets [(first @texs-atom)]}))
+                            {:target (first @texs-atom)}))
   (update-page!))

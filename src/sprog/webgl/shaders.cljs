@@ -79,9 +79,11 @@
   (set-sprog-uniforms! gl sprog uniform-map))
 
 (defn run-sprog [gl sprog size uniform-map start length
-                 & [{:keys [targets offset]}]]
-  (if targets
-    (apply (partial target-textures! gl) targets)
+                 & [{:keys [target offset]}]]
+  (if target
+    (if (coll? target)
+      (apply (partial target-textures! gl) target)
+      (target-textures! gl target))
     (target-screen! gl))
   (let [[width height] (if (number? size) [size size] size)
         [x y] (if offset offset [0 0])]
