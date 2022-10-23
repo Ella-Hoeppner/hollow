@@ -14,10 +14,11 @@
             sprog.dev.vertex-demo
             sprog.dev.voronoise-demo
             sprog.dev.video-demo
-            sprog.dev.webcam-demo))
+            sprog.dev.webcam-demo
+            sprog.dev.bloom-demo))
 
 (defn init []
-  (sprog.dev.basic-demo/init)
+  #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
@@ -32,7 +33,8 @@
   #_(sprog.dev.vertex-demo/init)
   #_(sprog.dev.voronoise-demo/init)
   #_(sprog.dev.video-demo/init)
-  #_(sprog.dev.webcam-demo/init))
+  #_(sprog.dev.webcam-demo/init)
+  (sprog.dev.bloom-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

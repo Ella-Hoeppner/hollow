@@ -97,3 +97,108 @@
                 (vec4 (texture tex (/ (+ gridCoords (vec2 1 1)) texSize)))
                 tweenCoords.x)
            tweenCoords.y))}})
+
+(defn get-bloom-chunk [texture-type]
+  (postwalk-replace
+   {:divisor (.toFixed ({:f8 1
+                         :u8 (dec (Math/pow 2 8))
+                         :u16 (dec (Math/pow 2 16))
+                         :u32 (dec (Math/pow 2 32))} texture-type)
+                       1)
+    :sampler-type (if (= texture-type :f8)
+                    'sampler2D
+                    'usampler2D)}
+   '{:signatures {bloom ([:sampler-type vec2 float float]  vec4)}
+     :functions
+     {bloom
+      ([tex pos step intensity]
+       (=vec4 sum (vec4 0))
+
+       ; 9 samples to blur x axis
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (- pos.x (* "4." step))
+                                          pos.y))) 
+                     :divisor)
+                  ".05"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (- pos.x (* "3." step))
+                                          pos.y))) 
+                     :divisor)
+                  ".09"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (- pos.x (* "2." step))
+                                          pos.y)))
+                     :divisor)
+                  ".12"))
+       (+= sum (* (/ (vec4 (texture tex (vec2 (- pos.x step)
+                                              pos.y)))
+                     :divisor)
+                  ".15"))
+       (+= sum (* (/ (vec4 (texture tex pos)) :divisor) ".16"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (+ pos.x step)
+                                          pos.y)))
+                     :divisor)
+                  ".15"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (+ pos.x (* "2." step))
+                                          pos.y)))
+                     :divisor)
+                  ".12"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (+ pos.x (* "3." step))
+                                          pos.y)))
+                     :divisor)
+                  ".09"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 (+ pos.x (* "4." step))
+                                          pos.y)))
+                     :divisor)
+                  ".05"))
+
+       ; 9 more samples blur y axis
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (- pos.y (* "4." step)))))
+                     :divisor)
+                  ".05"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (- pos.y (* "3." step)))))
+                     :divisor)
+                  ".09"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (- pos.y (* "2." step)))))
+                     :divisor)
+                  ".12"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (- pos.y step))))
+                     :divisor)
+                  ".15"))
+       (+= sum (* (/ (vec4 (texture tex pos)) :divisor) ".16"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (+ pos.y step))))
+                     :divisor) 
+                  ".15"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (+ pos.y (* "2." step)))))
+                     :divisor)
+                  ".12"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (+ pos.y (* "3." step)))))
+                     :divisor)
+                  ".09"))
+       (+= sum (* (/ (vec4 (texture tex
+                                    (vec2 pos.x
+                                          (+ pos.y (* "4." step)))))
+                     :divisor)
+                  ".05"))
+
+       (vec4 (+ (* sum intensity)
+                (/ (vec4 (texture tex pos)) :divisor))))}}))
+
