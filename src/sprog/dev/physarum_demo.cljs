@@ -42,8 +42,6 @@
 (defonce substrate-texs-atom (atom nil))
 (defonce agent-texs-atom (atom nil))
 
-(defonce fb-atom (atom nil))
-
 (defonce frame-atom (atom nil))
 
 (def bindings
@@ -197,7 +195,7 @@
   (let [gl @gl-atom
         [front-tex back-tex] @agent-texs-atom
         substrate-tex (first @substrate-texs-atom)]
-    (target-textures! gl @fb-atom back-tex)
+    (target-textures! gl back-tex)
     (run-purefrag-sprog @agent-logic-sprog-atom
                         agent-tex-resolution
                         {:floats {"randomizeChance" randomize-chance
@@ -210,7 +208,7 @@
   (let [gl @gl-atom
         [front-tex back-tex] @substrate-texs-atom
         agent-tex (first @agent-texs-atom)]
-    (target-textures! gl @fb-atom front-tex)
+    (target-textures! gl front-tex)
     (run-triangle-sprog @particle-sprog-atom
                         substrate-resolution
                         {:textures {"particleTex" agent-tex}
@@ -219,7 +217,7 @@
                         0
                         (* 6 agent-tex-resolution agent-tex-resolution))
 
-    (target-textures! gl @fb-atom back-tex)
+    (target-textures! gl back-tex)
     (run-purefrag-sprog @substrate-logic-sprog-atom
                         substrate-resolution
                         {:textures {"substrate" front-tex}}))
@@ -262,8 +260,7 @@
     (reset! substrate-texs-atom
             (u/gen 2 (create-u16-tex gl substrate-resolution)))
     (reset! agent-texs-atom
-            (u/gen 2 (create-u16-tex gl agent-tex-resolution)))
-    (reset! fb-atom (.createFramebuffer gl)))
+            (u/gen 2 (create-u16-tex gl agent-tex-resolution))))
   
   (reset! frame-atom 0)
   

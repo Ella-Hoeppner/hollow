@@ -21,8 +21,6 @@
 
 (defonce texs-atom (atom nil))
 
-(defonce fb-atom (atom nil))
-
 (def render-frag-source
   '{:version "300 es"
     :precision {float highp}
@@ -101,7 +99,7 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (target-textures! gl @fb-atom (second @texs-atom))
+    (target-textures! gl (second @texs-atom))
     (run-purefrag-sprog @logic-sprog-atom
                         sort-resolution
                         {:floats {"size" [sort-resolution sort-resolution]
@@ -131,11 +129,10 @@
                               gl
                               (iglu->glsl logic-frag-source)))
     (reset! texs-atom (u/gen 2 (create-f8-tex gl sort-resolution)))
-    (reset! fb-atom (.createFramebuffer gl))
 
     (reset! frame-atom 0)
 
-    (target-textures! gl @fb-atom (first @texs-atom))
+    (target-textures! gl (first @texs-atom))
     (run-purefrag-sprog (create-purefrag-sprog
                          gl
                          (iglu->glsl init-frag-source))

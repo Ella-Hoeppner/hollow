@@ -69,7 +69,6 @@
                         gl
                         (u/log (iglu->glsl render-frag-source)))]
       (target-textures! gl
-                        (.createFramebuffer gl)
                         @texture-atom)
       (run-purefrag-sprog render-sprog
                           texture-resolution

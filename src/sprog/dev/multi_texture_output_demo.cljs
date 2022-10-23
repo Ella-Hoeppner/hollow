@@ -84,7 +84,6 @@
                         gl
                         (u/log (iglu->glsl render-frag-source)))]
       (target-textures! gl
-                        (.createFramebuffer gl)
                         @texture-1-atom
                         @texture-2-atom)
       (run-purefrag-sprog render-sprog
