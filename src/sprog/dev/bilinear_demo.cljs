@@ -30,7 +30,7 @@
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= fragColor (/ (vec4 (texture tex pos)) :u16-max-f)))}))
 
-(def bicubic-frag-source
+(def bilinear-frag-source
   (iglu->glsl
    {:u16-max-f (.toFixed u16-max 1)}
    bilinear-usampler-chunk
@@ -57,7 +57,7 @@
                           {:floats {"size" half-resolution}
                            :textures {"tex" @tex-atom}})
     (run-purefrag-shader! gl
-                          bicubic-frag-source
+                          bilinear-frag-source
                           half-resolution
                           {:floats {"size" half-resolution
                                     "offset" [(* width 0.5) 0]}
