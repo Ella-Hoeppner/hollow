@@ -80,7 +80,7 @@
      :main
      ((=float centerSample (substrateSample (/ gl_FragCoord.xy
                                                :substrate-resolution-f)))
-      (=float averageNeightborSample
+      (=float averageNeighborSample
               (/ (float
                   (+ (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 -1))
                                          :substrate-resolution-f))
@@ -101,7 +101,7 @@
                  "8.0"))
       (= fragColor
          (uvec4 (* (* (mix centerSample
-                           averageNeightborSample
+                           averageNeighborSample
                            :substrate-spread-factor)
                       (- "1.0" :substrate-fade-factor))
                    :uint16-max-f)
