@@ -135,16 +135,25 @@
   (doseq [[name value] name-mat-map]
     (set-sprog-mat-uniform! gl sprog name value)))
 
-(defn set-sprog-tex-uniforms! [gl sprog name-tex-map]
-  (let [name-tex-vec (vec name-tex-map)]
-    (doseq [i (range (count name-tex-vec))]
-      (let [[name tex] (name-tex-vec i)]
+(defn set-sprog-tex-uniforms! [gl sprog name-tex-2d-map name-tex-3d-map]
+  (let [name-tex-2d-vec (vec name-tex-2d-map)
+        name-tex-3d-vec (vec name-tex-3d-map)]
+    (doseq [i (range (count name-tex-2d-vec))]
+      (let [[name tex] (name-tex-2d-vec i)]
         (.activeTexture gl (+ gl.TEXTURE0 i))
         (.bindTexture gl gl.TEXTURE_2D tex)
-        (set-sprog-uniform-1i! gl sprog name i)))))
+        (set-sprog-uniform-1i! gl sprog name i)))
+    (doseq [i (range (count name-tex-3d-vec))]
+      (let [[name tex] (name-tex-3d-vec i)
+            index (+ i (count name-tex-2d-vec))]
+        (.activeTexture gl (+ gl.TEXTURE0 index))
+        (.bindTexture gl gl.TEXTURE_3D tex)
+        (set-sprog-uniform-1i! gl sprog name index)))))
 
-(defn set-sprog-uniforms! [gl sprog {:keys [floats ints textures matrices]}]
+(defn set-sprog-uniforms! [gl 
+                           sprog 
+                           {:keys [floats ints textures textures-3d matrices]}]
   (set-sprog-float-uniforms! gl sprog floats)
   (set-sprog-int-uniforms! gl sprog ints)
-  (set-sprog-tex-uniforms! gl sprog textures)
+  (set-sprog-tex-uniforms! gl sprog textures textures-3d)
   (set-sprog-mat-uniforms! gl sprog matrices))
