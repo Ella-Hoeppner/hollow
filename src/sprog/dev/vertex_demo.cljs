@@ -1,7 +1,7 @@
 (ns sprog.dev.vertex-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        square-maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-shaders!]]
             [sprog.webgl.attributes :refer [create-boj!]]))
 
@@ -38,7 +38,7 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (square-maximize-gl-canvas gl)
+    (square-maximize-canvas gl.canvas)
     (run-shaders! gl
                   [vert-source frag-source]
                   resolution
@@ -53,7 +53,7 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
     (reset! pos-boj-atom
             (create-boj! gl

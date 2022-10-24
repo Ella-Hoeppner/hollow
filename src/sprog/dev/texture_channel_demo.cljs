@@ -1,8 +1,8 @@
 (ns sprog.dev.texture-channel-demo
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk-replace]]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-f8-tex]]))
 
@@ -35,7 +35,7 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (maximize-gl-canvas gl)
+    (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           draw-frag-source
                           resolution
@@ -44,7 +44,7 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
     (reset! texture-atom (create-f8-tex gl
                                         texture-resolution

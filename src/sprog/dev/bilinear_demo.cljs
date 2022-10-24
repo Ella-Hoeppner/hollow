@@ -1,7 +1,7 @@
 (ns sprog.dev.bilinear-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-u16-tex]]
             [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
@@ -50,7 +50,7 @@
         height gl.canvas.height
         resolution [width height]
         half-resolution (update resolution 0 (partial * 0.5))]
-    (maximize-gl-canvas gl)
+    (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           nearest-frag-source
                           half-resolution
@@ -66,7 +66,7 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
     (reset! tex-atom (create-u16-tex gl 2 {:wrap-mode :clamp
                                            :data (js/Uint16Array. pixel-data)})))

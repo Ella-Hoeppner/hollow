@@ -1,7 +1,7 @@
 (ns sprog.dev.fn-sort-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [merge-chunks]]
             [clojure.walk :refer [postwalk-replace]]))
@@ -35,7 +35,7 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (maximize-gl-canvas gl)
+    (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           frag-source
                           resolution
@@ -43,5 +43,5 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (reset! gl-atom  (create-gl-canvas))
+  (reset! gl-atom  (create-gl-canvas true))
   (update-page!))

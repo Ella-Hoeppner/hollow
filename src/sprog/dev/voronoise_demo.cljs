@@ -1,7 +1,7 @@
 (ns sprog.dev.voronoise-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
@@ -31,7 +31,7 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width
                     gl.canvas.height]]
-    (maximize-gl-canvas gl)
+    (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                             noise-2d-frag-source
                             resolution
@@ -41,6 +41,6 @@
   (js/requestAnimationFrame update-page!))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl))
   (update-page!))

@@ -1,7 +1,7 @@
 (ns sprog.dev.simplex-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                              simplex-3d-chunk]]
@@ -48,7 +48,7 @@
         resolution [width height]
         half-width (* width 0.5)
         split-resolution [half-width height]]
-    (maximize-gl-canvas gl)
+    (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           noise-2d-frag-source
                           split-resolution
@@ -62,5 +62,5 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (reset! gl-atom (create-gl-canvas))
+  (reset! gl-atom (create-gl-canvas true))
   (update-page!))

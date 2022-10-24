@@ -1,7 +1,7 @@
 (ns sprog.dev.tilable-simplex-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
@@ -37,7 +37,7 @@
         width gl.canvas.width
         height gl.canvas.height
         resolution [width height]]
-    (maximize-gl-canvas gl)
+    (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           frag-source
                           resolution
@@ -46,5 +46,5 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (reset! gl-atom (create-gl-canvas))
+  (reset! gl-atom (create-gl-canvas true))
   (update-page!))

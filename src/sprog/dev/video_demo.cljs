@@ -2,8 +2,8 @@
   (:require [sprog.util :as u]
             [sprog.webgl.textures :refer [create-f8-tex
                                           copy-html-image-data!]]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        square-maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]))
 
 (defonce gl-atom (atom nil))
@@ -14,7 +14,7 @@
 (defn update-page! []
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (square-maximize-gl-canvas gl)
+    (square-maximize-canvas gl.canvas)
     (when @time-updated?-atom
       (copy-html-image-data! gl @tex-atom @video-element-atom))
     (run-purefrag-shader! gl
@@ -34,7 +34,7 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas)
+  (let [gl (create-gl-canvas true)
         video (js/document.createElement "video")]
     (set! video.src "./test_video.mp4")
     (set! video.muted "muted")

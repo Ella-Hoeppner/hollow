@@ -1,7 +1,7 @@
 (ns sprog.dev.physarum-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        square-maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-shaders!
                                          run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-u16-tex]]
@@ -78,36 +78,36 @@
      :precision {float highp}
      :outputs {fragColor uvec4}
      :main
-      ((=float centerSample (substrateSample (/ gl_FragCoord.xy
-                                                :substrate-resolution-f)))
-       (=float averageNeightborSample
-               (/ (float
-                   (+ (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 -1))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 0 -1))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 -1))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 0))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 0))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 1))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 0 1))
-                                          :substrate-resolution-f))
-                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 1))
-                                          :substrate-resolution-f))))
-                  "8.0"))
-       (= fragColor
-          (uvec4 (* (* (mix centerSample
-                            averageNeightborSample
-                            :substrate-spread-factor)
-                       (- "1.0" :substrate-fade-factor))
-                    :uint16-max-f)
-                 0
-                 0
-                 0)))}))
+     ((=float centerSample (substrateSample (/ gl_FragCoord.xy
+                                               :substrate-resolution-f)))
+      (=float averageNeightborSample
+              (/ (float
+                  (+ (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 -1))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 0 -1))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 -1))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 0))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 0))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 1))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 0 1))
+                                         :substrate-resolution-f))
+                     (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 1))
+                                         :substrate-resolution-f))))
+                 "8.0"))
+      (= fragColor
+         (uvec4 (* (* (mix centerSample
+                           averageNeightborSample
+                           :substrate-spread-factor)
+                      (- "1.0" :substrate-fade-factor))
+                   :uint16-max-f)
+                0
+                0
+                0)))}))
 
 (def agent-logic-frag-source
   (iglu-wrapper
@@ -209,7 +209,7 @@
   (update-substrate!)
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
-    (square-maximize-gl-canvas gl)
+    (square-maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           render-frag-source
                           resolution
@@ -220,7 +220,7 @@
   (js/requestAnimationFrame update-page!))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
 
     (reset! substrate-texs-atom

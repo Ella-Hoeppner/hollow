@@ -1,7 +1,7 @@
 (ns sprog.dev.pixel-sort-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        square-maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-f8-tex
                                           html-image-texture]]
@@ -76,7 +76,7 @@
     (swap! texs-atom reverse)
 
 
-    (square-maximize-gl-canvas gl)
+    (square-maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           '{:version "300 es"
                             :precision {float highp}
@@ -93,7 +93,7 @@
   (js/requestAnimationFrame update-page!))
 
 (defn init []
-  (let [gl (create-gl-canvas)]
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
     (reset! texs-atom (u/gen 2 (create-f8-tex gl sort-resolution)))
     (reset! frame-atom 0)

@@ -1,27 +1,22 @@
-(ns sprog.webgl.canvas
+(ns sprog.dom.canvas
   (:require [sprog.util :as u]))
 
-(defn create-gl-canvas []
+(defn create-gl-canvas [& [append-to-body?]]
   (let [canvas (js/document.createElement "canvas")
         gl (.getContext canvas "webgl2")]
-    (set! (.-position canvas.style) "absolute")
-    (.appendChild js/document.body canvas)
+    (when append-to-body?
+      (set! (.-position canvas.style) "absolute")
+      (.appendChild js/document.body canvas))
     gl))
 
-(defn maximize-gl-canvas [gl & {:keys [max-pixel-ratio]}]
-  (let [canvas (.-canvas gl)
-        raw-width js/window.innerWidth
+(defn maximize-canvas [canvas & {:keys [max-pixel-ratio]}]
+  (let [raw-width js/window.innerWidth
         raw-height js/window.innerHeight
         pixel-ratio (if max-pixel-ratio
                       (min js/window.devicePixelRatio max-pixel-ratio)
                       js/window.devicePixelRatio)
         style canvas.style
-        max-resolution (.getParameter gl gl.MAX_TEXTURE_SIZE)
-        [width height] (mapv (partial *
-                                      (Math/floor
-                                       (min pixel-ratio
-                                            (/ max-resolution
-                                               (max raw-width raw-height)))))
+        [width height] (mapv (partial * pixel-ratio)
                              [raw-width raw-height])]
     (set! (.-left style) 0)
     (set! (.-top style) 0)
@@ -30,20 +25,15 @@
     (set! (.-width canvas) width)
     (set! (.-height canvas) height)))
 
-(defn square-maximize-gl-canvas [gl & {:keys [max-pixel-ratio]}]
-  (let [canvas (.-canvas gl)
-        raw-width js/window.innerWidth
+(defn square-maximize-canvas [canvas & {:keys [max-pixel-ratio]}]
+  (let [raw-width js/window.innerWidth
         raw-height js/window.innerHeight
         raw-size (min raw-width raw-height)
         pixel-ratio (if max-pixel-ratio
                       (min js/window.devicePixelRatio max-pixel-ratio)
                       js/window.devicePixelRatio)
         style canvas.style
-        max-resolution (.getParameter gl gl.MAX_TEXTURE_SIZE)
-        size (* raw-size
-                (Math/floor
-                 (min pixel-ratio
-                      (/ max-resolution raw-size))))]
+        size (* raw-size pixel-ratio)]
     (set! (.-left style) (* (- raw-width raw-size) 0.5))
     (set! (.-top style) (* (- raw-height raw-size) 0.5))
     (set! (.-width style) (str raw-size "px"))
@@ -51,8 +41,8 @@
     (set! (.-width canvas) size)
     (set! (.-height canvas) size)))
 
-(defn save-image [gl name]
-  (.toBlob gl.canvas
+(defn save-image [canvas name]
+  (.toBlob canvas
            (fn [blob]
              (let [a (js/document.createElement "a")]
                (js/document.body.appendChild a)
@@ -60,4 +50,13 @@
                  (set! a.href url)
                  (set! a.download (str name ".png"))
                  (.click a))
-               (js/document.body.removeChild a)))))
+               (js/document.body.removeChild a))))) 
+
+(defn set-page-background-color [color]
+  (set! js/document.body.style.backgroundColor
+        (apply str "#"
+               (map #(let [hex (.toString % 16)]
+                       (if (= (count hex) 1)
+                         (str "0" hex)
+                         hex))
+                    color))))

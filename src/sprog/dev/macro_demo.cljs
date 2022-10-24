@@ -1,7 +1,7 @@
 (ns sprog.dev.macro-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.canvas :refer [create-gl-canvas
-                                        square-maximize-gl-canvas]]
+            [sprog.dom.canvas :refer [create-gl-canvas
+                                      square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
@@ -33,7 +33,7 @@
         width gl.canvas.width
         height gl.canvas.height
         resolution [width height]]
-    (square-maximize-gl-canvas gl)
+    (square-maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           frag-source
                           resolution
@@ -41,5 +41,5 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (reset! gl-atom (create-gl-canvas))
+  (reset! gl-atom (create-gl-canvas true))
   (update-page!))
