@@ -11,7 +11,7 @@
     (let [framebuffer (.createFramebuffer gl)]
       (.bindFramebuffer gl gl.FRAMEBUFFER framebuffer)
       (doseq [[texture index] (map list textures (range))]
-        (js/console.log (str [texture index]))
+        (str [texture index])
         (if (vector? texture)
           (.framebufferTextureLayer gl
                                     gl.FRAMEBUFFER
