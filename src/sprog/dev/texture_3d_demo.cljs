@@ -5,16 +5,6 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-f8-tex]]))
 
-(def texture-data
-  [255 0 0 255
-   0 255 0 255
-   0 0 255 255
-   0 0 0 255
-   0 255 0 255
-   0 0 255 255
-   0 0 0 255
-   255 0 0 255])
-
 (defonce gl-atom (atom nil))
 
 (defonce tex-atom (atom nil))
@@ -41,10 +31,27 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (reset! gl-atom (create-gl-canvas true))
-  (reset! tex-atom
-          (create-f8-tex @gl-atom
-                         2
-                         {:3d true
-                          :data (js/Uint8Array. texture-data)}))
+  (let [gl (create-gl-canvas true)
+        tex (create-f8-tex gl 2 {:3d true})]
+    (reset! gl-atom  gl)
+    (reset! tex-atom tex)
+    (run-purefrag-shader! gl
+                          '{:version "300 es"
+                            :precision {float highp
+                                        sampler3D highp}
+                            :outputs {layer1Color vec4
+                                      layer2Color vec4}
+                            :qualifiers {layer1Color "layout(location = 0)"
+                                         layer2Color "layout(location = 1)"}
+                            :main
+                            ((= layer1Color (vec4 (/ gl_FragCoord.xy
+                                                     "2.0")
+                                                  0
+                                                  1))
+                             (= layer2Color (vec4 0
+                                                  (/ gl_FragCoord.xy)
+                                                  1)))}
+                          2
+                          {}
+                          {:target [[tex 0] [tex 1]]}))
   (update-page!))

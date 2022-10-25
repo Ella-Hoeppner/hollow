@@ -11,12 +11,20 @@
     (let [framebuffer (.createFramebuffer gl)]
       (.bindFramebuffer gl gl.FRAMEBUFFER framebuffer)
       (doseq [[texture index] (map list textures (range))]
-        (.framebufferTexture2D gl
-                               gl.FRAMEBUFFER
-                               (+ gl.COLOR_ATTACHMENT0 index)
-                               gl.TEXTURE_2D
-                               texture
-                               0))
+        (js/console.log (str [texture index]))
+        (if (vector? texture)
+          (.framebufferTextureLayer gl
+                                    gl.FRAMEBUFFER
+                                    (+ gl.COLOR_ATTACHMENT0 index)
+                                    (first texture)
+                                    0
+                                    (second texture))
+          (.framebufferTexture2D gl
+                                 gl.FRAMEBUFFER
+                                 (+ gl.COLOR_ATTACHMENT0 index)
+                                 gl.TEXTURE_2D
+                                 texture
+                                 0)))
       (swap! framebuffer-map-atom assoc [gl textures] framebuffer)
       framebuffer)))
 
