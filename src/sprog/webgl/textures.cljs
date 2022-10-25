@@ -1,5 +1,6 @@
 (ns sprog.webgl.textures)
 
+
 (defn set-texture-parameters [gl texture filter-mode wrap-mode & [three-d?]]
   (let [texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)]
     (.bindTexture gl texture-target texture)
@@ -14,23 +15,29 @@
                       texture-target
                       gl.TEXTURE_MAG_FILTER
                       gl-filter-mode))
-    (let [gl-wrap-mode ({:clamp gl.CLAMP_TO_EDGE
-                         :repeat gl.REPEAT
-                         :mirror gl.MIRRORED_REPEAT}
-                        wrap-mode)]
+    (let [wrap-mode->gl-enum (fn [mode]
+                               (case mode
+                                 :clamp gl.CLAMP_TO_EDGE
+                                 :repeat gl.REPEAT
+                                 :mirror gl.MIRRORED_REPEAT
+                                 mode))
+          [gl-wrap-s gl-wrap-t gl-wrap-r]
+          (if (coll? wrap-mode)
+            (map wrap-mode->gl-enum wrap-mode)
+            (repeat (wrap-mode->gl-enum wrap-mode)))]
       (.texParameteri gl
                       texture-target
                       gl.TEXTURE_WRAP_S
-                      gl-wrap-mode)
+                      gl-wrap-s)
       (.texParameteri gl
                       texture-target
                       gl.TEXTURE_WRAP_T
-                      gl-wrap-mode)
+                      gl-wrap-t)
       (when three-d?
         (.texParameteri gl
                         texture-target
                         gl.TEXTURE_WRAP_R
-                        gl-wrap-mode)))))
+                        gl-wrap-r)))))
 
 (defn create-texture [gl
                       resolution

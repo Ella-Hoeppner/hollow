@@ -36,8 +36,10 @@
 
 (defn init []
   (let [gl (create-gl-canvas true)
-        tex (create-f8-tex gl [tex-size tex-size 4] {:3d true
-                                                     :wrap-mode :clamp})]
+        tex (create-f8-tex gl 
+                           [tex-size tex-size 4]
+                           {:3d true
+                            :wrap-mode [:clamp :clamp :repeat]})]
     (reset! gl-atom  gl)
     (reset! tex-atom tex)
     (run-purefrag-shader! gl
