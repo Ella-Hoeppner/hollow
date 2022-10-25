@@ -22,6 +22,12 @@
        :clj (prn val)))
   (last vals))
 
+(defn log-tables [& tables]
+  (doseq [_ tables]
+        #?(:cljs (js/console.table (clj->js tables))
+           :clj (prn tables)))
+  (last tables))
+
 (defn scale
   ([from-min from-max to-min to-max value]
    (+ (* (/ (- value from-min)
