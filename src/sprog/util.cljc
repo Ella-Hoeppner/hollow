@@ -23,8 +23,8 @@
   (last vals))
 
 (defn log-tables [& tables]
-  (doseq [_ tables]
-        #?(:cljs (js/console.table (clj->js tables))
+  (doseq [table tables]
+        #?(:cljs (js/console.table (clj->js table))
            :clj (prn tables)))
   (last tables))
 
