@@ -4,14 +4,19 @@
                            :down? false
                            :present? false}))
 
-(defonce mouse-down-callbacks-atom (atom []))
-(defonce mouse-up-callbacks-atom (atom []))
+(defonce mouse-callbacks-atom (atom {}))
 
 (defn add-mouse-down-callback [callback]
-  (swap! mouse-down-callbacks-atom conj callback))
+  (swap! mouse-callbacks-atom update :down conj callback))
 
 (defn add-mouse-up-callback [callback]
-  (swap! mouse-up-callbacks-atom conj callback))
+  (swap! mouse-callbacks-atom update :up conj callback))
+
+(defn add-scroll-x-callback [callback]
+  (swap! mouse-callbacks-atom update :scroll-x conj callback))
+
+(defn add-scroll-y-callback [callback]
+  (swap! mouse-callbacks-atom update :scroll-y conj callback))
 
 (defn mouse-pos []
   (:pos @mouse-atom))
@@ -37,7 +42,7 @@
 
 (set! js/document.onmousedown
       (fn [_]
-        (doseq [callback @mouse-down-callbacks-atom]
+        (doseq [callback (:down @mouse-callbacks-atom)]
           (callback))
         (swap! mouse-atom
                assoc
@@ -46,12 +51,19 @@
 
 (set! js/document.onmouseup
       (fn [_]
-        (doseq [callback @mouse-up-callbacks-atom]
+        (doseq [callback (:up @mouse-callbacks-atom)]
           (callback))
         (swap! mouse-atom
                assoc
                :down? false
                :present? true)))
+
+(set! js/document.onmousewheel
+      (fn [event]
+        (doseq [callback (:scroll-x @mouse-callbacks-atom)]
+          (callback event.deltaX))
+        (doseq [callback (:scroll-y @mouse-callbacks-atom)]
+          (callback event.deltaY))))
 
 (set! js/document.onmouseenter
       (fn [_]
