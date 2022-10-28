@@ -1,7 +1,15 @@
 (ns sprog.iglu.parse
   (:require [clojure.spec.alpha :as s]
-            [expound.alpha :as expound]
-            [sprog.util :as u]))
+            [expound.alpha :as expound]))
+
+(defn int-literal? [x]
+  (and (or (symbol? x)
+           (str x))
+       (let [x-str (str x)
+             first-letter (first x-str)
+             remainder (subs x-str 1)]
+         (and (= first-letter \i)
+              (re-matches #"[0-9]+" remainder)))))
 
 (s/def ::type (s/or
                :type-name symbol?
@@ -27,6 +35,7 @@
                      :args (s/* ::subexpression)))
 (s/def ::subexpression (s/or
                         :number number?
+                        :int-literal int-literal?
                         :symbol symbol?
                         :string string?
                         :accessor (s/and vector? ::expression)

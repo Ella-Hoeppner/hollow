@@ -22,35 +22,35 @@
     :functions
     {main
      ([]
-      (=int agentIndex (/ gl_VertexID 6))
-      (=int corner "gl_VertexID % 6")
+      (=int agentIndex (/ gl_VertexID i6))
+      (=int corner (% gl_VertexID i6))
 
-      (=ivec2 texSize (textureSize particleTex 0))
+      (=ivec2 texSize (textureSize particleTex i0))
 
       (=vec2 texPos
-             (/ (+ "0.5" (vec2 (% agentIndex texSize.x)
-                               (/ agentIndex texSize.x)))
+             (/ (+ 0.5 (vec2 (% agentIndex texSize.x)
+                          (/ agentIndex texSize.x)))
                 (vec2 texSize)))
 
       (=uvec4 particleColor (texture particleTex texPos))
-      (= particlePos (/ (vec2 particleColor.xy) "65535.0"))
+      (= particlePos (/ (vec2 particleColor.xy) 65535))
 
       (= gl_Position
          (vec4 (- (* (+ particlePos
                         (* radius
-                           (- (* "2.0"
-                                 (if (|| (== corner 0)
-                                         (== corner 3))
+                           (- (* 2
+                                 (if (|| (== corner i0)
+                                         (== corner i3))
                                    (vec2 0 1)
-                                   (if (|| (== corner 1)
-                                           (== corner 4))
+                                   (if (|| (== corner i1)
+                                           (== corner i4))
                                      (vec2 1 0)
-                                     (if (== corner 2)
+                                     (if (== corner i2)
                                        (vec2 0 0)
                                        (vec2 1 1)))))
-                              "1.0")))
-                     "2.0")
-                  "1.0")
+                              1)))
+                     2)
+                  1)
                0
                1)))}})
 
@@ -66,35 +66,35 @@
     :functions
     {main
      ([]
-      (=int agentIndex (/ gl_VertexID 6))
-      (=int corner "gl_VertexID % 6")
+      (=int agentIndex (/ gl_VertexID i6))
+      (=int corner (% gl_VertexID i6))
 
-      (=ivec2 texSize (textureSize particleTex 0))
+      (=ivec2 texSize (textureSize particleTex i0))
 
       (=vec2 texPos
-             (/ (+ "0.5" (vec2 (% agentIndex texSize.x)
-                               (/ agentIndex texSize.x)))
+             (/ (+ 0.5 (vec2 (% agentIndex texSize.x)
+                             (/ agentIndex texSize.x)))
                 (vec2 texSize)))
 
       (=uvec4 particleColor (texture particleTex texPos))
-      (= particlePos (/ (vec2 particleColor.xy) "4294967295.0"))
+      (= particlePos (/ (vec2 particleColor.xy) 4294967295))
 
       (= gl_Position
          (vec4 (- (* (+ particlePos
                         (* radius
-                           (- (* "2.0"
-                                 (if (|| (== corner 0)
-                                         (== corner 3))
+                           (- (* 2
+                                 (if (|| (== corner i0)
+                                         (== corner i3))
                                    (vec2 0 1)
-                                   (if (|| (== corner 1)
-                                           (== corner 4))
+                                   (if (|| (== corner i1)
+                                           (== corner i4))
                                      (vec2 1 0)
-                                     (if (== corner 2)
+                                     (if (== corner i2)
                                        (vec2 0 0)
                                        (vec2 1 1)))))
-                              "1.0")))
-                     "2.0")
-                  "1.0")
+                              1)))
+                     2)
+                  1)
                0
                1)))}})
 

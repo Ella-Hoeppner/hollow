@@ -12,13 +12,13 @@
 
 (def frag-glsl
   (iglu->glsl
-   {:raymarch-step-factor "0.5"
-    :max-ray-dist "5.0"
-    :fov "0.5"
-    :distortion-amplitude-factor "0.1"
-    :distortion-frequency-factor "4.0"
-    :time-factor "0.25"
-    :TAU (.toFixed u/TAU 8)}
+   {:raymarch-step-factor 0.5
+    :max-ray-dist 5
+    :fov 0.5
+    :distortion-amplitude-factor 0.5
+    :distortion-frequency-factor 4
+    :time-factor 0.25
+    :TAU u/TAU}
    simplex-4d-chunk
    '{:version "300 es"
      :precision {float highp
@@ -34,21 +34,21 @@
       ([pos]
        (+ (* :distortion-amplitude-factor
              mouse.x
-             (snoise4D (vec4 (* (mix "1.0" "8.0" mouse.y) pos)
+             (snoise4D (vec4 (* (mix 1 8 mouse.y) pos)
                              time)))
-          (- (length pos) "1.0")))
+          (- (length pos) 1)))
       rayNormal
       ([rayOrigin rayDirection]
-       (=float rayLength "0.0")
+       (=float rayLength 0)
        ("for(int i=0;i<512;i++)"
         (=vec3 rayPos (+ rayOrigin (* rayDirection rayLength)))
         (=float estimate (* :raymarch-step-factor (distanceEstimate rayPos)))
-        ("if" (|| (< (abs estimate) "0.00001")
+        ("if" (|| (< (abs estimate) 0.00001)
                   (> rayLength :max-ray-dist))
               "break")
         (+= rayLength estimate))
        (=vec3 finalRayPos (+ rayOrigin (* rayLength rayDirection)))
-       (=vec2 e (vec2 "0.00025" 0))
+       (=vec2 e (vec2 0.00025 0))
        (if (> rayLength :max-ray-dist)
          (vec3 0)
          (normalize (vec3 (- (distanceEstimate (+ finalRayPos e.xyy))
@@ -60,10 +60,10 @@
      :main
      ((=vec2 pos (/ gl_FragCoord.xy size))
 
-      (=float h (tan (/ :fov "2.0")))
-      (=float viewportSize (* h "2.0"))
+      (=float h (tan (/ :fov 2)))
+      (=float viewportSize (* h 2))
 
-      (=float focalLength "1.0")
+      (=float focalLength 1)
 
       (=vec3 cameraOrigin (vec3 0 0 -5))
       (=vec3 cameraTarget (vec3 0 0 1))
@@ -74,12 +74,12 @@
       (=vec3 u (normalize (cross vup w)))
       (=vec3 v (cross w u))
 
-      (=vec3 horizontal (* u h "2.0"))
-      (=vec3 vertical (* v h "2.0"))
+      (=vec3 horizontal (* u h 2))
+      (=vec3 vertical (* v h 2))
 
       (=vec3 lowerLeftCorner (- cameraOrigin
-                                (+ (* "0.5" horizontal)
-                                   (* "0.5" vertical)
+                                (+ (* 0.5 horizontal)
+                                   (* 0.5 vertical)
                                    w)))
 
       (=vec3 cameraDir (- (+ lowerLeftCorner
@@ -89,9 +89,7 @@
       (=vec3 surfaceNormal (rayNormal cameraOrigin cameraDir))
 
       (= fragColor
-         (vec4 (* "0.5"
-                  (+ "1.0"
-                     surfaceNormal))
+         (vec4 (* 0.5 (+ 1 surfaceNormal))
                1)))}))
 
 (defn update-page! []

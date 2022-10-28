@@ -5,36 +5,34 @@
     :functions {hsl2rgb
                 ([color]
                  (=vec3 chroma
-                        (clamp (- "2.0"
+                        (clamp (- 2
                                   (abs
-                                   (- (mod (+ (* color.x "6.0")
-                                              (vec3 "3.0"
-                                                    "1.0"
-                                                    "5.0"))
-                                           "6.0")
-                                      "3.0")))
-                               "0.0"
-                               "1.0"))
+                                   (- (mod (+ (* color.x 6)
+                                              (vec3 3 1 5))
+                                           6)
+                                      3)))
+                               0
+                               1))
                  (mix (mix (vec3 0)
-                           (mix (vec3 "0.5") chroma color.y)
-                           (clamp (* color.z "2.0") "0.0" "1.0"))
+                           (mix (vec3 0.5) chroma color.y)
+                           (clamp (* color.z 2) 0 1))
                       (vec3 1)
-                      (clamp (- (* color.z "2.0") "1.0")
-                             "0.0"
-                             "1.0")))}})
+                      (clamp (- (* color.z 2) 1)
+                             0
+                             1)))}})
 
 ; derived from https://www.shadertoy.com/view/MsS3Wc
 (def hsv-to-rgb-chunk
   '{:signatures {hsv2rgb ([vec3] vec3)}
     :functions {hsv2rgb
                 ([color]
-                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x "6.0")
+                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x 6)
                                                       (vec3 0 4 2))
-                                                   "6.0")
-                                              "3.0"))
-                                      "1.0")
-                                   "0.0"
-                                   "1.0"))
+                                                   6)
+                                              3))
+                                      1)
+                                   0
+                                   1))
                  (* color.z (mix (vec3 1)
                                  rgb
                                  color.y)))}})
@@ -44,14 +42,14 @@
   '{:signatures {hsv2rgb ([vec3] vec3)}
     :functions {hsv2rgb
                 ([color]
-                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x "6.0")
+                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x 6)
                                                       (vec3 0 4 2))
-                                                   "6.0")
-                                              "3.0"))
-                                      "1.0")
-                                   "0.0"
-                                   "1.0"))
-                 (= rgb (* rgb rgb (- "3.0" (* "2.0" rgb))))
+                                                   6)
+                                              3))
+                                      1)
+                                   0
+                                   1))
+                 (= rgb (* rgb rgb (- 3 (* 2 rgb))))
                  (* color.z (mix (vec3 1)
                                  rgb
                                  color.y)))}})
@@ -61,17 +59,17 @@
   '{:signatures {hsv2rgb ([vec3] vec3)}
     :functions {hsv2rgb
                 ([color]
-                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x "6.0")
+                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x 6)
                                                       (vec3 0 4 2))
-                                                   "6.0")
-                                              "3.0"))
-                                      "1.0")
-                                   "0.0"
-                                   "1.0"))
+                                                   6)
+                                              3))
+                                      1)
+                                   0
+                                   1))
                  (= rgb (* rgb
                            rgb
                            rgb
-                           (+ "10.0" (* rgb (- (* rgb "6.0") "15.0")))))
+                           (+ 10 (* rgb (- (* rgb 6) 15)))))
                  (* color.z (mix (vec3 1)
                                  rgb
                                  color.y)))}})
@@ -81,14 +79,14 @@
   '{:signatures {hsv2rgb ([vec3] vec3)}
     :functions {hsv2rgb
                 ([color]
-                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x "6.0")
+                 (=vec3 rgb (clamp (- (abs (- (mod (+ (* color.x 6)
                                                       (vec3 0 4 2))
-                                                   "6.0")
-                                              "3.0"))
-                                      "1.0")
-                                   "0.0"
-                                   "1.0"))
-                 (= rgb (+ "0.5" (* "-0.5" (cos (* rgb "3.14159265359")))))
+                                                   6)
+                                              3))
+                                      1)
+                                   0
+                                   1))
+                 (= rgb (+ 0.5 (* -0.5 (cos (* rgb 3.14159265359)))))
                  (* color.z (mix (vec3 1)
                                  rgb
                                  color.y)))}})

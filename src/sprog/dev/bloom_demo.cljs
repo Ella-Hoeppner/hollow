@@ -16,8 +16,7 @@
 
 (def frag-source
   (iglu->glsl
-   {:step (/ 1 512)
-    :intensity "0."}
+   nil
    (get-bloom-chunk :f8)
    '{:version "300 es"
     :precision {float highp}
@@ -29,11 +28,11 @@
     :functions {main
                 ([]
                  (=vec2 pos (/ gl_FragCoord.xy size))
-                 (= pos.y (- "1." pos.y))
+                 (= pos.y (- 1 pos.y))
                  (= fragColor (bloom tex 
                                      pos 
-                                     (mix "0." (/ "1." "256.") mouse.x)
-                                     (- "1." mouse.y))))}}))
+                                     (mix 0 (/ 1 256) mouse.x)
+                                     (- 1 mouse.y))))}}))
 
 (defn update-page! []
   (let [gl @gl-atom

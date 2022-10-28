@@ -22,11 +22,11 @@
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue
                     (* (+ (snoiseTileable2D (vec2 0)
-                                            (pow (vec2 "25.0") mouse)
-                                            (+ (* pos "3.0")
+                                            (pow (vec2 25) mouse)
+                                            (+ (* pos 3)
                                                (vec2 100 -20)))
-                          "1.0")
-                       "0.5"))
+                          1)
+                       0.5))
             (= fragColor (vec4 noiseValue
                                noiseValue
                                noiseValue

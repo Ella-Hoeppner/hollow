@@ -27,7 +27,7 @@
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
                                    (= fragColor
                                       (texture tex 
-                                               (vec3 pos (mod time "1.0")))))}
+                                               (vec3 pos (mod time 1)))))}
                           resolution
                           {:floats {"size" resolution
                                     "time" (u/seconds-since-startup)}
@@ -60,7 +60,7 @@
                              ((=float colorValue
                                       (/ (length 
                                           (/ gl_FragCoord.xy :tex-size-f))
-                                         (sqrt "2.0")))
+                                         (sqrt 2)))
                               (= layer1Color (vec4 colorValue 0 0 1))
                               (= layer2Color (vec4 0 colorValue 0 1))
                               (= layer3Color (vec4 0 0 colorValue 1))

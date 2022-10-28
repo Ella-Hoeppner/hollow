@@ -26,8 +26,7 @@
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
                                    (= fragColor
                                       (texture tex
-                                               (vec2 pos.x
-                                                     (- "1.0" pos.y)))))}
+                                               (vec2 pos.x (- 1 pos.y)))))}
                           resolution
                           {:floats {"size" resolution}
                            :textures {"tex" @tex-atom}})

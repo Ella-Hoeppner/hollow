@@ -25,10 +25,10 @@
                     (* v1.d v2.d)
                     (* v1.e v2.e)))}
     :main ((=vec2 pos (/ gl_FragCoord.xy size))
-           (=vec5 v1 (vec5 "0.0" "1.0" "2.0" "3.0" "4.0"))
-           (=vec5 v2 (vec5 "0.0" "1.0" "2.0" "3.0" "4.0"))
+           (=vec5 v1 (vec5 0 1 2 3 4))
+           (=vec5 v2 (vec5 0 1 2 3 4))
            (=float dotProduct (vec5dot v1 v2))
-           (= fragColor (vec4 (/ dotProduct "60.0") 0 0 1)))})
+           (= fragColor (vec4 (/ dotProduct 60) 0 0 1)))})
 
 (defn update-page! []
   (let [gl @gl-atom

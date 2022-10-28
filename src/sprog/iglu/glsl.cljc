@@ -1,8 +1,16 @@
 (ns sprog.iglu.glsl
-  (:require [clojure.string :as str]
+  (:require [clojure.string :refer [join
+                                    starts-with?
+                                    ends-with?
+                                    includes?]]
             [clojure.walk :refer [walk]]
             [clojure.set :refer [union
-                                 intersection]]))
+                                 intersection]]
+            [sprog.iglu.parse :refer [int-literal?]]))
+
+(defn parse-int [s]
+  #?(:clj (Integer/ParseInt))
+  #?(:cljs (js/parseInt s)))
 
 ;; multimethods
 
@@ -10,13 +18,14 @@
   (fn [fn-name args]
     (cond
       (number? fn-name) ::number
+      (int-literal? fn-name) ::int-literal
       ('#{? if} fn-name) ::inline-conditional
       ('#{+ - * / % < > <= >= == != || && "^^"} fn-name) ::operator
       ('#{= += -= *= "/="} fn-name) ::assignment
       (#{"if" "else if" "switch" "for" "while"} fn-name) ::block-with-expression
       (string? fn-name) ::block
-      (-> fn-name str (str/starts-with? "=")) ::local-assignment
-      (-> fn-name str (str/starts-with? ".")) ::property
+      (-> fn-name str (starts-with? "=")) ::local-assignment
+      (-> fn-name str (starts-with? ".")) ::property
       :else fn-name)))
 
 (defmulti ->subexpression
@@ -67,7 +76,7 @@
      " : " (->subexpression false-case))))
 
 (defmethod ->function-call ::operator [fn-name args]
-  (str/join (str " " fn-name " ") (mapv ->subexpression args)))
+  (join (str " " fn-name " ") (mapv ->subexpression args)))
 
 (defmethod ->function-call ::property [fn-name args]
   (when (not= (count args) 1)
@@ -79,8 +88,13 @@
     (throw (ex-info (str fn-name " requires exactly one arg") {})))
   (str (->subexpression (first args)) "[" fn-name "]"))
 
+(defmethod ->function-call ::int-literal [fn-name args]
+  (when (not= (count args) 1)
+    (throw (ex-info (str fn-name " requires exactly one arg") {})))
+  (str (->subexpression (first args)) "[" fn-name "]"))
+
 (defmethod ->function-call :default [fn-name args]
-  (str fn-name "(" (str/join ", " (mapv ->subexpression args)) ")"))
+  (str fn-name "(" (join ", " (mapv ->subexpression args)) ")"))
 
 ;; ->statement
 
@@ -104,11 +118,17 @@
   (let [{:keys [fn-name args]} expression]
     (->> args
          (map #(str "[" (->subexpression %) "]"))
-         str/join
+         join
          (str fn-name))))
 
 (defmethod ->subexpression :number [[_ number]]
-  (str number))
+  (let [num-str (str number)]
+    (if (includes? num-str ".")
+      num-str
+      (str num-str "."))))
+
+(defmethod ->subexpression :int-literal [[_ literal]]
+  (parse-int (subs (str literal) 1)))
 
 (defmethod ->subexpression :symbol [[_ symbol]]
   (str symbol))
@@ -176,7 +196,7 @@
                         {:fn name
                          :signature in
                          :definition args})))
-      (let [args-list (str/join ", "
+      (let [args-list (join ", "
                                 (mapv (fn [type name]
                                         (str type " " name))
                                       in args))
@@ -192,15 +212,15 @@
 ;; compiler fn
 
 (defn indent [level line]
-  (str (str/join (repeat (* level 2) " "))
+  (str (join (repeat (* level 2) " "))
        line))
 
 (defn stringify [level lines line]
   (cond
     (string? line)
     (conj lines
-          (if (or (str/starts-with? line "#")
-                  (str/ends-with? line ";"))
+          (if (or (starts-with? line "#")
+                  (ends-with? line ";"))
             line
             (str (indent level line) ";")))
     (string? (first line))
@@ -274,4 +294,4 @@
                (mapv (partial ->function signatures)
                      sorted-fns))
          (reduce (partial stringify 0) [])
-         (str/join \newline))))
+         (join \newline))))

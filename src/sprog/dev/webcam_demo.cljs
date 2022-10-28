@@ -28,8 +28,7 @@
                                    (= fragColor
                                       (vec4 (.xyz
                                              (texture tex
-                                                      (vec2 pos.x
-                                                            (- "1.0" pos.y))))
+                                                      (vec2 pos.x (- 1 pos.y))))
                                             1)))}
                           resolution
                           {:floats {"size" resolution}

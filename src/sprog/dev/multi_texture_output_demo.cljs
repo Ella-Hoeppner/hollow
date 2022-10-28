@@ -40,10 +40,10 @@
     :outputs {fragColor vec4}
     :main ((=vec2 pos (/ gl_FragCoord.xy size))
            (= fragColor
-              (if (< pos.x "0.5")
-                (texture tex1 (* pos (vec2 "2.0" "1.0")))
-                (texture tex2 (* (- pos (vec2 "0.5" "0.0"))
-                                 (vec2 "2.0" "1.0"))))))})
+              (if (< pos.x 0.5)
+                (texture tex1 (* pos (vec2 2 1)))
+                (texture tex2 (* (- pos (vec2 0.5 0))
+                                 (vec2 2 1))))))})
 
 (defn update-page! []
   (let [gl @gl-atom
