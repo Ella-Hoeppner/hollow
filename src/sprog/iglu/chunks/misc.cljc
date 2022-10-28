@@ -2,6 +2,16 @@
   (:require [clojure.walk :refer [postwalk 
                                   postwalk-replace]]))
 
+(def rescale-chunk
+  '{:signatures {rescale ([float float float float float] float)}
+    :functions
+    {rescale
+     ([oldMin oldMax newMin newMax x]
+      (+ newMin
+         (* (- newMax newMin)
+            (/ (- x oldMin)
+               (- oldMax oldMin)))))}})
+
 (def sympow-chunk
   '{:signatures {sympow ([float float] float)}
     :functions
