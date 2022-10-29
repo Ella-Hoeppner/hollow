@@ -41,12 +41,13 @@
                         :accessor (s/and vector? ::expression)
                         :expression ::expression))
 
-(s/def ::signature (s/cat :in (s/coll-of symbol?) :out symbol?))
-(s/def ::signatures (s/map-of symbol? ::signature))
-
 (s/def ::body (s/+ (s/spec ::subexpression)))
 (s/def ::function (s/cat :args (s/coll-of symbol?) :body ::body))
-(s/def ::functions (s/map-of symbol? ::function))
+(s/def ::signature (s/cat :in (s/coll-of symbol?) :out symbol?))
+(s/def ::functions (s/map-of symbol?
+                             (s/map-of ::signature
+                                       ::function
+                                       :conform-keys true)))
 (s/def ::main ::body)
 
 (s/def ::shader (s/keys :opt-un [::version
@@ -57,7 +58,6 @@
                                  ::varyings
                                  ::inputs
                                  ::outputs
-                                 ::signatures
                                  ::main
                                  ::functions]))
 

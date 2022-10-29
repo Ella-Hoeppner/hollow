@@ -27,36 +27,36 @@
                 time float
                 mouse vec2}
      :outputs {fragColor vec4}
-     :signatures {distanceEstimate ([vec3] float)
-                  rayNormal ([vec3 vec3] vec3)}
      :functions
      {distanceEstimate
-      ([pos]
-       (+ (* :distortion-amplitude-factor
-             mouse.x
-             (snoise4D (vec4 (* (mix 1 8 mouse.y) pos)
-                             time)))
-          (- (length pos) 1)))
+      {([vec3] float)
+       ([pos]
+        (+ (* :distortion-amplitude-factor
+              mouse.x
+              (snoise4D (vec4 (* (mix 1 8 mouse.y) pos)
+                              time)))
+           (- (length pos) 1)))}
       rayNormal
-      ([rayOrigin rayDirection]
-       (=float rayLength 0)
-       ("for(int i=0;i<512;i++)"
-        (=vec3 rayPos (+ rayOrigin (* rayDirection rayLength)))
-        (=float estimate (* :raymarch-step-factor (distanceEstimate rayPos)))
-        ("if" (|| (< (abs estimate) 0.00001)
-                  (> rayLength :max-ray-dist))
-              "break")
-        (+= rayLength estimate))
-       (=vec3 finalRayPos (+ rayOrigin (* rayLength rayDirection)))
-       (=vec2 e (vec2 0.00025 0))
-       (if (> rayLength :max-ray-dist)
-         (vec3 0)
-         (normalize (vec3 (- (distanceEstimate (+ finalRayPos e.xyy))
-                             (distanceEstimate (- finalRayPos e.xyy)))
-                          (- (distanceEstimate (+ finalRayPos e.yxy))
-                             (distanceEstimate (- finalRayPos e.yxy)))
-                          (- (distanceEstimate (+ finalRayPos e.yyx))
-                             (distanceEstimate (- finalRayPos e.yyx)))))))}
+      {([vec3 vec3] vec3)
+       ([rayOrigin rayDirection]
+        (=float rayLength 0)
+        ("for(int i=0;i<512;i++)"
+         (=vec3 rayPos (+ rayOrigin (* rayDirection rayLength)))
+         (=float estimate (* :raymarch-step-factor (distanceEstimate rayPos)))
+         ("if" (|| (< (abs estimate) 0.00001)
+                   (> rayLength :max-ray-dist))
+               "break")
+         (+= rayLength estimate))
+        (=vec3 finalRayPos (+ rayOrigin (* rayLength rayDirection)))
+        (=vec2 e (vec2 0.00025 0))
+        (if (> rayLength :max-ray-dist)
+          (vec3 0)
+          (normalize (vec3 (- (distanceEstimate (+ finalRayPos e.xyy))
+                              (distanceEstimate (- finalRayPos e.xyy)))
+                           (- (distanceEstimate (+ finalRayPos e.yxy))
+                              (distanceEstimate (- finalRayPos e.yxy)))
+                           (- (distanceEstimate (+ finalRayPos e.yyx))
+                              (distanceEstimate (- finalRayPos e.yyx)))))))}}
      :main
      ((=vec2 pos (/ gl_FragCoord.xy size))
 

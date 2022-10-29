@@ -24,8 +24,8 @@
                frame int
                threshold float}
     :outputs {fragColor vec4}
-    :signatures {grayscale ([vec3] float)}
-    :functions {grayscale ([c] (/ (+ c.r c.g c.b) 3))}
+    :functions {grayscale {([vec3] float)
+                           ([c] (/ (+ c.r c.g c.b) 3))}}
     :main
     ((=vec2 pos (/ gl_FragCoord.xy size))
 

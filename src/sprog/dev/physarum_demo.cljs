@@ -51,11 +51,11 @@
 (def substrate-sample-chunk
   '{:precision {usampler2D highp}
     :uniforms {substrate usampler2D}
-    :signatures {substrateSample ([vec2] float)}
     :functions {substrateSample
-                ([pos]
-                 (/ (float (.x (texture substrate pos)))
-                    :u16-max-f))}})
+                {([vec2] float)
+                 ([pos]
+                  (/ (float (.x (texture substrate pos)))
+                     :u16-max-f))}}})
 
 (def render-frag-source
   (iglu-wrapper

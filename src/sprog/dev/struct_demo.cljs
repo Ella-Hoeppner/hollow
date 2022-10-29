@@ -16,14 +16,14 @@
                     c float
                     d float
                     e float]}
-    :signatures {vec5dot ([vec5 vec5] float)}
     :functions {vec5dot
-                ([v1 v2]
-                 (+ (* v1.a v2.a)
-                    (* v1.b v2.b)
-                    (* v1.c v2.c)
-                    (* v1.d v2.d)
-                    (* v1.e v2.e)))}
+                {([vec5 vec5] float)
+                 ([v1 v2]
+                  (+ (* v1.a v2.a)
+                     (* v1.b v2.b)
+                     (* v1.c v2.c)
+                     (* v1.d v2.d)
+                     (* v1.e v2.e)))}}
     :main ((=vec2 pos (/ gl_FragCoord.xy size))
            (=vec5 v1 (vec5 0 1 2 3 4))
            (=vec5 v2 (vec5 0 1 2 3 4))

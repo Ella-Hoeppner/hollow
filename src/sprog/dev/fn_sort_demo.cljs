@@ -25,11 +25,11 @@
                   {:fn-name (symbol (str "f" (inc i)))
                    :prev-fn-name (symbol (str "f" i))}
                   (if (zero? i)
-                    '{:signatures {:fn-name ([float] float)}
-                      :functions {:fn-name ([x] (+ x 0.01))}}
-                    '{:signatures {:fn-name ([float] float)}
-                      :functions {:fn-name
-                                  ([x] (+ (:prev-fn-name x) 0.01))}})))
+                    '{:functions {:fn-name {([float] float) 
+                                            ([x] (+ x 0.01))}}}
+                    '{:functions {:fn-name {([float] float)
+                                            ([x] (+ (:prev-fn-name x) 
+                                                    0.01))}}})))
                (range fn-count))))
 
 (defn update-page! []

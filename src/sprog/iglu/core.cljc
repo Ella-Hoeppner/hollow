@@ -22,7 +22,9 @@
 
 (defn iglu->glsl
   ([shader]
-   (-> shader parse parsed-iglu->glsl))
+   (-> shader
+       parse
+       parsed-iglu->glsl))
   ([replacement-and-macro-map & chunks]
    (let [{macros true
           replacements false}

@@ -187,33 +187,33 @@
                    (partition 2 fields)))
        "}"))
 
-(defn ->function [signatures [name {:keys [args body]}]]
-  (let [signature (if (= (str name) "main")
-                    '{:in [] :out void}
-                    (get signatures name))]
-    (when-not signature
-      (throw
-       (ex-info "Nothing found in :signatures for function"
-                {:fn name})))
-    (let [{:keys [in out]} signature]
-      (when (not= (count in) (count args))
-        (throw (ex-info (str "Function has args signature of a different"
-                             " length than its args definition")
-                        {:fn name
-                         :signature in
-                         :definition args})))
-      (let [args-list (join ", "
-                                (mapv (fn [type name]
-                                        (str type " " name))
-                                      in args))
-            signature (str out " " name "(" args-list ")")]
-        (into [signature]
-              (let [body-lines (mapv ->statement body)]
-                (if (= 'void out)
-                  body-lines
-                  (conj
-                   (vec (butlast body-lines))
-                   (str "return " (last body-lines))))))))))
+(defn ->function [[name signature-function-map]]
+  (map (fn [[signature {:keys [args body]}]]
+         (when-not signature
+           (throw
+            (ex-info "Nothing found in :signatures for function"
+                     {:fn name})))
+         (let [{:keys [in out]} signature]
+           (when (not= (count in) (count args))
+             (throw (ex-info
+                     (str "Function has args signature of a different "
+                          "length than its args definition")
+                     {:fn name
+                      :signature in
+                      :definition args})))
+           (let [args-list (join ", "
+                                 (mapv (fn [type name]
+                                         (str type " " name))
+                                       in args))
+                 signature (str out " " name "(" args-list ")")]
+             (into [signature]
+                   (let [body-lines (mapv ->statement body)]
+                     (if (= 'void out)
+                       body-lines
+                       (conj
+                        (vec (butlast body-lines))
+                        (str "return " (last body-lines)))))))))
+       signature-function-map))
 
 ;; compiler fn
 
@@ -255,8 +255,10 @@
                         (mapv (fn [[fn-name fn-content]]
                                 [fn-name
                                  (intersection fn-names
-                                               (inner-symbols
-                                                (:body fn-content)))])
+                                               (apply union
+                                                      (map #(inner-symbols
+                                                             (:body (second %)))
+                                                           fn-content)))])
                               functions))]
       (loop [remaining-names fn-names
              sorted-fns []]
@@ -282,11 +284,11 @@
                                  inputs
                                  outputs
                                  qualifiers
-                                 signatures
                                  main
                                  functions]}]
   (let [full-functions (cond-> functions
-                         main (assoc 'main {:args [] :body main}))
+                         main (assoc 'main {{:in [] :out 'void}
+                                            {:args [] :body main}}))
         sorted-fns (sort-fns full-functions)]
     (->> (into (cond-> []
                  version (conj (str "#version " version))
@@ -297,7 +299,7 @@
                  inputs (into (mapv (partial ->in qualifiers) inputs))
                  outputs (into (mapv (partial ->out qualifiers) outputs))
                  structs (into (mapv ->struct structs)))
-               (mapv (partial ->function signatures)
-                     sorted-fns))
+               (vec (mapcat ->function
+                            sorted-fns)))
          (reduce (partial stringify 0) [])
          (join \newline))))

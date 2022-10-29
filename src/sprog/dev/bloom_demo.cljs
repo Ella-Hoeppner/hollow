@@ -24,15 +24,12 @@
                mouse vec2
                tex sampler2D}
     :outputs {fragColor vec4}
-    :signatures {main ([] void)}
-    :functions {main
-                ([]
-                 (=vec2 pos (/ gl_FragCoord.xy size))
-                 (= pos.y (- 1 pos.y))
-                 (= fragColor (bloom tex 
-                                     pos 
-                                     (mix 0 (/ 1 256) mouse.x)
-                                     (- 1 mouse.y))))}}))
+    :main ((=vec2 pos (/ gl_FragCoord.xy size))
+           (= pos.y (- 1 pos.y))
+           (= fragColor (bloom tex
+                               pos
+                               (mix 0 (/ 1 256) mouse.x)
+                               (- 1 mouse.y))))}))
 
 (defn update-page! []
   (let [gl @gl-atom
