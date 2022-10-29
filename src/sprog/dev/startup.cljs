@@ -22,7 +22,7 @@
   #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
-  #_(sprog.dev.pixel-sort-demo/init)
+  (sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.raymarch-demo/init)
   #_(sprog.dev.physarum-demo/init)
   #_(sprog.dev.texture-channel-demo/init)
@@ -36,7 +36,7 @@
   #_(sprog.dev.video-demo/init)
   #_(sprog.dev.webcam-demo/init)
   #_(sprog.dev.bloom-demo/init)
-  (sprog.dev.texture-3d-demo/init))
+  #_(sprog.dev.texture-3d-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

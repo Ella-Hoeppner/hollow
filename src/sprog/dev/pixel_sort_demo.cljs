@@ -24,37 +24,37 @@
                frame int
                threshold float}
     :outputs {fragColor vec4}
-    :signatures {gscale ([vec3] float)}
-    :functions {gscale ([c] (/ (+ c.r c.g c.b) 3))}
+    :signatures {grayscale ([vec3] float)}
+    :functions {grayscale ([c] (/ (+ c.r c.g c.b) 3))}
     :main
     ((=vec2 pos (/ gl_FragCoord.xy size))
 
-     (=float fParity (- (* (mod (float frame) 2) 2) 1))
-     (=float vp (- (* (mod (floor (* pos.x size.x)) 2) 2) 1))
+     (=float frameParity (- (* (mod (float frame) 2) 2) 1))
+     (=float pixelParity (- (* (mod (floor gl_FragCoord.x) 2) 2) 1))
 
      (=vec2 dir (vec2 1 0))
-     (*= dir (* fParity vp))
+     (*= dir (* frameParity pixelParity))
      (= dir (/ dir size))
 
-     (=vec4 curr (texture tex pos))
-     (=vec4 comp (texture tex (+ pos dir)))
+     (=vec4 currentValue (texture tex pos))
+     (=vec4 comparisonValue (texture tex (+ pos dir)))
 
-     (=float gCurr (gscale curr.rgb))
-     (=float gComp (gscale comp.rgb))
+     (=float currentGrayscale (grayscale currentValue.rgb))
+     (=float comparisonGrayscale (grayscale comparisonValue.rgb))
 
      (= fragColor
         (if (|| (< (+ pos.x dir.x) 0)
                 (> (+ pos.x dir.x) 1))
-          (= fragColor curr)
+          currentValue
           (if (< dir.x 0)
-            (if (&& (> gCurr threshold)
-                    (> gComp gCurr))
-              comp
-              curr)
-            (if (&& (> gComp threshold)
-                    (> gCurr gComp))
-              comp
-              curr)))))})
+            (if (&& (> currentGrayscale threshold)
+                    (> comparisonGrayscale currentGrayscale))
+              comparisonValue
+              currentValue)
+            (if (&& (> comparisonGrayscale threshold)
+                    (> currentGrayscale comparisonGrayscale))
+              comparisonValue
+              currentValue)))))})
 
 (defn update-page! []
   (let [gl @gl-atom
