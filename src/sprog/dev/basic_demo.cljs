@@ -6,26 +6,12 @@
             [clojure.spec.alpha :as s]))
 
 (def source
-  #_'{:version "300 es"
-      :precision {float highp}
-      :uniforms {size vec2}
-      :outputs {fragColor vec4}
-      :signatures {getColor ([] vec2)}
-      :functions {getColor ([] (/ gl_FragCoord.xy size))}
-      :main ((=vec2 pos (/ gl_FragCoord.xy size))
-             (= fragColor (vec4 (getColor) 0 1)))}
   '{:version "300 es"
     :precision {float highp}
     :uniforms {size vec2}
     :outputs {fragColor vec4}
-    :functions {getColor
-                {([] vec2)
-                 ([] (/ gl_FragCoord.xy size))}
-                main
-                {([] void)
-                 ([]
-                  (=vec2 pos (/ gl_FragCoord.xy size))
-                  (= fragColor (vec4 (getColor) 0 1)))}}})
+    :main ((=vec2 pos (/ gl_FragCoord.xy size))
+           (= fragColor (vec4 pos 0 1)))})
 
 (defonce gl-atom (atom nil))
 
