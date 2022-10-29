@@ -1,8 +1,11 @@
 (ns sprog.iglu.glsl
-  (:require [clojure.string :refer [join
-                                    starts-with?
-                                    ends-with?
-                                    includes?]]
+  (:require [clojure.string
+             :refer [join
+                     starts-with?
+                     ends-with?
+                     includes?
+                     replace]
+             :rename {replace string-replace}]
             [clojure.walk :refer [walk]]
             [clojure.set :refer [union
                                  intersection]]
@@ -11,6 +14,9 @@
 (defn parse-int [s]
   #?(:clj (Integer/ParseInt))
   #?(:cljs (js/parseInt s)))
+
+(defn symbol->glsl-str [sym]
+  (string-replace (str sym) "-" "_"))
 
 ;; multimethods
 
@@ -131,7 +137,7 @@
   (parse-int (subs (str literal) 1)))
 
 (defmethod ->subexpression :symbol [[_ symbol]]
-  (str symbol))
+  (symbol->glsl-str symbol))
 
 (defmethod ->subexpression :string [[_ string]]
   string)
@@ -163,7 +169,7 @@
        " "
        (parse-type type)
        " "
-       name))
+       (symbol->glsl-str name)))
 
 (defn ->in [qualifiers name-type-pair]
   (->inout "in" qualifiers name-type-pair))
