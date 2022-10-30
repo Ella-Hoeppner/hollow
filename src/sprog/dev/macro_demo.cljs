@@ -21,10 +21,9 @@
      :outputs {fragColor vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float dist (distance pos
-                                   (vec2 [:rand]
-                                         [:rand])))
+                                   (vec2 (:rand) (:rand))))
             (= fragColor
-               (if (> dist [:rand 0.1 0.5])
+               (if (> dist (:rand))
                  (vec4 1)
                  (vec4 0 0 0 1))))}))
 

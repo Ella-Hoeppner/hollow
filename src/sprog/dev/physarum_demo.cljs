@@ -37,9 +37,9 @@
   (partial iglu->glsl
            {:rand (fn [minimum maximum]
                     (+ minimum (rand (- maximum minimum))))
-            :u16-max-f (dec (Math/pow 2 16))
-            :substrate-resolution-f substrate-resolution
-            :agent-tex-resolution-f agent-tex-resolution
+            :u16-max (dec (Math/pow 2 16))
+            :substrate-resolution substrate-resolution
+            :agent-tex-resolution agent-tex-resolution
             :substrate-spread-factor substrate-spread-factor
             :substrate-fade-factor substrate-fade-factor
             :sensor-distance sensor-distance
@@ -54,8 +54,11 @@
     :functions {substrateSample
                 {([vec2] float)
                  ([pos]
-                  (/ (float (.x (texture substrate pos)))
-                     :u16-max-f))}}})
+                  (-> substrate
+                      (texture pos)
+                      .x
+                      float
+                      (/ :u16-max)))}}})
 
 (def render-frag-source
   (iglu-wrapper
@@ -79,32 +82,32 @@
      :outputs {fragColor uvec4}
      :main
      ((=float centerSample (substrateSample (/ gl_FragCoord.xy
-                                               :substrate-resolution-f)))
+                                               :substrate-resolution)))
       (=float averageNeighborSample
               (/ (float
                   (+ (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 -1))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 0 -1))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 -1))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 0))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 0))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 -1 1))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 0 1))
-                                         :substrate-resolution-f))
+                                         :substrate-resolution))
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 1))
-                                         :substrate-resolution-f))))
+                                         :substrate-resolution))))
                  8))
       (= fragColor
          (uvec4 (* (* (mix centerSample
                            averageNeighborSample
                            :substrate-spread-factor)
                       (- 1 :substrate-fade-factor))
-                   :u16-max-f)
+                   :u16-max)
                 0
                 0
                 0)))}))
@@ -120,11 +123,11 @@
                 time float}
      :outputs {fragColor uvec4}
      :main
-     ((=vec2 pos (/ gl_FragCoord.xy :agent-tex-resolution-f))
+     ((=vec2 pos (/ gl_FragCoord.xy :agent-tex-resolution))
       (=uvec4 oldFragColor (texture agentTex pos))
 
-      (=vec2 agentPos (/ (vec2 oldFragColor.xy) :u16-max-f))
-      (=float agentAngle (* :TAU (/ (float oldFragColor.z) :u16-max-f)))
+      (=vec2 agentPos (/ (vec2 oldFragColor.xy) :u16-max))
+      (=float agentAngle (* :TAU (/ (float oldFragColor.z) :u16-max)))
 
       (=float clockwiseAngle (+ agentAngle :sensor-spread))
       (=float clockwiseSensorSample
@@ -158,14 +161,14 @@
       (=vec2 randSeed (* 400 (+ pos (vec2 (mod time 3.217) 0))))
 
       (= fragColor
-         (uvec4 (* (if (< (rand (+ randSeed [:rand -100 100]))
+         (uvec4 (* (if (< (rand (+ randSeed (:rand -100 100)))
                           randomizeChance)
-                     (vec3 (rand (+ randSeed [:rand -100 100]))
-                           (rand (+ randSeed [:rand -100 100]))
-                           (rand (+ randSeed [:rand -100 100])))
+                     (vec3 (rand (+ randSeed (:rand -100 100)))
+                           (rand (+ randSeed (:rand -100 100)))
+                           (rand (+ randSeed (:rand -100 100))))
                      (vec3 newAgentPos
                            (/ newAgentAngle :TAU)))
-                   :u16-max-f)
+                   :u16-max)
                 0)))}))
 
 (defn update-agents! [randomize-chance]
