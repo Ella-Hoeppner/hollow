@@ -6,7 +6,7 @@
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.iglu.chunks.misc :refer [get-bloom-chunk]]
+            [sprog.iglu.chunks.postprocessing :refer [get-bloom-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
