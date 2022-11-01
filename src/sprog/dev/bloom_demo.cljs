@@ -5,7 +5,8 @@
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.iglu.chunks.postprocessing :refer [get-bloom-chunk]]
+            [sprog.iglu.chunks.postprocessing :refer [get-bloom-chunk
+                                                      square-neighborhood]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (defonce gl-atom (atom nil))
@@ -14,7 +15,7 @@
 (def frag-source
   (iglu->glsl
    nil
-   (get-bloom-chunk :f8)
+   (get-bloom-chunk :f8 (square-neighborhood 4 1) 5)
    '{:version "300 es"
     :precision {float highp}
     :uniforms {size vec2
@@ -23,10 +24,12 @@
     :outputs {fragColor vec4}
     :main ((=vec2 pos (/ gl_FragCoord.xy size))
            (= pos.y (- 1 pos.y))
-           (= fragColor (bloom tex
-                               pos
-                               (mix 0 (/ 1 256) mouse.x)
-                               (- 1 mouse.y))))}))
+           (= fragColor (-> (bloom tex
+                                   pos
+                                   (* mouse.x 0.0025)
+                                   (- 1 mouse.y))
+                            .xyz
+                            (vec4 1))))}))
 
 (defn update-page! []
   (let [gl @gl-atom

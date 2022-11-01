@@ -18,9 +18,7 @@
 (def top-frag-source
   (iglu->glsl
    {}
-   (create-gaussian-sample-chunk
-    'tex
-    (square-neighborhood 4 3))
+   (create-gaussian-sample-chunk :f8 (square-neighborhood 4 3))
    '{:version "300 es"
      :precision {float highp
                  sampler2D highp}
@@ -33,15 +31,18 @@
             (=vec2 texSize (vec2 (textureSize tex i0)))
             (=float sampleDistFactor blurFactor)
             (= fragColor
-               (gaussianSample pos
+               (gaussianSample tex
+                               pos
                                (/ 1 texSize)
                                (* 10 (clamp blurFactor 0.001 1)))))}))
 
 (def bottom-frag-source
   (iglu->glsl
    {:gaussian-expression
-    (partial prescaled-gaussian-sample-expression
-             (square-neighborhood 4 3))}
+    #(prescaled-gaussian-sample-expression
+      %
+      (square-neighborhood 4 3)
+      10)}
    '{:version "300 es"
      :precision {float highp
                  sampler2D highp}
@@ -57,8 +58,7 @@
                 (texture tex
                          (+ pos
                             (* (clamp blurFactor 0 1)
-                               (/ (vec2 :x :y) texSize))))
-                10)))}))
+                               (/ (vec2 :x :y) texSize)))))))}))
 
 (defn update-page! []
   (let [gl @gl-atom
