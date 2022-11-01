@@ -12,7 +12,7 @@
             [sprog.iglu.parse :refer [int-literal?]]))
 
 (defn parse-int [s]
-  #?(:clj (Integer/ParseInt))
+  #?(:clj (Integer/parseInt s))
   #?(:cljs (js/parseInt s)))
 
 (defn symbol->glsl-str [sym]
