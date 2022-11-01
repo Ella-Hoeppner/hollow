@@ -1,59 +1,92 @@
 (ns sprog.iglu.chunks.postprocessing
-  (:require [clojure.walk :refer [postwalk-replace]]))
+  (:require [clojure.walk :refer [postwalk-replace]]
+            [sprog.iglu.core :refer [merge-chunks]]))
 
-(defn get-simple-gaussian-chunk [& [sample-radius]]
-  (let [sample-radius (or sample-radius 16)]
-    (postwalk-replace
-     {:sample-radius-i (str sample-radius)}
-     '{:functions
-       {gaussian {([vec2 float] float)
-                  ([offset sigma]
-                   (=vec2 scaledOffset (/ offset sigma))
-                   (/ (exp (* -0.5 (dot scaledOffset scaledOffset)))
-                      (* 6.28 (pow sigma 2))))}
-        blur {([sampler2D vec2 float] vec4)
-              ([tex pos ratio]
-               (=int radius :sample-radius-i)
-               (=vec4 O (vec4 0))
-               ("for (int x = -radius; x <= radius; x++)"
-                ("for (int y = -radius; y <= radius; y++)"
-                 (=vec2 d (vec2 x y))
-                 (+= O (* (gaussian d ratio)
-                          (texture tex
-                                   (+ pos
-                                      (* (/ (vec2 1)
-                                            (vec2 (textureSize tex i0)))
-                                         d)))))))
-               (/ O O.a))}}})))
+(def gaussian-chunk
+  '{:functions
+    {gaussian {([vec2 float] float)
+               ([offset sigma]
+                (=vec2 scaledOffset (/ offset sigma))
+                (/ (exp (* -0.5 (dot scaledOffset scaledOffset)))
+                   (* 6.28 (pow sigma 2))))}}})
 
-(defn sparse-gaussian-expression [value-fn radius sigma & [skip-factor]]
-  (let [coords (conj (mapcat (fn [r]
-                               (list [0 r]
-                                     [r r]
-                                     [r 0]
-                                     [r (- r)]
-                                     [0 (- r)]
-                                     [(- r) (- r)]
-                                     [(- r) 0]
-                                     [(- r) r]))
-                             (range 1 (inc radius) (or skip-factor 1)))
-                     [0 0])
-        factors (map (fn [[x y]]
+(defn star-neighborhood [radius & [skip-factor]]
+  (conj (mapcat (comp (fn [r]
+                        (list [0 r]
+                              [r r]
+                              [r 0]
+                              [r (- r)]
+                              [0 (- r)]
+                              [(- r) (- r)]
+                              [(- r) 0]
+                              [(- r) r]))
+                      (partial * (or skip-factor 1)))
+                (range 1 (inc radius)))
+        [0 0]))
+
+(defn plus-neighborhood [radius & [skip-factor]]
+  (conj (mapcat (comp (fn [r]
+                        (list [0 r]
+                              [r 0]
+                              [0 (- r)]
+                              [(- r) 0]))
+                      (partial * (or skip-factor 1)))
+                (range 1 (inc radius)))
+        [0 0]))
+
+(defn square-neighborhood [radius & [skip-factor]]
+  (mapv (partial mapv (partial * (or skip-factor 1)))
+        (for [x (range (- radius) (inc radius))
+              y (range (- radius) (inc radius))]
+          [x y])))
+
+(defn prescaled-gaussian-sample-expression [neighborhood
+                                            value-expression
+                                            sigma]
+  (let [factors (map (fn [[x y]]
                        (Math/exp
                         (/ (- (+ (* x x) (* y y)))
                            (* 2 sigma sigma))))
-                     coords)
+                     neighborhood)
         factor-sum (apply + factors)]
     (conj (map (fn [[x y] factor]
-                 (postwalk-replace
-                  {:x (.toFixed x 1)
-                   :y (.toFixed y 1)
-                   :factor (.toFixed (/ factor factor-sum) 8)
-                   :value-fn value-fn}
-                  '(* (:value-fn :x :y) :factor)))
-               coords
+                 (list '*
+                       (/ factor factor-sum)
+                       (postwalk-replace
+                        {:x x
+                         :y y}
+                        value-expression)))
+               neighborhood
                factors)
           '+)))
+
+(defn create-gaussian-sample-chunk [texture-name neighborhood]
+  (merge-chunks
+   gaussian-chunk
+   {:functions
+    {'gaussianSample
+     {'([vec2 vec2 float] vec4)
+      (concat
+       '([pos offsetFactor sigma]
+         (=vec4 sampleSum (vec4 0))
+         (=float factorSum 0)
+         (=vec2 offset (vec2 0))
+         (=float factor 0))
+       (mapcat (fn [[x y]]
+                 (postwalk-replace
+                  {:x x
+                   :y y
+                   :texture-name texture-name}
+                  '((= offset (vec2 :x :y))
+                    (= factor (gaussian offset sigma))
+                    (+= factorSum factor)
+                    (+= sampleSum
+                        (* factor
+                           (texture :texture-name
+                                    (+ pos
+                                       (* offsetFactor offset))))))))
+               neighborhood)
+       '((/ sampleSum factorSum)))}}}))
 
 (defn get-bloom-chunk [texture-type]
   (postwalk-replace
