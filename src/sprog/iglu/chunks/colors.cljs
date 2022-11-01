@@ -21,6 +21,26 @@
                               0
                               1)))}}})
 
+; derived from https://www.shadertoy.com/view/4dKcWK
+(def rgb-to-hsv-chunk
+  '{:functions {rgb2hsv
+                {([vec3] vec3)
+                 ([rgb]
+                  (=vec4 p (if (< rgb.g rgb.b)
+                             (vec4 rgb.bg -1 0.666666666)
+                             (vec4 rgb.gb 0 -0.333333333)))
+                  (=vec4 q (if (< rgb.r p.x)
+                             (vec4 p.xyw rgb.r)
+                             (vec4 rgb.r p.yzx)))
+                  (=float c (- q.x (min q.w q.y)))
+                  (=float h (abs (+ (/ (- q.w q.y)
+                                       (+ "0.0000001"
+                                          (* 6 c)))
+                                    q.z)))
+                  (=vec3 hcv (vec3 h c q.x))
+                  (=float s (/ hcv.y (+ hcv.z "0.0000001")))
+                  (vec3 hcv.x s hcv.z))}}})
+
 ; derived from https://www.shadertoy.com/view/MsS3Wc
 (def hsv-to-rgb-chunk
   '{:functions {hsv2rgb

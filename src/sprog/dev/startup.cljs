@@ -17,7 +17,8 @@
             sprog.dev.webcam-demo
             sprog.dev.bloom-demo
             sprog.dev.texture-3d-demo
-            sprog.dev.gaussian-demo))
+            sprog.dev.gaussian-demo
+            sprog.dev.hsv-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -36,9 +37,10 @@
   #_(sprog.dev.voronoise-demo/init)
   #_(sprog.dev.video-demo/init)
   #_(sprog.dev.webcam-demo/init)
-  (sprog.dev.bloom-demo/init)
+  #_(sprog.dev.bloom-demo/init)
   #_(sprog.dev.texture-3d-demo/init)
-  #_(sprog.dev.gaussian-demo/init))
+  #_(sprog.dev.gaussian-demo/init)
+  (sprog.dev.hsv-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
