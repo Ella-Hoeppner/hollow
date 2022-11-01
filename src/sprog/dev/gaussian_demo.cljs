@@ -68,11 +68,10 @@
     (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           top-frag-source
-                          [width half-height]
+                          [0 half-height width half-height]
                           {:floats {"size" [width height]
                                     "blurFactor" (first (mouse-pos))}
-                           :textures {"tex" @html-image-atom}}
-                          {:offset [0 half-height]})
+                           :textures {"tex" @html-image-atom}})
     (run-purefrag-shader! gl
                           bottom-frag-source
                           [width half-height]

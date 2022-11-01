@@ -69,15 +69,17 @@
   (set-sprog-attributes! gl sprog attribute-map))
 
 (defn run-sprog! [gl sprog size uniform-map attribute-map start length
-                  & [{:keys [target offset]}]]
+                  & [{:keys [target]}]]
   (if target
     (if (coll? target)
       (apply (partial target-textures! gl) target)
       (target-textures! gl target))
     (target-screen! gl))
-  (let [[width height] (if (number? size) [size size] size)
-        [x y] (if offset offset [0 0])]
-    (.viewport gl x y width height)
+  (let [[offset-x offset-y width height]
+        (cond (number? size) [0 0 size size]
+              (= (count size) 2) (vec (concat [0 0] size))
+              (= (count size) 4) (vec size))]
+    (.viewport gl offset-x offset-y width height)
     (use-sprog! gl sprog uniform-map attribute-map)
     (.drawArrays gl gl.TRIANGLES start length)))
 

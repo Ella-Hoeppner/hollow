@@ -44,19 +44,17 @@
         width gl.canvas.width
         height gl.canvas.height
         resolution [width height]
-        half-width (* width 0.5)
-        split-resolution [half-width height]]
+        half-width (* width 0.5)]
     (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           noise-2d-frag-source
-                          split-resolution
+                          [half-width height]
                           {:floats {"size" resolution}})
     (run-purefrag-shader! gl
                           noise-3d-frag-source
-                          split-resolution
+                          [half-width 0 half-width height]
                           {:floats {"size" resolution
-                                    "time" (u/seconds-since-startup)}}
-                          {:offset [half-width 0]})
+                                    "time" (u/seconds-since-startup)}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

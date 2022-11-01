@@ -31,14 +31,14 @@
   #_(sprog.dev.simplex-demo/init)
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
-  #_(sprog.dev.bilinear-demo/init)
+  (sprog.dev.bilinear-demo/init)
   #_(sprog.dev.vertex-demo/init)
   #_(sprog.dev.voronoise-demo/init)
   #_(sprog.dev.video-demo/init)
   #_(sprog.dev.webcam-demo/init)
   #_(sprog.dev.bloom-demo/init)
   #_(sprog.dev.texture-3d-demo/init)
-  (sprog.dev.gaussian-demo/init))
+  #_(sprog.dev.gaussian-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

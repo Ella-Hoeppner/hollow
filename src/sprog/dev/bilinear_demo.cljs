@@ -48,21 +48,19 @@
   (let [gl @gl-atom
         width gl.canvas.width
         height gl.canvas.height
-        resolution [width height]
-        half-resolution (update resolution 0 (partial * 0.5))]
+        half-width (* width 0.5)]
     (maximize-canvas gl.canvas)
     (run-purefrag-shader! gl
                           nearest-frag-source
-                          half-resolution
-                          {:floats {"size" half-resolution}
+                          [half-width height]
+                          {:floats {"size" [half-width height]}
                            :textures {"tex" @tex-atom}})
     (run-purefrag-shader! gl
                           bilinear-frag-source
-                          half-resolution
-                          {:floats {"size" half-resolution
-                                    "offset" [(* width 0.5) 0]}
-                           :textures {"tex" @tex-atom}}
-                          {:offset [(* width 0.5) 0]})
+                          [half-width 0 half-width height]
+                          {:floats {"size" [half-width height]
+                                    "offset" [half-width 0]}
+                           :textures {"tex" @tex-atom}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
