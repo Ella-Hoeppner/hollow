@@ -12,14 +12,15 @@
 
 (defn iglu->glsl
   ([shader]
-   (-> shader
-       parse
-       parsed-iglu->glsl))
+   (->> shader
+        (apply-macros default-macros)
+        parse
+        parsed-iglu->glsl))
   ([replacement-and-macro-map & chunks]
    (let [{macros true
           replacements false}
          (group-by (comp fn? second) replacement-and-macro-map)]
-     (iglu->glsl
-      (prewalk-replace (into {} replacements)
-                       (apply-macros (into default-macros macros)
-                                     (apply merge-chunks chunks)))))))
+     (->> chunks
+          (apply merge-chunks)
+          (apply-macros (into default-macros macros))
+          (prewalk-replace (into {} replacements))))))
