@@ -1,35 +1,29 @@
 (ns sprog.iglu.chunks.postprocessing
   (:require [clojure.walk :refer [postwalk-replace]]))
 
-(defn get-simple-gaussian [& [samples]]
-  (postwalk-replace
-   {:samples (or samples 32)
-    :LOD 2
-    :sLOD 4}
-
-   '{:functions
-     {gaussian
-      {([vec2 float] float)
-       ([i ratio]
-        (=float sigma (* :samples ratio))
-        (/ (exp (* -0.5 (dot (/ i sigma) (/ i sigma))))
-           (* 6.28 (pow sigma 2))))}
-
-      blur {([sampler2D vec2 float] vec4)
-            ([tex pos ratio]
-             (=int s (/ (int :samples) (int :sLOD)))
-             (=vec4 O (vec4 0))
-
-             ("for (int i = 0; i < s*s; i++)"
-              (=vec2 d (- (* (vec2 (% i s)
-                                   (/ i s))
-                             :sLOD)
-                          (/ :samples 2)))
-              (+= O (* (gaussian d ratio) (texture tex (+ pos
-                                                          (* (/ (vec2 1) size)
-                                                             d)) :LOD))))
-
-             (/ O O.a))}}}))
+(defn get-simple-gaussian-chunk [& [sample-radius]]
+  (let [sample-radius (or sample-radius 16)]
+    (postwalk-replace
+     {:sample-radius-i (str sample-radius)}
+     '{:functions
+       {gaussian {([vec2 float] float)
+                  ([offset sigma]
+                   (=vec2 scaledOffset (/ offset sigma))
+                   (/ (exp (* -0.5 (dot scaledOffset scaledOffset)))
+                      (* 6.28 (pow sigma 2))))}
+        blur {([sampler2D vec2 float] vec4)
+              ([tex pos ratio]
+               (=int radius :sample-radius-i)
+               (=vec4 O (vec4 0))
+               ("for (int x = -radius; x <= radius; x++)"
+                ("for (int y = -radius; y <= radius; y++)"
+                 (=vec2 d (vec2 x y))
+                 (+= O (* (gaussian d ratio)
+                          (texture tex
+                                   (+ pos
+                                      (* (/ (vec2 1) size)
+                                         d)))))))
+               (/ O O.a))}}})))
 
 (defn sparse-gaussian-expression [value-fn radius sigma & [skip-factor]]
   (let [coords (conj (mapcat (fn [r]

@@ -1,7 +1,9 @@
 (ns sprog.dev.simple-gaussian-demo
   (:require [sprog.util :as u]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.postprocessing :refer [get-simple-gaussian]]
+            [sprog.iglu.chunks.postprocessing 
+             :refer
+             [get-simple-gaussian-chunk]]
             [sprog.iglu.chunks.misc :refer [rescale-chunk]]
             [sprog.dom.canvas :refer [create-gl-canvas
                                       maximize-canvas]]
@@ -13,12 +15,11 @@
 
 (def frame-atom (atom 0))
 
-
 (def frag-source
   (iglu->glsl
    {}
    rescale-chunk
-   (get-simple-gaussian 32 2)
+   (get-simple-gaussian-chunk)
    '{:version "300 es"
      :precision {float highp
                  sampler2D highp}
@@ -30,7 +31,7 @@
             (= pos.y (- 1 pos.y))
             (= fragColor (blur tex
                                pos
-                               (rescale -1 1 0.01 0.9 (sin time)))))}))
+                               (rescale -1 1 0.01 10 (sin time)))))}))
 
 (defn update-page! []
   (let [gl @gl-atom
