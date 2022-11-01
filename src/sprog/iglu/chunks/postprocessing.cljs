@@ -21,7 +21,8 @@
                  (+= O (* (gaussian d ratio)
                           (texture tex
                                    (+ pos
-                                      (* (/ (vec2 1) size)
+                                      (* (/ (vec2 1)
+                                            (vec2 (textureSize tex i0)))
                                          d)))))))
                (/ O O.a))}}})))
 
