@@ -1,7 +1,6 @@
 (ns sprog.dev.bloom-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.textures :refer [create-f8-tex
-                                          copy-html-image-data!]]
+            [sprog.webgl.textures :refer [html-image-texture]]
             [sprog.dom.canvas :refer [create-gl-canvas
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
@@ -11,8 +10,6 @@
 
 (defonce gl-atom (atom nil))
 (defonce tex-atom (atom nil))
-(defonce video-element-atom (atom nil))
-(defonce time-updated?-atom (atom nil))
 
 (def frag-source
   (iglu->glsl
@@ -35,8 +32,6 @@
   (let [gl @gl-atom
         resolution [gl.canvas.width gl.canvas.height]]
     (square-maximize-canvas gl.canvas)
-    (when @time-updated?-atom
-      (copy-html-image-data! gl @tex-atom @video-element-atom))
     (run-purefrag-shader! gl
                           frag-source
                           resolution
@@ -46,15 +41,7 @@
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (let [gl (create-gl-canvas true)
-        video (js/document.createElement "video")]
-    (set! video.src "./test_video.mp4")
-    (set! video.muted "muted")
-    (set! video.loop "true")
-    (.play video)
-    (.addEventListener video "timeupdate" #(reset! time-updated?-atom true))
-    (reset! video-element-atom video)
-
+  (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! tex-atom (create-f8-tex gl 1)))
+    (reset! tex-atom (html-image-texture gl "img" gl)))
   (update-page!))
