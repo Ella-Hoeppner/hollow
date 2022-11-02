@@ -3,8 +3,8 @@
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.misc :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
-            [sprog.webgl.framebuffers :refer [target-textures!
-                                              target-screen!]]
+            [sprog.webgl.textures :refer [target-textures!
+                                          target-screen!]]
             [sprog.webgl.attributes :refer [set-sprog-attributes!
                                             set-sprog-attribute!
                                             create-boj!]]
