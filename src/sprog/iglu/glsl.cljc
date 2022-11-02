@@ -196,10 +196,6 @@
 
 (defn ->function [[name signature-function-map]]
   (map (fn [[signature {:keys [args body]}]]
-         (when-not signature
-           (throw
-            (ex-info "Nothing found in :signatures for function"
-                     {:fn name})))
          (let [{:keys [in out]} signature]
            (when (not= (count in) (count args))
              (throw (ex-info
