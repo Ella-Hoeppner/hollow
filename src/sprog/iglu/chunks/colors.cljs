@@ -34,11 +34,11 @@
                              (vec4 rgb.r p.yzx)))
                   (=float c (- q.x (min q.w q.y)))
                   (=float h (abs (+ (/ (- q.w q.y)
-                                       (+ "0.0000001"
+                                       (+ 0.0000001
                                           (* 6 c)))
                                     q.z)))
                   (=vec3 hcv (vec3 h c q.x))
-                  (=float s (/ hcv.y (+ hcv.z "0.0000001")))
+                  (=float s (/ hcv.y (+ hcv.z 0.0000001)))
                   (vec3 hcv.x s hcv.z))}}})
 
 ; derived from https://www.shadertoy.com/view/MsS3Wc

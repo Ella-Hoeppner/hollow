@@ -15,6 +15,16 @@
   #?(:clj (Integer/parseInt s))
   #?(:cljs (js/parseInt s)))
 
+(defn num->glsl-str [num]
+  (apply str
+         (reverse
+          (some #(when (not= (first %) \0)
+                   %)
+                (iterate rest
+                         (reverse
+                          #?(:clj (format "%.20f" num)
+                             :cljs (.toFixed num 20))))))))
+
 (defn symbol->glsl-str [sym]
   (string-replace (str sym) "-" "_"))
 
@@ -128,10 +138,7 @@
          (str fn-name))))
 
 (defmethod ->subexpression :number [[_ number]]
-  (let [num-str (str number)]
-    (if (includes? num-str ".")
-      num-str
-      (str num-str "."))))
+  (num->glsl-str number))
 
 (defmethod ->subexpression :int-literal [[_ literal]]
   (parse-int (subs (str literal) 1)))
