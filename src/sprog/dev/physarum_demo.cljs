@@ -4,7 +4,7 @@
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-shaders!
                                          run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [create-u16-tex]]
+            [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
@@ -227,9 +227,9 @@
     (reset! gl-atom gl)
 
     (reset! substrate-texs-atom
-            (u/gen 2 (create-u16-tex gl substrate-resolution)))
+            (u/gen 2 (create-tex gl :u16 substrate-resolution)))
     (reset! agent-texs-atom
-            (u/gen 2 (create-u16-tex gl agent-tex-resolution))))
+            (u/gen 2 (create-tex gl :u16 agent-tex-resolution))))
 
   (reset! frame-atom 0)
 

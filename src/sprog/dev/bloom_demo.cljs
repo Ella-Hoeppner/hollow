@@ -1,6 +1,6 @@
 (ns sprog.dev.bloom-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.textures :refer [html-image-texture]]
+            [sprog.webgl.textures :refer [html-image-tex]]
             [sprog.dom.canvas :refer [create-gl-canvas
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
@@ -46,5 +46,5 @@
 (defn init []
   (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! tex-atom (html-image-texture gl "img" gl)))
+    (reset! tex-atom (html-image-tex gl "img" gl)))
   (update-page!))

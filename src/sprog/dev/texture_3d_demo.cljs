@@ -3,7 +3,7 @@
             [sprog.dom.canvas :refer [create-gl-canvas
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [create-f8-tex]]
+            [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
 (def tex-size 6)
@@ -36,10 +36,11 @@
 
 (defn init []
   (let [gl (create-gl-canvas true)
-        tex (create-f8-tex gl 
-                           [tex-size tex-size 4]
-                           {:3d true
-                            :wrap-mode [:clamp :clamp :repeat]})]
+        tex (create-tex gl
+                        :f8
+                        [tex-size tex-size 4]
+                        {:3d true
+                         :wrap-mode [:clamp :clamp :repeat]})]
     (reset! gl-atom  gl)
     (reset! tex-atom tex)
     (run-purefrag-shader! gl

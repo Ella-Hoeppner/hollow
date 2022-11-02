@@ -1,7 +1,6 @@
 (ns sprog.webgl.textures)
 
-
-(defn set-texture-parameters [gl texture filter-mode wrap-mode & [three-d?]]
+(defn set-tex-parameters [gl texture filter-mode wrap-mode & [three-d?]]
   (let [texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)]
     (.bindTexture gl texture-target texture)
     (let [gl-filter-mode ({:linear gl.LINEAR
@@ -39,17 +38,16 @@
                         gl.TEXTURE_WRAP_R
                         gl-wrap-r)))))
 
-(defn create-texture [gl
-                      resolution
-                      texture-type
-                      & [{:keys [wrap-mode
-                                 filter-mode
-                                 channels
-                                 data]
-                          :or {wrap-mode :repeat
-                               filter-mode :linear
-                               channels 4}
-                          three-d? :3d}]]
+(defn create-tex [gl
+                  texture-type
+                  resolution
+                  & [{:keys [wrap-mode
+                             filter-mode
+                             channels
+                             data]
+                      :or {wrap-mode :repeat
+                           channels 4}
+                      three-d? :3d}]]
   (let [texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)
         tex (.createTexture gl texture-target)]
     (.bindTexture gl texture-target tex)
@@ -101,17 +99,15 @@
                        format
                        webgl-type
                        data))))
-    (set-texture-parameters gl tex filter-mode wrap-mode three-d?)
+    (set-tex-parameters gl
+                        tex
+                        (or filter-mode
+                            (if (= texture-type :f8)
+                              :linear
+                              :nearest))
+                        wrap-mode
+                        three-d?)
     tex))
-
-(defn create-f8-tex [gl resolution & [options]]
-  (create-texture gl resolution :f8 options))
-
-(defn create-u16-tex [gl resolution & [options]]
-  (create-texture gl resolution :u16 (merge options {:filter-mode :nearest})))
-
-(defn create-u32-tex [gl resolution & [options]]
-  (create-texture gl resolution :u32 (merge options {:filter-mode :nearest})))
 
 (defn copy-html-image-data! [gl tex element-or-id]
   (let [element (if (string? element-or-id)
@@ -126,13 +122,13 @@
                  gl.UNSIGNED_BYTE
                  element)))
 
-(defn html-image-texture [gl element-or-id & [{:keys [wrap-mode
-                                                      filter-mode]
-                                               :or {wrap-mode :repeat
-                                                    filter-mode :linear}}]]
+(defn html-image-tex [gl element-or-id & [{:keys [wrap-mode
+                                                  filter-mode]
+                                           :or {wrap-mode :repeat
+                                                filter-mode :linear}}]]
   (let [texture (.createTexture gl)]
     (.bindTexture gl gl.TEXTURE_2D texture)
-    (set-texture-parameters gl texture filter-mode wrap-mode)
+    (set-tex-parameters gl texture filter-mode wrap-mode)
     (copy-html-image-data! gl texture element-or-id)
     texture))
 

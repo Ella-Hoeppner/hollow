@@ -1,6 +1,6 @@
 (ns sprog.dev.video-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.textures :refer [create-f8-tex
+            [sprog.webgl.textures :refer [create-tex
                                           copy-html-image-data!]]
             [sprog.dom.canvas :refer [create-gl-canvas
                                       square-maximize-canvas]]
@@ -43,5 +43,5 @@
     (reset! video-element-atom video)
 
     (reset! gl-atom gl)
-    (reset! tex-atom (create-f8-tex gl 1)))
+    (reset! tex-atom (create-tex gl :f8 1)))
   (update-page!))

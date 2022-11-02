@@ -4,7 +4,7 @@
             [sprog.dom.canvas :refer [create-gl-canvas
                                       maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [create-f8-tex]]))
+            [sprog.webgl.textures :refer [create-tex]]))
 
 (def texture-resolution 8)
 
@@ -46,10 +46,11 @@
 (defn init []
   (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! texture-atom (create-f8-tex gl
-                                        texture-resolution
-                                        {:filter-mode :nearest
-                                         :channels 2}))
+    (reset! texture-atom (create-tex gl
+                                     :f8
+                                     texture-resolution
+                                     {:filter-mode :nearest
+                                      :channels 2}))
     (run-purefrag-shader! gl
                           render-frag-source
                           texture-resolution

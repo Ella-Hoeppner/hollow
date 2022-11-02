@@ -3,8 +3,8 @@
             [sprog.dom.canvas :refer [create-gl-canvas
                                       square-maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [create-f8-tex
-                                          html-image-texture]]
+            [sprog.webgl.textures :refer [create-tex
+                                          html-image-tex]]
             [sprog.input.mouse :refer [mouse-pos]]))
 
 (def sort-resolution 1000)
@@ -89,7 +89,7 @@
 (defn init []
   (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! texs-atom (u/gen 2 (create-f8-tex gl sort-resolution)))
+    (reset! texs-atom (u/gen 2 (create-tex gl :f8 sort-resolution)))
     (reset! frame-atom 0)
     (run-purefrag-shader! gl
                           '{:version "300 es"
@@ -103,6 +103,6 @@
                           sort-resolution
                           {:floats {"size" [sort-resolution sort-resolution]}
                            :textures {"tex"
-                                      (html-image-texture gl "img")}}
+                                      (html-image-tex gl "img")}}
                           {:target (first @texs-atom)}))
   (update-page!))

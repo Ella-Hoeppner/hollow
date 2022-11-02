@@ -3,7 +3,7 @@
             [sprog.dom.canvas :refer [create-gl-canvas
                                       maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [create-u16-tex]]
+            [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]))
 
@@ -66,6 +66,9 @@
 (defn init []
   (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! tex-atom (create-u16-tex gl 2 {:wrap-mode :clamp
-                                           :data (js/Uint16Array. pixel-data)})))
+    (reset! tex-atom (create-tex gl
+                                 :u16
+                                 2
+                                 {:wrap-mode :clamp
+                                  :data (js/Uint16Array. pixel-data)})))
   (update-page!))

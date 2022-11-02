@@ -10,7 +10,7 @@
             [sprog.dom.canvas :refer [create-gl-canvas
                                       maximize-canvas]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [html-image-texture]]))
+            [sprog.webgl.textures :refer [html-image-tex]]))
 
 (defonce gl-atom (atom nil))
 (defonce html-image-atom (atom nil))
@@ -83,5 +83,5 @@
 (defn init []
   (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! html-image-atom (html-image-texture gl "img"))
+    (reset! html-image-atom (html-image-tex gl "img"))
     (update-page!)))

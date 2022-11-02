@@ -1,6 +1,6 @@
 (ns sprog.dev.webcam-demo
   (:require [sprog.util :as u]
-            [sprog.webgl.textures :refer [create-f8-tex
+            [sprog.webgl.textures :refer [create-tex
                                           copy-html-image-data!
                                           create-webcam-video-element]]
             [sprog.dom.canvas :refer [create-gl-canvas
@@ -40,7 +40,7 @@
    (fn [video]
      (let [gl (create-gl-canvas true)]
        (reset! gl-atom gl)
-       (reset! tex-atom (create-f8-tex gl 1))
+       (reset! tex-atom (create-tex gl :f8 1))
        (.addEventListener video "timeupdate" #(reset! time-updated?-atom true))
        (reset! video-element-atom video)
        (update-page!)))))
