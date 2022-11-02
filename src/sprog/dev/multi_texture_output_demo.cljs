@@ -20,8 +20,8 @@
      :precision {float highp}
      :outputs {fragColor0 vec4
                fragColor1 vec4}
-     :qualifiers {fragColor0 "layout(location = 0)"
-                  fragColor1 "layout(location = 1)"}
+     :layout {fragColor0 0
+              fragColor1 1}
      :main ((=vec2 pos (/ gl_FragCoord.xy :texture-resolution-f))
             (= fragColor0 (vec4 pos
                                 0

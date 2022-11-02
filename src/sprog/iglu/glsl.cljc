@@ -295,6 +295,15 @@
                    (inner-symbols struct-content))])
                structs))))
 
+(defn layout-qualifiers [layout]
+  (into {}
+        (map (fn [[name location]]
+               [name
+                (str "layout(location = "
+                     location
+                     ")")])
+             layout)))
+
 (defn parsed-iglu->glsl [{:keys [version
                                  precision
                                  uniforms
@@ -304,19 +313,21 @@
                                  inputs
                                  outputs
                                  qualifiers
+                                 layout
                                  main
                                  functions]}]
   (let [full-functions (cond-> functions
                          main (assoc 'main {{:in [] :out 'void}
-                                            {:args [] :body main}}))]
+                                            {:args [] :body main}}))
+        full-qualifiers (merge qualifiers (layout-qualifiers layout))]
     (->> (into (cond-> []
                  version (conj (str "#version " version))
                  precision (into (mapv ->precision precision))
                  uniforms (into (mapv ->uniform uniforms))
                  attributes (into (mapv ->attribute attributes))
                  varyings (into (mapv ->varying varyings))
-                 inputs (into (mapv (partial ->in qualifiers) inputs))
-                 outputs (into (mapv (partial ->out qualifiers) outputs))
+                 inputs (into (mapv (partial ->in full-qualifiers) inputs))
+                 outputs (into (mapv (partial ->out full-qualifiers) outputs))
                  structs (into (mapv ->struct (sort-structs structs))))
                (vec (mapcat ->function (sort-fns full-functions))))
          (reduce (partial stringify 0) [])

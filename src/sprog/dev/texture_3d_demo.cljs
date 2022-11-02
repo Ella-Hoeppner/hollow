@@ -53,10 +53,10 @@
                                        layer2Color vec4
                                        layer3Color vec4
                                        layer4Color vec4}
-                             :qualifiers {layer1Color "layout(location = 0)"
-                                          layer2Color "layout(location = 1)"
-                                          layer3Color "layout(location = 2)"
-                                          layer4Color "layout(location = 3)"}
+                             :layout {layer1Color 0
+                                      layer2Color 1
+                                      layer3Color 2
+                                      layer4Color 3}
                              :main
                              ((=float colorValue
                                       (/ (length 
