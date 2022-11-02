@@ -109,6 +109,10 @@
                         three-d?)
     tex))
 
+(defn delete-tex [gl & textures]
+  (doseq [tex textures]
+    (.deleteTexture gl tex)))
+
 (defn copy-html-image-data! [gl tex element-or-id]
   (let [element (if (string? element-or-id)
                   (.getElementById js/document element-or-id)
