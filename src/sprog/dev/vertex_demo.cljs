@@ -1,9 +1,11 @@
 (ns sprog.dev.vertex-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-canvas]]
+                                      square-maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-shaders!]]
-            [sprog.webgl.attributes :refer [create-boj!]]))
+            [sprog.webgl.attributes :refer [create-boj!]]
+            [sprog.webgl.core :refer-macros [with-context]]))
 
 (def pos-buffer-data [0 0
                       1 0
@@ -35,13 +37,11 @@
     :outputs {fragColor vec4}
     :main ((= fragColor (vec4 color 1)))})
 
-(defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (square-maximize-canvas gl.canvas)
-    (run-shaders! gl
-                  [vert-source frag-source]
-                  resolution
+(with-context @gl-atom
+  (defn update-page! []
+    (square-maximize-gl-canvas)
+    (run-shaders! [vert-source frag-source]
+                  (canvas-resolution)
                   {:matrices {"rotation"
                               (let [angle (u/seconds-since-startup)]
                                 [(Math/cos angle) (- (Math/sin angle))
@@ -50,17 +50,14 @@
                    "vertexColor" @color-boj-atom}
                   0
                   3)
-    (js/requestAnimationFrame update-page!)))
+    (js/requestAnimationFrame update-page!))
 
-(defn init []
-  (let [gl (create-gl-canvas true)]
-    (reset! gl-atom gl)
+  (defn init []
+    (reset! gl-atom (create-gl-canvas true))
     (reset! pos-boj-atom
-            (create-boj! gl
-                         2
+            (create-boj! 2
                          {:initial-data (js/Float32Array. pos-buffer-data)}))
     (reset! color-boj-atom
-            (create-boj! gl
-                         3
-                         {:initial-data (js/Float32Array. color-buffer-data)})))
-  (update-page!))
+            (create-boj! 3
+                         {:initial-data (js/Float32Array. color-buffer-data)}))
+    (update-page!)))

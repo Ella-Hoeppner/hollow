@@ -1,11 +1,13 @@
 (ns sprog.dev.simplex-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-canvas]]
+                                      maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                              simplex-3d-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.webgl.core :refer [with-context]]))
 
 (defonce gl-atom (atom nil))
 
@@ -40,22 +42,19 @@
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
 (defn update-page! []
-  (let [gl @gl-atom
-        width gl.canvas.width
-        height gl.canvas.height
-        resolution [width height]
-        half-width (* width 0.5)]
-    (maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          noise-2d-frag-source
-                          [half-width height]
-                          {:floats {"size" resolution}})
-    (run-purefrag-shader! gl
-                          noise-3d-frag-source
-                          [half-width 0 half-width height]
-                          {:floats {"size" resolution
-                                    "time" (u/seconds-since-startup)}})
-    (js/requestAnimationFrame update-page!)))
+  (with-context @gl-atom
+    (let [[width height] (canvas-resolution)
+          resolution [width height]
+          half-width (* width 0.5)]
+      (maximize-gl-canvas)
+      (run-purefrag-shader! noise-2d-frag-source
+                            [half-width height]
+                            {:floats {"size" resolution}})
+      (run-purefrag-shader! noise-3d-frag-source
+                            [half-width 0 half-width height]
+                            {:floats {"size" resolution
+                                      "time" (u/seconds-since-startup)}})
+      (js/requestAnimationFrame update-page!))))
 
 (defn init []
   (reset! gl-atom (create-gl-canvas true))

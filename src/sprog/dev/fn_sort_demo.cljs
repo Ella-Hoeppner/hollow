@@ -1,10 +1,12 @@
 (ns sprog.dev.fn-sort-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-canvas]]
+                                      maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [merge-chunks]]
-            [clojure.walk :refer [postwalk-replace]]))
+            [clojure.walk :refer [postwalk-replace]]
+            [sprog.webgl.core :refer [with-context]]))
 
 (def fn-count 50)
 
@@ -33,15 +35,13 @@
                (range fn-count))))
 
 (defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          frag-source
-                          resolution
-                          {:floats {"size" resolution}})
+  (with-context @gl-atom
+    (maximize-gl-canvas)
+    (run-purefrag-shader! frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
-  (reset! gl-atom  (create-gl-canvas true))
+  (reset! gl-atom (create-gl-canvas true))
   (update-page!))

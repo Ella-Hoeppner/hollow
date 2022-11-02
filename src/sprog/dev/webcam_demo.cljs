@@ -4,22 +4,22 @@
                                           copy-html-image-data!
                                           create-webcam-video-element]]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-shader!]]))
+                                      square-maximize-gl-canvas
+                                      canvas-resolution]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
+            [sprog.webgl.core :refer-macros [with-context]]))
 
 (defonce gl-atom (atom nil))
 (defonce tex-atom (atom nil))
 (defonce video-element-atom (atom nil))
 (defonce time-updated?-atom (atom nil))
 
-(defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (square-maximize-canvas gl.canvas)
+(with-context @gl-atom
+  (defn update-page! []
+    (square-maximize-gl-canvas)
     (when @time-updated?-atom
-      (copy-html-image-data! gl @tex-atom @video-element-atom))
-    (run-purefrag-shader! gl
-                          '{:version "300 es"
+      (copy-html-image-data! @tex-atom @video-element-atom))
+    (run-purefrag-shader! '{:version "300 es"
                             :precision {float highp}
                             :uniforms {size vec2
                                        tex sampler2D}
@@ -30,17 +30,16 @@
                                              (texture tex
                                                       (vec2 pos.x (- 1 pos.y))))
                                             1)))}
-                          resolution
-                          {:floats {"size" resolution}
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)}
                            :textures {"tex" @tex-atom}})
-    (js/requestAnimationFrame update-page!)))
+    (js/requestAnimationFrame update-page!))
 
-(defn init []
-  (create-webcam-video-element
-   (fn [video]
-     (let [gl (create-gl-canvas true)]
-       (reset! gl-atom gl)
-       (reset! tex-atom (create-tex gl :f8 1))
+  (defn init []
+    (create-webcam-video-element
+     (fn [video]
+       (reset! gl-atom (create-gl-canvas true))
+       (reset! tex-atom (create-tex :f8 1))
        (.addEventListener video "timeupdate" #(reset! time-updated?-atom true))
        (reset! video-element-atom video)
        (update-page!)))))

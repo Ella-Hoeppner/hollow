@@ -1,11 +1,13 @@
 (ns sprog.dev.tilable-simplex-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-canvas]]
+                                      maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.input.mouse :refer [mouse-pos]]))
+            [sprog.input.mouse :refer [mouse-pos]]
+            [sprog.webgl.core :refer [with-context]]))
 
 (defonce gl-atom (atom nil))
 
@@ -33,15 +35,11 @@
                                1)))}))
 
 (defn update-page! []
-  (let [gl @gl-atom
-        width gl.canvas.width
-        height gl.canvas.height
-        resolution [width height]]
-    (maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          frag-source
-                          resolution
-                          {:floats {"size" resolution
+  (with-context @gl-atom
+    (maximize-gl-canvas)
+    (run-purefrag-shader! frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)
                                     "mouse" (mouse-pos)}})
     (js/requestAnimationFrame update-page!)))
 

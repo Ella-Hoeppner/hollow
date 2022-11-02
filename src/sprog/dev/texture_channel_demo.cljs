@@ -2,9 +2,11 @@
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk-replace]]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-canvas]]
+                                      maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.textures :refer [create-tex]]))
+            [sprog.webgl.textures :refer [create-tex]]
+            [sprog.webgl.core :refer-macros [with-context]]))
 
 (def texture-resolution 8)
 
@@ -32,28 +34,23 @@
            (=vec4 textureColor (texture tex pos))
            (= fragColor (vec4 textureColor.xy 0 1)))})
 
-(defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          draw-frag-source
-                          resolution
-                          {:floats {"size" resolution}
+(with-context @gl-atom
+  (defn update-page! []
+    (maximize-gl-canvas)
+    (run-purefrag-shader! draw-frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)}
                            :textures {"tex" @texture-atom}})
-    (js/requestAnimationFrame update-page!)))
+    (js/requestAnimationFrame update-page!))
 
-(defn init []
-  (let [gl (create-gl-canvas true)]
-    (reset! gl-atom gl)
-    (reset! texture-atom (create-tex gl
-                                     :f8
+  (defn init []
+    (reset! gl-atom (create-gl-canvas true))
+    (reset! texture-atom (create-tex :f8
                                      texture-resolution
                                      {:filter-mode :nearest
                                       :channels 2}))
-    (run-purefrag-shader! gl
-                          render-frag-source
+    (run-purefrag-shader! render-frag-source
                           texture-resolution
                           {}
-                          {:target @texture-atom}))
-  (update-page!))
+                          {:target @texture-atom})
+    (update-page!)))

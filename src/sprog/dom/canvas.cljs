@@ -25,6 +25,9 @@
     (set! (.-width canvas) width)
     (set! (.-height canvas) height)))
 
+(defn maximize-gl-canvas [gl & options]
+  (apply (partial maximize-canvas gl.canvas) options))
+
 (defn square-maximize-canvas [canvas & {:keys [max-pixel-ratio]}]
   (let [raw-width js/window.innerWidth
         raw-height js/window.innerHeight
@@ -40,6 +43,12 @@
     (set! (.-height style) (str raw-size "px"))
     (set! (.-width canvas) size)
     (set! (.-height canvas) size)))
+
+(defn canvas-resolution [gl]
+  [gl.canvas.width gl.canvas.height])
+
+(defn square-maximize-gl-canvas [gl & options]
+  (apply (partial square-maximize-canvas gl.canvas) options))
 
 (defn save-image [canvas name]
   (.toBlob canvas

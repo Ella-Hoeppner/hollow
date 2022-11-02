@@ -1,11 +1,13 @@
 (ns sprog.dev.voronoise-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-canvas]]
+                                      maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.webgl.core :refer [with-context]]))
 
 (defonce gl-atom (atom nil))
 
@@ -28,16 +30,13 @@
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
 (defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width
-                    gl.canvas.height]]
-    (maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                            noise-2d-frag-source
-                            resolution
-                            {:floats {"size" resolution
-                                      "mouse" (mouse-pos)
-                                      "time" (u/seconds-since-startup)}}))
+  (with-context @gl-atom
+    (maximize-gl-canvas)
+    (run-purefrag-shader! noise-2d-frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)
+                                    "mouse" (mouse-pos)
+                                    "time" (u/seconds-since-startup)}}))
   (js/requestAnimationFrame update-page!))
 
 (defn init []

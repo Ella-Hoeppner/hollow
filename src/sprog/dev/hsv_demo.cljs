@@ -1,13 +1,15 @@
 (ns sprog.dev.hsv-demo
-  (:require [sprog.util :as u]
+  (:require #_[sprog.util :as u]
             [sprog.webgl.textures :refer [html-image-tex]]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-canvas]]
+                                      square-maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.iglu.chunks.colors :refer [hsv-to-rgb-chunk
                                               rgb-to-hsv-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.webgl.core :refer [with-context]]))
 
 (defonce gl-atom (atom nil))
 (defonce tex-atom (atom nil))
@@ -32,20 +34,18 @@
             (= fragColor (vec4 outRGB
                                1)))}))
 
-(defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (square-maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          frag-source
-                          resolution
-                          {:floats {"size" resolution
+(with-context @gl-atom
+  (defn update-page! []
+    (square-maximize-gl-canvas)
+    (run-purefrag-shader! frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)
                                     "mouse" (mouse-pos)}
                            :textures {"tex" @tex-atom}})
-    (js/requestAnimationFrame update-page!)))
+    (js/requestAnimationFrame update-page!))
 
-(defn init []
-  (let [gl (create-gl-canvas true)]
-    (reset! gl-atom gl)
-    (reset! tex-atom (html-image-tex gl "img")))
-  (update-page!))
+  (defn init []
+    (reset! gl-atom (create-gl-canvas true))
+    (reset! tex-atom (html-image-tex "img"))
+
+    (update-page!)))

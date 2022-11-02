@@ -1,12 +1,14 @@
 (ns sprog.dev.raymarch-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-canvas]]
+                                      square-maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.input.mouse :refer [mouse-pos
                                        mouse-present?]]
             [sprog.iglu.chunks.noise :refer [simplex-4d-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.webgl.core :refer-macros [with-context]]))
 
 (defonce gl-atom (atom nil))
 
@@ -93,17 +95,16 @@
                1)))}))
 
 (defn update-page! []
-  (let [gl @gl-atom
-        resolution gl.canvas.width]
-    (square-maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          frag-glsl
-                          resolution
-                          {:floats {"size" resolution
-                                    "time" (u/seconds-since-startup)
-                                    "mouse" (if (mouse-present?)
-                                              (mouse-pos)
-                                              [0 0])}})
+  (with-context @gl-atom
+    (square-maximize-gl-canvas)
+    (run-purefrag-shader!
+     frag-glsl
+     (canvas-resolution)
+     {:floats {"size" (first (canvas-resolution))
+               "time" (u/seconds-since-startup)
+               "mouse" (if (mouse-present?)
+                         (mouse-pos)
+                         [0 0])}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []

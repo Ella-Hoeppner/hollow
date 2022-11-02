@@ -1,11 +1,13 @@
 (ns sprog.dev.pixel-sort-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-canvas]]
+                                      square-maximize-gl-canvas
+                                      canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex
                                           html-image-tex]]
-            [sprog.input.mouse :refer [mouse-pos]]))
+            [sprog.input.mouse :refer [mouse-pos]]
+            [sprog.webgl.core :refer-macros [with-context]]))
 
 (def sort-resolution 1000)
 
@@ -56,11 +58,9 @@
               comparisonValue
               currentValue)))))})
 
-(defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (run-purefrag-shader! gl
-                          logic-frag-source
+(with-context @gl-atom
+  (defn update-page! []
+    (run-purefrag-shader! logic-frag-source
                           sort-resolution
                           {:floats {"size" [sort-resolution sort-resolution]
                                     "threshold" (first (mouse-pos))}
@@ -68,41 +68,38 @@
                            :ints {"frame" @frame-atom}}
                           {:target (second @texs-atom)})
     (swap! texs-atom reverse)
-
-
-    (square-maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          '{:version "300 es"
+    (square-maximize-gl-canvas)
+    (run-purefrag-shader! '{:version "300 es"
                             :precision {float highp}
                             :uniforms {size vec2
                                        tex sampler2D}
                             :outputs {fragColor vec4}
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
                                    (= fragColor (texture tex pos)))}
-                          resolution
-                          {:floats {"size" resolution}
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)}
                            :textures {"tex" (first @texs-atom)}})
 
-    (swap! frame-atom inc))
-  (js/requestAnimationFrame update-page!))
+    (swap! frame-atom inc)
+    (js/requestAnimationFrame update-page!))
 
-(defn init []
-  (let [gl (create-gl-canvas true)]
-    (reset! gl-atom gl)
-    (reset! texs-atom (u/gen 2 (create-tex gl :f8 sort-resolution)))
-    (reset! frame-atom 0)
-    (run-purefrag-shader! gl
-                          '{:version "300 es"
-                            :precision {float highp}
-                            :uniforms {size vec2
-                                       tex sampler2D}
-                            :outputs {fragColor vec4}
-                            :main ((=vec2 pos (/ gl_FragCoord.xy size))
-                                   (= pos.y (- 1 pos.y))
-                                   (= fragColor (texture tex pos)))}
-                          sort-resolution
-                          {:floats {"size" [sort-resolution sort-resolution]}
-                           :textures {"tex"
-                                      (html-image-tex gl "img")}}
-                          {:target (first @texs-atom)}))
-  (update-page!))
+  (defn init []
+    (let [gl (create-gl-canvas true)]
+      (reset! gl-atom gl)
+      (reset! frame-atom 0)
+      (reset! texs-atom (u/gen 2 (create-tex :f8 sort-resolution)))
+      (run-purefrag-shader! '{:version "300 es"
+                              :precision {float highp}
+                              :uniforms {size vec2
+                                         tex sampler2D}
+                              :outputs {fragColor vec4}
+                              :main ((=vec2 pos (/ gl_FragCoord.xy size))
+                                     (= pos.y (- 1 pos.y))
+                                     (= fragColor (texture tex pos)))}
+                            sort-resolution
+                            {:floats {"size"
+                                      [sort-resolution sort-resolution]}
+                             :textures {"tex"
+                                        (html-image-tex "img")}}
+                            {:target (first @texs-atom)}))
+    (update-page!)))

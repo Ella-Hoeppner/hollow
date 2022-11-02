@@ -1,8 +1,10 @@
 (ns sprog.dev.struct-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-canvas]]
-            [sprog.webgl.shaders :refer [run-purefrag-shader!]]))
+                                      maximize-gl-canvas
+                                      canvas-resolution]]
+            [sprog.webgl.shaders :refer [run-purefrag-shader!]]
+            [sprog.webgl.core :refer-macros [with-context]]))
 
 (defonce gl-atom (atom nil))
 
@@ -31,13 +33,11 @@
            (= fragColor (vec4 (/ dotProduct 60) 0 0 1)))})
 
 (defn update-page! []
-  (let [gl @gl-atom
-        resolution [gl.canvas.width gl.canvas.height]]
-    (maximize-canvas gl.canvas)
-    (run-purefrag-shader! gl
-                          frag-source
-                          resolution
-                          {:floats {"size" resolution}})
+  (with-context @gl-atom
+    (maximize-gl-canvas)
+    (run-purefrag-shader! frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
