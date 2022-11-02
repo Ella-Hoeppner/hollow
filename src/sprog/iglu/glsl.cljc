@@ -241,42 +241,59 @@
     :else
     (into lines (reduce (partial stringify level) [] line))))
 
+(defn inner-symbols [form]
+  (walk (fn [s]
+          (if (coll? s)
+            (if (map? s)
+              (inner-symbols (vals s))
+              (inner-symbols s))
+            (if (symbol? s)
+              #{s}
+              #{})))
+        #(apply union %)
+        form))
+
+(defn sort-expressions [expressions dependencies]
+  (loop [remaining-names (set (keys expressions))
+         sorted-expressions []]
+    (if (empty? remaining-names)
+      (seq sorted-expressions)
+      (let [next-expression-name (some #(when (empty?
+                                               (intersection remaining-names
+                                                             (dependencies %)))
+                                          %)
+                                       remaining-names)]
+        (if next-expression-name
+          (recur (disj remaining-names next-expression-name)
+                 (conj sorted-expressions 
+                       [next-expression-name
+                        (expressions next-expression-name)]))
+          (throw (ex-info "Cyclic dependency detected"
+                          {:functions (str remaining-names)})))))))
+
 (defn sort-fns [functions]
-  (letfn [(inner-symbols [form]
-                         (walk (fn [s]
-                                 (if (coll? s)
-                                   (if (map? s)
-                                     (inner-symbols (vals s))
-                                     (inner-symbols s))
-                                   (if (symbol? s)
-                                     #{s}
-                                     #{})))
-                               #(apply union %)
-                               form))]
-    (let [fn-names (set (keys functions))
-          fn-deps (into {}
-                        (mapv (fn [[fn-name fn-content]]
-                                [fn-name
-                                 (intersection fn-names
-                                               (apply union
-                                                      (map #(inner-symbols
-                                                             (:body (second %)))
-                                                           fn-content)))])
-                              functions))]
-      (loop [remaining-names fn-names
-             sorted-fns []]
-        (if (empty? remaining-names)
-          (seq sorted-fns)
-          (let [next-fn-name (some #(when (empty?
-                                           (intersection remaining-names
-                                                         (fn-deps %)))
-                                      %)
-                                   remaining-names)]
-            (if next-fn-name
-              (recur (disj remaining-names next-fn-name)
-                     (conj sorted-fns [next-fn-name (functions next-fn-name)]))
-              (throw (ex-info "Cyclic dependency detected between functions"
-                              {:functions (str remaining-names)})))))))))
+  (sort-expressions
+   functions
+   (into {}
+         (mapv (fn [[fn-name fn-content]]
+                 [fn-name
+                  (intersection (set (keys functions))
+                                (apply union
+                                       (map #(inner-symbols
+                                              (:body (second %)))
+                                            fn-content)))])
+               functions))))
+
+(defn sort-structs [structs]
+  (sort-expressions
+   structs
+   (into {}
+         (mapv (fn [[struct-name struct-content]]
+                 [struct-name
+                  (intersection
+                   (set (keys structs))
+                   (inner-symbols struct-content))])
+               structs))))
 
 (defn parsed-iglu->glsl [{:keys [version
                                  precision
@@ -291,8 +308,7 @@
                                  functions]}]
   (let [full-functions (cond-> functions
                          main (assoc 'main {{:in [] :out 'void}
-                                            {:args [] :body main}}))
-        sorted-fns (sort-fns full-functions)]
+                                            {:args [] :body main}}))]
     (->> (into (cond-> []
                  version (conj (str "#version " version))
                  precision (into (mapv ->precision precision))
@@ -301,8 +317,7 @@
                  varyings (into (mapv ->varying varyings))
                  inputs (into (mapv (partial ->in qualifiers) inputs))
                  outputs (into (mapv (partial ->out qualifiers) outputs))
-                 structs (into (mapv ->struct structs)))
-               (vec (mapcat ->function
-                            sorted-fns)))
+                 structs (into (mapv ->struct (sort-structs structs))))
+               (vec (mapcat ->function (sort-fns full-functions))))
          (reduce (partial stringify 0) [])
          (join \newline))))
