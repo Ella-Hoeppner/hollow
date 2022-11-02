@@ -47,5 +47,5 @@
 (defn init []
   (let [gl (create-gl-canvas true)]
     (reset! gl-atom gl)
-    (reset! tex-atom (html-image-tex gl "img" gl)))
+    (reset! tex-atom (html-image-tex gl "img")))
   (update-page!))

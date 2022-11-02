@@ -1,4 +1,5 @@
-(ns sprog.webgl.textures)
+(ns sprog.webgl.textures
+  (:require [sprog.webgl.framebuffers :refer [target-textures!]]))
 
 (defn set-tex-parameters [gl texture filter-mode wrap-mode & [three-d?]]
   (let [texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)]
@@ -112,6 +113,26 @@
 (defn delete-tex [gl & textures]
   (doseq [tex textures]
     (.deleteTexture gl tex)))
+
+(defn tex-data-array [gl texture texture-type size]
+  (target-textures! gl texture)
+  (let [[x y width height]
+        (cond
+          (number? size) [0 0 size size]
+          (= (count size) 2) (into [] size)
+          (= (count size) 4) size)
+        array (case texture-type
+                :f8 (js/Uint8Array. (* width height 4))
+                :u16 (js/Uint16Array. (* width height 4))
+                :u32 (js/Uint32Array. (* width height 4)))]
+    (case texture-type
+      :f8
+      (.readPixels gl x y width height gl.RGBA gl.UNSIGNED_BYTE array)
+      :u16
+      (.readPixels gl x y width height gl.RGBA_INTEGER gl.UNSIGNED_SHORT array)
+      :u32
+      (.readPixels gl x y width height gl.RGBA_INTEGER gl.UNSIGNED_INT array))
+    array))
 
 (defn copy-html-image-data! [gl tex element-or-id]
   (let [element (if (string? element-or-id)
