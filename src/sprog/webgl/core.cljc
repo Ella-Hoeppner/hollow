@@ -5,6 +5,7 @@
 #?(:clj
    (defmacro with-context [context & body]
      (let [contextful-functions '#{create-tex
+                                   delete-tex
                                    run-purefrag-shader!
                                    run-shaders!
                                    maximize-gl-canvas
