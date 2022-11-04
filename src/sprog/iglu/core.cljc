@@ -23,4 +23,5 @@
      (->> chunks
           (apply merge-chunks)
           (apply-macros (into default-macros macros))
-          (prewalk-replace (into {} replacements))))))
+          (prewalk-replace (into {} replacements))
+          iglu->glsl))))
