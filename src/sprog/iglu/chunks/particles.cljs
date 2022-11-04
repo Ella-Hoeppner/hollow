@@ -48,37 +48,37 @@
     :outputs {particlePos vec2}
     :uniforms {particleTex usampler2D
                radius float}
-    :main '((=int agentIndex (/ gl_VertexID i6))
-            (=int corner (% gl_VertexID i6))
+    :main ((=int agentIndex (/ gl_VertexID i6))
+           (=int corner (% gl_VertexID i6))
 
-            (=ivec2 texSize (textureSize particleTex i0))
+           (=ivec2 texSize (textureSize particleTex i0))
 
-            (=vec2 texPos
-                   (/ (+ 0.5 (vec2 (% agentIndex texSize.x)
-                                   (/ agentIndex texSize.x)))
-                      (vec2 texSize)))
+           (=vec2 texPos
+                  (/ (+ 0.5 (vec2 (% agentIndex texSize.x)
+                                  (/ agentIndex texSize.x)))
+                     (vec2 texSize)))
 
-            (=uvec4 particleColor (texture particleTex texPos))
-            (= particlePos (/ (vec2 particleColor.xy) 4294967295))
+           (=uvec4 particleColor (texture particleTex texPos))
+           (= particlePos (/ (vec2 particleColor.xy) 4294967295))
 
-            (= gl_Position
-               (vec4 (- (* (+ particlePos
-                              (* radius
-                                 (- (* 2
-                                       (if (|| (== corner i0)
-                                               (== corner i3))
-                                         (vec2 0 1)
-                                         (if (|| (== corner i1)
-                                                 (== corner i4))
-                                           (vec2 1 0)
-                                           (if (== corner i2)
-                                             (vec2 0 0)
-                                             (vec2 1 1)))))
-                                    1)))
-                           2)
-                        1)
-                     0
-                     1)))})
+           (= gl_Position
+              (vec4 (- (* (+ particlePos
+                             (* radius
+                                (- (* 2
+                                      (if (|| (== corner i0)
+                                              (== corner i3))
+                                        (vec2 0 1)
+                                        (if (|| (== corner i1)
+                                                (== corner i4))
+                                          (vec2 1 0)
+                                          (if (== corner i2)
+                                            (vec2 0 0)
+                                            (vec2 1 1)))))
+                                   1)))
+                          2)
+                       1)
+                    0
+                    1)))})
 
 (def particle-frag-source-u16
   '{:version "300 es"
