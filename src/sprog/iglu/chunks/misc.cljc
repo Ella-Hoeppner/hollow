@@ -8,6 +8,21 @@
     :inputs {vertPos vec4}
     :main ((= gl_Position vertPos))})
 
+(defn identity-frag-source [texture-type]
+  (postwalk-replace
+   (let [float-tex? (= texture-type :f8)]
+     {:sampler-type (if float-tex? 'sampler2D 'usampler2D)
+      :pixel-type (if float-tex? 'vec4 'uvec4)})
+   '{:version "300 es"
+     :precision {float highp
+                 sampler2D highp
+                 int highp
+                 usampler2D highp}
+     :uniforms {tex :sampler-type
+                size vec2}
+     :outputs {fragColor :pixel-type}
+     :main ((= fragColor (texture tex (/ gl_FragCoord.xy size))))}))
+
 (def rescale-chunk
   '{:functions
     {rescale
