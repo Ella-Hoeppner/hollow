@@ -1,6 +1,5 @@
 (ns sprog.util
-  #?(:cljs (:require-macros [sprog.util]))
-  #?(:clj (:require [backtick :refer [template]])))
+  #?(:cljs (:require-macros [sprog.util])))
 
 (defn now []
   #?(:cljs (js/Date.now)
