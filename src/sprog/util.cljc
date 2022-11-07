@@ -8,13 +8,6 @@
 (def startup-time (now))
 (defn seconds-since-startup [] (/ (- (now) startup-time) 1000))
 
-(defn map-keys [f map-keys]
-  (reduce #(assoc %1
-                  %2
-                  (f %2))
-          {}
-          map-keys))
-
 (defn log [& vals]
   (doseq [val vals]
     #?(:cljs (js/console.log (str val))
@@ -23,8 +16,8 @@
 
 (defn log-tables [& tables]
   (doseq [table tables]
-        #?(:cljs (js/console.table (clj->js table))
-           :clj (prn tables)))
+    #?(:cljs (js/console.table (clj->js table))
+       :clj (prn tables)))
   (last tables))
 
 (defn scale
