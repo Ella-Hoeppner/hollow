@@ -33,6 +33,14 @@
              (/ (- x oldMin)
                 (- oldMax oldMin)))))}}})
 
+(def pos-chunk
+  '{:functions {getPos {([] vec2)
+                        ([]
+                         (=float minDim (min size.x size.y))
+                         (/ (- gl_FragCoord.xy
+                               (* 0.5 (- size minDim)))
+                            minDim))}}})
+
 (def sympow-chunk
   '{:functions
     {sympow
