@@ -14,6 +14,24 @@
                                 (/ (dot (- planeRay.pos ray.pos) planeRay.dir)
                                    (dot ray.dir planeRay.dir)))}}}))
 
+(def sphere-intersection-chunk
+  (merge-chunks ray-chunk
+                '{:functions
+                  {sphereIntersections
+                   {([Ray vec3 float] vec2)
+                    ([ray sphereCenter sphereRadius]
+                     (=vec3 offset (- ray.pos sphereCenter))
+                     (=float halfB (dot offset ray.dir))
+                     (=float c (- (dot offset offset)
+                                  (* sphereRadius sphereRadius)))
+                     (=float discriminant (- (* halfB halfB) c))
+                     ("if" (> discriminant 0)
+                           (=float discriminantSqrt (sqrt discriminant))
+                           (return (- 0
+                                      (vec2 (+ halfB discriminantSqrt)
+                                            (- halfB discriminantSqrt)))))
+                     (vec2 0))}}}))
+
 (def plane-sdf-chunk
   (merge-chunks ray-chunk
                 '{:functions {sdPlane
