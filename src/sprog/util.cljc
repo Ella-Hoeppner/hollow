@@ -73,7 +73,3 @@
       `(vec (repeatedly (fn [] ~exp))))
      ([number exp]
       `(vec (repeatedly ~number (fn [] ~exp))))))
-
-#?(:clj
-   (defmacro dequote [exp]
-     `(template ~exp)))
