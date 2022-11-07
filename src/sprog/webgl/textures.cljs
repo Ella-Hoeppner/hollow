@@ -150,7 +150,7 @@
   (let [[x y width height]
         (cond
           (number? size) [0 0 size size]
-          (= (count size) 2) (into [] size)
+          (= (count size) 2) (into [0 0] size)
           (= (count size) 4) size)
         array (case texture-type
                 :f8 (js/Uint8Array. (* width height 4))
