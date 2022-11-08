@@ -8,7 +8,7 @@
 
 (def plane-intersection-chunk
   (merge-chunks ray-chunk
-                '{:functions {planeIntersection
+                '{:functions {findPlaneIntersection
                               {([Ray Ray] float)
                                ([ray planeRay]
                                 (/ (dot (- planeRay.pos ray.pos) planeRay.dir)
@@ -17,7 +17,7 @@
 (def sphere-intersection-chunk
   (merge-chunks ray-chunk
                 '{:functions
-                  {sphereIntersections
+                  {findSphereIntersections
                    {([Ray vec3 float] vec2)
                     ([ray sphereCenter sphereRadius]
                      (=vec3 offset (- ray.pos sphereCenter))
