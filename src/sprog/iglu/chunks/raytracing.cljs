@@ -83,3 +83,86 @@
                                        (* (- screenPos.y 0.5) camUp)))
 
                      (Ray camPos (normalize filmPos)))}}}))
+
+(defn get-voxel-intersection-chunk
+  [& [{:keys [max-voxel-steps
+              return-type
+              default-return-expression
+              hit-expression]
+       :or {max-voxel-steps 1024
+            return-type 'VoxelIntersection
+            default-return-expression '(VoxelIntersection "false"
+                                                          (ivec3 "0")
+                                                          (vec3 0)
+                                                          (vec3 0))
+            hit-expression '((return voxelIntersection))}}]]
+  (merge-chunks
+   ray-chunk
+   (postwalk-replace
+    {:max-voxel-steps (str max-voxel-steps)
+     :return-type return-type
+     :hit-expression hit-expression
+     :default-return-expression default-return-expression
+     :voxel-hit-expression
+     (concat
+      (list "if"
+            '(voxelFilled voxelCoords)
+            '(=VoxelIntersection voxelIntersection
+                                 (VoxelIntersection "true"
+                                                    voxelCoords
+                                                    (+ ray.pos
+                                                       (* ray.dir dist))
+                                                    norm)))
+      hit-expression)}
+    '{:structs {VoxelIntersection [hit bool
+                                   gridPos ivec3
+                                   pos vec3
+                                   norm vec3]}
+      :functions
+      {findVoxelIntersection
+       {([Ray float] :return-type)
+        ([ray maxDist]
+         (=ivec3 voxelCoords (ivec3 (floor ray.pos)))
+         (=vec3 innerCoords (fract ray.pos))
+
+         (=ivec3 step (ivec3 (sign ray.dir)))
+         (=vec3 delta (/ (vec3 step) ray.dir))
+
+         (=vec3 tMax (* delta
+                        (vec3 (if (> ray.dir.x "0.0")
+                                (- "1.0" innerCoords.x)
+                                innerCoords.x)
+                              (if (> ray.dir.y "0.0")
+                                (- "1.0" innerCoords.y)
+                                innerCoords.y)
+                              (if (> ray.dir.z "0.0")
+                                (- "1.0" innerCoords.z)
+                                innerCoords.z))))
+
+         (=vec3 norm (vec3 0))
+         (=int maxVoxelSteps :max-voxel-steps)
+         ("for(int i=0;i<maxVoxelSteps;i++)"
+          (=vec3 t
+                 (min (/ (- (vec3 voxelCoords) ray.pos) ray.dir)
+                      (/ (- (vec3 (+ (vec3 voxelCoords) 1)) ray.pos) ray.dir)))
+          (=float dist (max (max t.x t.y) t.z))
+          ("if" (>= dist maxDist) (return :default-return-expression))
+          :voxel-hit-expression
+          ("if" (< tMax.x tMax.y)
+                ("if" (< tMax.z tMax.x)
+                      (+= tMax.z delta.z)
+                      (+= voxelCoords.z step.z)
+                      (= norm (vec3 0 0 (- "0.0" (float step.z)))))
+                ("else"
+                 (+= tMax.x delta.x)
+                 (+= voxelCoords.x step.x)
+                 (= norm (vec3 (- "0.0" (float step.x)) 0 0))))
+          ("else" ("if" (< tMax.z tMax.y)
+                        (+= tMax.z delta.z)
+                        (+= voxelCoords.z step.z)
+                        (= norm (vec3 0 0 (- "0.0" (float step.z)))))
+                  ("else"
+                   (+= tMax.y delta.y)
+                   (+= voxelCoords.y step.y)
+                   (= norm (vec3 0 (- "0.0" (float step.y)) 0)))))
+         :default-return-expression)}}})))
