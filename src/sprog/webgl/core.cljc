@@ -13,7 +13,8 @@
                                    canvas-resolution
                                    create-boj!
                                    copy-html-image-data!
-                                   html-image-tex}]
+                                   html-image-tex
+                                   max-texture-size}]
        (conj (postwalk (fn [form]
                          (if (and (seq? form)
                                   (contextful-functions (first form)))

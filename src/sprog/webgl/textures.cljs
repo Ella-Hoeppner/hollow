@@ -207,3 +207,6 @@
                    (fn [e]
                      (.play video)
                      (callback video)))))))
+
+(defn max-tex-size [gl]
+  (.getParameter gl gl.MAX_TEXTURE_SIZE))
