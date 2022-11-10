@@ -1,6 +1,7 @@
 (ns sprog.iglu.core
   (:require [clojure.walk :refer [prewalk-replace]]
-            [sprog.iglu.glsl :refer [parsed-iglu->glsl]]
+            [sprog.iglu.glsl :refer [clj-name->glsl-name
+                                     parsed-iglu->glsl]]
             [sprog.iglu.parse :refer [parse]]
             [sprog.iglu.macros :refer [apply-macros
                                        default-macros]]))
@@ -25,3 +26,16 @@
           (apply-macros (into default-macros macros))
           (prewalk-replace (into {} replacements))
           iglu->glsl))))
+
+(defn inline-float-uniforms [numerical-param-names & chunks]
+  (let [param-uniform-names
+        (apply hash-map
+               (mapcat #(list % (clj-name->glsl-name %))
+                       numerical-param-names))]
+    (prewalk-replace param-uniform-names
+                     (apply merge-chunks
+                            (concat chunks
+                                    (list
+                                     {:uniforms
+                                      (zipmap (vals param-uniform-names)
+                                              (repeat 'float))}))))))

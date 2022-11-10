@@ -25,8 +25,13 @@
                           #?(:clj (format "%.20f" num)
                              :cljs (.toFixed num 20))))))))
 
-(defn symbol->glsl-str [sym]
-  (string-replace (str sym) "-" "_"))
+(defn clj-name->glsl-name [clj-name]
+  (symbol
+   (string-replace
+    (cond-> (str clj-name)
+      (keyword? clj-name) (subs 1))
+    "-"
+    "_")))
 
 ;; multimethods
 
@@ -144,7 +149,7 @@
   (parse-int (subs (str literal) 1)))
 
 (defmethod ->subexpression :symbol [[_ symbol]]
-  (symbol->glsl-str symbol))
+  (clj-name->glsl-name symbol))
 
 (defmethod ->subexpression :string [[_ string]]
   string)
@@ -176,7 +181,7 @@
        " "
        (parse-type type)
        " "
-       (symbol->glsl-str name)))
+       (clj-name->glsl-name name)))
 
 (defn ->in [qualifiers name-type-pair]
   (->inout "in" qualifiers name-type-pair))

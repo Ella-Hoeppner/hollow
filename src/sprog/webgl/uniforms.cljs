@@ -1,103 +1,104 @@
-(ns sprog.webgl.uniforms)
+(ns sprog.webgl.uniforms
+  (:require [sprog.iglu.glsl :refer [clj-name->glsl-name]]))
 
 (defn ensure-uniform-present! [gl
                                {:keys [program uniforms-atom]}
-                               uniform-name-str]
-  (when (not (@uniforms-atom uniform-name-str))
+                               uniform-name]
+  (when (not (@uniforms-atom uniform-name))
     (swap! uniforms-atom
            assoc
-           uniform-name-str
+           uniform-name
            (.getUniformLocation gl
                                 program
-                                uniform-name-str))))
+                                uniform-name))))
 
 (defn set-sprog-uniform-1i! [gl
                              {:keys [uniforms-atom] :as sprog}
                              uniform-name
                              value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform1i gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform1i gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-2iv! [gl
                               {:keys [uniforms-atom] :as sprog}
                               uniform-name
                               value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform2iv gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform2iv gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-3iv! [gl
                               {:keys [uniforms-atom] :as sprog}
                               uniform-name
                               value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform3iv gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform3iv gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-4iv! [gl
                               {:keys [uniforms-atom] :as sprog}
                               uniform-name
                               value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform4iv gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform4iv gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-1f! [gl
                              {:keys [uniforms-atom] :as sprog}
                              uniform-name
                              value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform1f gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform1f gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-2fv! [gl
                               {:keys [uniforms-atom] :as sprog}
                               uniform-name
                               value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform2fv gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform2fv gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-3fv! [gl
                               {:keys [uniforms-atom] :as sprog}
                               uniform-name
                               value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform3fv gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform3fv gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-4fv! [gl
                               {:keys [uniforms-atom] :as sprog}
                               uniform-name
                               value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniform4fv gl (@uniforms-atom uniform-name-str) value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniform4fv gl (@uniforms-atom uniform-glsl-name) value)))
 
 (defn set-sprog-uniform-mat2! [gl
                                {:keys [uniforms-atom] :as sprog}
                                uniform-name
                                value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniformMatrix2fv gl (@uniforms-atom uniform-name-str) false value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniformMatrix2fv gl (@uniforms-atom uniform-glsl-name) false value)))
 
 (defn set-sprog-uniform-mat3! [gl
                                {:keys [uniforms-atom] :as sprog}
                                uniform-name
                                value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniformMatrix3fv gl (@uniforms-atom uniform-name-str) false value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniformMatrix3fv gl (@uniforms-atom uniform-glsl-name) false value)))
 
 (defn set-sprog-uniform-mat4! [gl 
                                {:keys [uniforms-atom] :as sprog}
                                uniform-name
                                value]
-  (let [uniform-name-str (str uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-name-str)
-    (.uniformMatrix4fv gl (@uniforms-atom uniform-name-str) false value)))
+  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+    (ensure-uniform-present! gl sprog uniform-glsl-name)
+    (.uniformMatrix4fv gl (@uniforms-atom uniform-glsl-name) false value)))
 
 (defn set-sprog-float-uniform! [gl sprog uniform-name value]
   ((cond
