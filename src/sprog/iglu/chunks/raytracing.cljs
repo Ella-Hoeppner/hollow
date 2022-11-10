@@ -134,7 +134,6 @@
    (postwalk-replace
     {:max-voxel-steps (str max-voxel-steps)
      :return-type return-type
-     :hit-expression hit-expression
      :default-return-expression default-return-expression
      :voxel-hit-expression
      (concat
