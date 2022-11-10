@@ -32,6 +32,39 @@
                                             (- halfB discriminantSqrt)))))
                      (vec2 0))}}}))
 
+; based on https://iquilezles.org/articles/boxfunctions/
+(def box-intersection-chunk
+  (merge-chunks
+   ray-chunk
+   '{:structs {BoxIntersection [hit bool
+                                frontDist float
+                                backDist float
+                                frontNorm vec3]}
+     :functions {findBoxIntersection
+                 {([Ray vec3 vec3] BoxIntersection)
+                  ([ray pos size]
+                   (=vec3 m (/ 1 ray.dir))
+                   (=vec3 n (* m (- ray.pos pos)))
+                   (=vec3 k (* (abs m) size))
+                   (=vec3 t1 (- 0 (+ n k)))
+                   (=vec3 t2 (- k n))
+
+                   (=float tN (max (max t1.x t1.y) t1.z))
+                   (=float tF (min (min t2.x t2.y) t2.z))
+                   ("if" (|| (> tN tF)
+                             (< tF 0))
+                         (return (BoxIntersection "false"
+                                                  0
+                                                  0
+                                                  (vec3 0))))
+                   (BoxIntersection "true"
+                                    tN
+                                    tF
+                                    (- 0
+                                       (* (sign ray.dir)
+                                          (step t1.yzx t1.xyz)
+                                          (step t1.zxy t1.xyz)))))}}}))
+
 (def plane-sdf-chunk
   (merge-chunks ray-chunk
                 '{:functions {sdPlane
