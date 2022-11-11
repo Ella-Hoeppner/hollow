@@ -122,7 +122,7 @@
               return-type
               default-return-expression
               hit-expression]
-       :or {max-voxel-steps 1024
+       :or {max-voxel-steps 1000000
             return-type 'VoxelIntersection
             default-return-expression '(VoxelIntersection "false"
                                                           (ivec3 "0")
@@ -197,4 +197,58 @@
                    (+= tMax.y delta.y)
                    (+= voxelCoords.y step.y)
                    (= norm (vec3 0 (- "0.0" (float step.y)) 0)))))
+         :default-return-expression)}}})))
+
+(defn get-column-intersection-chunk [return-type
+                                     default-return-expression
+                                     hit-expression
+                                     & [max-steps]]
+  (merge-chunks
+   ray-chunk
+   (postwalk-replace
+    {:max-steps (str (or max-steps 1000000))
+     :return-type return-type
+     :default-return-expression default-return-expression
+     :column-hit-expression
+     (concat
+      '("if" (columnFilled gridCoords))
+      hit-expression)}
+    '{:functions
+      {findColumnIntersection
+       {([Ray float] :return-type)
+        ([ray maxDist]
+
+         (=vec2 rayPos ray.pos.xy)
+         (=vec2 rayDir (normalize ray.dir.xy))
+
+         (=ivec2 gridCoords (ivec2 (floor rayPos)))
+         (=vec2 innerCoords (fract rayPos))
+
+         (=ivec2 step (ivec2 (sign rayDir)))
+         (=vec2 delta (/ (vec2 step) rayDir))
+
+         (=vec2 tMax (* delta
+                        (vec2 (if (> rayDir.x "0.0")
+                                (- "1.0" innerCoords.x)
+                                innerCoords.x)
+                              (if (> rayDir.y "0.0")
+                                (- "1.0" innerCoords.y)
+                                innerCoords.y))))
+
+         (=vec3 norm (vec3 0))
+         (=int maxSteps :max-steps)
+         ("for(int i=0;i<maxSteps;i++)"
+          (=vec2 t
+                 (min (/ (- (vec2 gridCoords) rayPos) rayDir)
+                      (/ (- (vec2 (+ (vec2 gridCoords) 1)) rayPos) rayDir)))
+          (=float dist (max t.x t.y))
+          ("if" (>= dist maxDist) (return :default-return-expression))
+          :column-hit-expression
+          ("if" (< tMax.x tMax.y)
+                (+= tMax.x delta.x)
+                (+= gridCoords.x step.x)
+                (= norm (vec3 (- "0.0" (float step.x)) 0 0)))
+          ("else" (+= tMax.y delta.y)
+                  (+= gridCoords.y step.y)
+                  (= norm (vec3 0 (- "0.0" (float step.y)) 0))))
          :default-return-expression)}}})))
