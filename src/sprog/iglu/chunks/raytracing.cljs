@@ -252,3 +252,102 @@
                   (+= gridCoords.y step.y)
                   (= norm (vec3 0 (- "0.0" (float step.y)) 0))))
          :default-return-expression)}}})))
+
+; based on https://iquilezles.org/articles/intersectors/
+(def capsule-intersection-chunk
+  '{:functions
+    {findCapsuleDist
+     {([Ray vec3 vec3 float] float)
+      ([ray point1 point2 radius]
+       (=vec3 diff (- point2 point1))
+       (=vec3 offset (- ray.pos point1))
+
+       (=float baba (dot diff diff))
+       (=float bard (dot diff ray.dir))
+       (=float baoa (dot diff offset))
+       (=float rdoa (dot ray.dir offset))
+       (=float oaoa (dot offset offset))
+
+       (=float a (- baba (* bard bard)))
+       (=float b (- (* baba rdoa) (* baoa bard)))
+       (=float c (- (* baba oaoa)
+                    (+ (* baoa baoa)
+                       (* radius radius baba))))
+       (=float h (- (* b b) (* a c)))
+       ("if" (>= h 0)
+             (=float t (/ (- 0 (+ b (sqrt h))) a))
+             (=float y (+ baoa (* t bard)))
+             ("if" (&& (> y 0) (< y baba)) (return t))
+             (=vec3 oc (if (<= y 0)
+                         offset
+                         (- ray.pos point2)))
+             (= b (dot ray.dir oc))
+             (= c (- (dot oc oc) (* radius radius)))
+             (= h (- (* b b) c))
+             ("if" (> h 0) (return (- 0 (+ b (sqrt h))))))
+       -1)}
+     capsuleNorm
+     {([vec3 vec3 vec3 float] vec3)
+      ([pos point1 point2 radius]
+       (=vec3 diff (- point2 point1))
+       (=vec3 offset (- pos point1))
+       (=float h (clamp (/ (dot offset diff)
+                           (dot diff diff))
+                        0
+                        1))
+       (/ (- offset (* h diff))
+          radius))}}})
+
+; based on https://iquilezles.org/articles/intersectors/
+(def cylinder-intersection-function
+  '{:structs
+    {CylinderIntersection [hit bool
+                           dist float
+                           norm vec3]}
+    :functions
+    {findCylinderIntersection
+     {([Ray vec3 vec3 float] CylinderIntersection)
+      ([ray point1 point2 radius]
+       (=vec3 diff (- point2 point1))
+       (=vec3 offset (- ray.pos point1))
+
+       (=float baba (dot diff diff))
+       (=float bard (dot diff ray.dir))
+       (=float baoc (dot diff offset))
+
+       (=float k2 (- baba (* bard bard)))
+       (=float k1 (- (* baba (dot offset ray.dir))
+                     (* baoc bard)))
+       (=float k0 (- (* baba (dot offset offset))
+                     (+ (* baoc baoc)
+                        (* radius
+                           radius
+                           baba))))
+
+       (=float h (- (* k1 k1) (* k2 k0)))
+       ("if" (< h 0)
+             (return (CylinderIntersection "false"
+                                           0
+                                           (vec3 0))))
+       (= h (sqrt h))
+       (=float t (/ (- 0 (+ k1 h)) k2))
+
+       (=float y (+ baoc (* t bard)))
+       ("if" (&& (>= t 0) (> y 0) (< y baba))
+             (return (CylinderIntersection "true"
+                                           t
+                                           (/ (- (+ offset (* t ray.dir))
+                                                 (/ (* diff y) baba))
+                                              radius))))
+
+       (= t (/ (- (if (< y 0) 0 baba) baoc) bard))
+       ("if" (&& (>= t 0)
+                 (< (abs (+ k1 (* k2 t))) h))
+             (return (CylinderIntersection "true"
+                                           t
+                                           (/ (* diff (sign y))
+                                              (sqrt baba)))))
+
+       (CylinderIntersection "false"
+                             0
+                             (vec3 0)))}}})
