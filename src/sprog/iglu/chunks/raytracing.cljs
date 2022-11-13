@@ -299,7 +299,7 @@
           radius))}}})
 
 ; based on https://iquilezles.org/articles/intersectors/
-(def cylinder-intersection-function
+(def cylinder-intersection-chunk
   '{:structs
     {CylinderIntersection [hit bool
                            dist float
