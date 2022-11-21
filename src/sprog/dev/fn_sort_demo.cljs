@@ -14,23 +14,22 @@
 
 (def frag-source
   (reduce merge-chunks
-          (postwalk-replace
-           {:final-fn-name (symbol (str "f" fn-count))
-            :fn-count-f (.toFixed fn-count 1)}
-           '{:version "300 es"
-             :precision {float highp}
-             :uniforms {size vec2}
-             :outputs {fragColor vec4}
-             :main ((= fragColor (vec4 (:final-fn-name 0) 0 0 1)))})
+          (u/q
+           {:version "300 es"
+            :precision {float highp}
+            :uniforms {size vec2}
+            :outputs {fragColor vec4}
+            :main ((= fragColor
+                      (vec4 (~(symbol (str "f" fn-count)) 0) 0 0 1)))})
           (map (fn [i]
                  (postwalk-replace
                   {:fn-name (symbol (str "f" (inc i)))
                    :prev-fn-name (symbol (str "f" i))}
                   (if (zero? i)
-                    '{:functions {:fn-name {([float] float) 
+                    '{:functions {:fn-name {([float] float)
                                             ([x] (+ x 0.01))}}}
                     '{:functions {:fn-name {([float] float)
-                                            ([x] (+ (:prev-fn-name x) 
+                                            ([x] (+ (:prev-fn-name x)
                                                     0.01))}}})))
                (range fn-count))))
 

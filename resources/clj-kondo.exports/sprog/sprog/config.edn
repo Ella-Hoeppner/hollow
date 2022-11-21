@@ -1,0 +1,3 @@
+{:hooks {:macroexpand
+         {sprog.webgl.core/with-context sprog.webgl.core/with-context
+          sprog.util/q sprog.util/q}}}
