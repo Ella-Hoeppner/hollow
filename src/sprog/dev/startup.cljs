@@ -22,7 +22,7 @@
             sprog.dev.params-demo))
 
 (defn init []
-  #_(sprog.dev.basic-demo/init)
+  (sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.fn-sort-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
@@ -42,7 +42,7 @@
   #_(sprog.dev.texture-3d-demo/init)
   #_(sprog.dev.gaussian-demo/init)
   #_(sprog.dev.hsv-demo/init)
-  (sprog.dev.params-demo/init))
+  #_(sprog.dev.params-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
