@@ -1,5 +1,6 @@
 (ns sprog.util
-  #?(:clj (:require [clojure.walk :refer [prewalk]]))
+  #?(:clj (:require [clojure.walk :refer [prewalk-replace
+                                          prewalk]]))
   #?(:cljs (:require-macros [sprog.util])))
 
 (defn now []
@@ -68,23 +69,40 @@
       `(vec (repeatedly ~number (fn [] ~exp))))))
 
 #?(:clj
-   (defmacro q [form]
-     (let [a (atom {})
-           inlined-replacements-form
-           (doall
-            (prewalk (fn [subform]
-                       (if (and (list? subform)
-                                (= (first subform) 'clojure.core/unquote))
-                         (let [replacement-binding
-                               (keyword (gensym 'IGLU_REPLACEMENT_BINDING))]
-                           (swap! a
-                                  assoc
-                                  replacement-binding
-                                  (second subform))
-                           replacement-binding)
-                         subform))
-                     form))]
-       [@a inlined-replacements-form]
-       (list 'clojure.walk/prewalk-replace
-             @a
-             (list `quote inlined-replacements-form)))))
+   (defmacro unquotable [expression]
+     (let [quote-replacement (gensym 'IGLU_REPLACED_QUOTE)]
+       (letfn [(inline-unquotes
+                [form]
+                (let [replacement-map-atom (atom {})
+                      inlined-replacements-form
+                      (doall
+                       (prewalk
+                        (fn [subform]
+                          (if (and (list? subform)
+                                   (= (first subform)
+                                      'clojure.core/unquote))
+                            (let [replacement-binding (keyword (gensym))]
+                              (swap! replacement-map-atom
+                                     assoc
+                                     replacement-binding
+                                     (second subform))
+                              replacement-binding)
+                            subform))
+                        form))]
+                  (list 'clojure.walk/prewalk-replace
+                        @replacement-map-atom
+                        (list `quote
+                              (replace-quotes inlined-replacements-form)))))
+               (replace-quotes
+                [form]
+                (if (and (list? form)
+                         (= (first form)
+                            quote-replacement))
+                  (let [subform (second form)]
+                    (if (coll? subform)
+                      (inline-unquotes subform)
+                      (list `quote subform)))
+                  form))]
+         (->> expression
+              (prewalk-replace {`quote quote-replacement})
+              (prewalk replace-quotes))))))

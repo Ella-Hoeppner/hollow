@@ -5,7 +5,6 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [merge-chunks]]
-            [clojure.walk :refer [postwalk-replace]]
             [sprog.webgl.core :refer [with-context]]))
 
 (def fn-count 50)
@@ -13,25 +12,23 @@
 (defonce gl-atom (atom nil))
 
 (def frag-source
-  (reduce merge-chunks
-          (u/q
-           {:version "300 es"
-            :precision {float highp}
-            :uniforms {size vec2}
-            :outputs {fragColor vec4}
-            :main ((= fragColor
-                      (vec4 (~(symbol (str "f" fn-count)) 0) 0 0 1)))})
-          (map (fn [i]
-                 (postwalk-replace
-                  {:fn-name (symbol (str "f" (inc i)))
-                   :prev-fn-name (symbol (str "f" i))}
-                  (if (zero? i)
-                    '{:functions {:fn-name {([float] float)
-                                            ([x] (+ x 0.01))}}}
-                    '{:functions {:fn-name {([float] float)
-                                            ([x] (+ (:prev-fn-name x)
-                                                    0.01))}}})))
-               (range fn-count))))
+  (u/unquotable
+   (reduce merge-chunks
+           '{:version "300 es"
+             :precision {float highp}
+             :uniforms {size vec2}
+             :outputs {fragColor vec4}
+             :main ((= fragColor
+                       (vec4 (~(symbol (str "f" fn-count)) 0) 0 0 1)))}
+           (map (fn [i]
+                  '{:functions
+                    {~(symbol (str "f" (inc i)))
+                     {([float] float)
+                      ([x] (+ ~(if (zero? i)
+                                 'x
+                                 '(~(symbol (str "f" i)) x))
+                              0.01))}}})
+                (range fn-count)))))
 
 (defn update-page! []
   (with-context @gl-atom
