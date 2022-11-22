@@ -38,6 +38,7 @@
 (defmulti ->function-call
   (fn [fn-name args]
     (cond
+      (= 'do fn-name) ::do-block
       (number? fn-name) ::number
       (int-literal? fn-name) ::int-literal
       ('#{? if} fn-name) ::inline-conditional
@@ -56,6 +57,9 @@
   (fn [val] (first val)))
 
 ;; ->function-call
+
+(defmethod ->function-call ::do-block [_ args]
+  (map ->statement args))
 
 (defmethod ->function-call ::assignment [fn-name args]
   (when-not (= 2 (count args))
@@ -77,15 +81,16 @@
 (defmethod ->function-call ::block-with-expression [fn-name args]
   (when (< (count args) 1)
     (throw (ex-info (str fn-name " requires 1 arg") {})))
-  (let [[condition & body] args]
-    (cond-> (str fn-name " " (->subexpression condition))
-      (seq body)
-      (cons (mapv ->statement body)))))
+  (conj (map ->statement (rest args))
+        (str fn-name " " (->subexpression (first args)))
+        :block))
 
 (defmethod ->function-call ::block [fn-name args]
   (when (< (count args) 1)
     (throw (ex-info (str fn-name " requires 1 arg") {})))
-  (cons fn-name (mapv ->statement args)))
+  (conj (map ->statement args) 
+        fn-name
+        :block))
 
 (defmethod ->function-call ::inline-conditional [fn-name args]
   (when-not (= 3 (count args))
@@ -214,13 +219,14 @@
                                          (str type " " name))
                                        in args))
                  signature (str out " " name "(" args-list ")")]
-             (into [signature]
-                   (let [body-lines (mapv ->statement body)]
-                     (if (= 'void out)
-                       body-lines
-                       (conj
-                        (vec (butlast body-lines))
-                        (str "return " (last body-lines)))))))))
+             (conj (seq (into [signature]
+                              (let [body-lines (mapv ->statement body)]
+                                (if (= 'void out)
+                                  body-lines
+                                  (conj
+                                   (vec (butlast body-lines))
+                                   (str "return " (last body-lines)))))))
+                   :block))))
        signature-function-map))
 
 ;; compiler fn
@@ -237,11 +243,11 @@
                   (ends-with? line ";"))
             line
             (str (indent level line) ";")))
-    (string? (first line))
+    (= :block (first line))
     (-> lines
-        (conj (indent level (first line)))
+        (conj (indent level (second line)))
         (conj (indent level "{"))
-        (into (reduce (partial stringify (inc level)) [] (rest line)))
+        (into (reduce (partial stringify (inc level)) [] (drop 2 line)))
         (conj (indent level "}")))
     :else
     (into lines (reduce (partial stringify level) [] line))))
