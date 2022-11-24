@@ -69,7 +69,7 @@
       `(vec (repeatedly ~number (fn [] ~exp))))))
 
 #?(:clj
-   (defmacro unquotable [expression]
+   (defmacro unquotable [& expressions]
      (let [quote-replacement (gensym 'IGLU_REPLACED_QUOTE)]
        (letfn [(inline-unquotes
                 [form]
@@ -103,6 +103,7 @@
                       (inline-unquotes subform)
                       (list `quote subform)))
                   form))]
-         (->> expression
+         (->> expressions
               (prewalk-replace {`quote quote-replacement})
-              (prewalk replace-quotes))))))
+              (prewalk replace-quotes)
+              (cons 'do))))))
