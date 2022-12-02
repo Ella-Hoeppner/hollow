@@ -1,4 +1,4 @@
-(ns sdf.chunks
+(ns sprog.iglu.chunks.sdf
   (:require [sprog.iglu.chunks.raytracing :refer [ray-chunk]]
             [sprog.iglu.core :refer [merge-chunks]]
             [clojure.walk :refer [postwalk-replace]]))
