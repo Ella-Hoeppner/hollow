@@ -115,12 +115,12 @@
       {([vec3] vec3)
        ([pos]
         (normalize
-         (vec3 (- (:sdf-name (+ pos (vec3 sample-distance 0 0)))
-                  (:sdf-name (- pos (vec3 sample-distance 0 0))))
-               (- (:sdf-name (+ pos (vec3 0 sample-distance 0)))
-                  (:sdf-name (- pos (vec3 0 sample-distance 0))))
-               (- (:sdf-name (+ pos (vec3 0 0 sample-distance)))
-                  (:sdf-name (- pos (vec3 0 0 sample-distance)))))))}}}))
+         (vec3 (- (:sdf-name (+ pos (vec3 :sample-distance 0 0)))
+                  (:sdf-name (- pos (vec3 :sample-distance 0 0))))
+               (- (:sdf-name (+ pos (vec3 0 :sample-distance 0)))
+                  (:sdf-name (- pos (vec3 0 :sample-distance 0))))
+               (- (:sdf-name (+ pos (vec3 0 0 :sample-distance)))
+                  (:sdf-name (- pos (vec3 0 0 :sample-distance)))))))}}}))
 
 (def perspective-camera-chunk
   (merge-chunks ray-chunk
