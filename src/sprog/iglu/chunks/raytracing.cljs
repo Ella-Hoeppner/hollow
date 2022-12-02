@@ -88,18 +88,39 @@
                   :termination-threshold termination-threshold
                   :fn-name fn-name}
                  '{:functions {:fn-name
-                               {([Ray] vec3)
-                                ([ray]
+                               {([Ray float] vec3)
+                                ([ray maxDistance]
                                  (=float t 0)
                                  (=int maxSteps :max-steps)
                                  ("for(int i=0;i<maxSteps;i++)"
                                   (=float distanceEstimate
                                           (:sdf-name (+ ray.pos (* t ray.dir))))
-                                  ("if" (< (abs distanceEstimate) 
+                                  ("if" (< (abs distanceEstimate)
                                            :termination-threshold)
-                                        "break")
-                                  (+= t (* distanceEstimate :step-factor)))
-                                 (+ ray.pos (* t ray.dir)))}}})))
+                                        (return (+ ray.pos (* t ray.dir))))
+                                  (+= t (* distanceEstimate :step-factor))
+                                  ("if" (> t maxDistance) "break"))
+                                 -1)}}})))
+
+(defn create-sdf-normal-chunk [sdf-name & [{:keys [sample-distance
+                                                   fn-name]
+                                            :or {sample-distance 0.001
+                                                 fn-name 'sdfNorm}}]]
+  (postwalk-replace
+   {:sample-distance sample-distance
+    :sdf-name sdf-name
+    :fn-name fn-name}
+   '{:functions
+     {:fn-name
+      {([vec3] vec3)
+       ([pos]
+        (normalize
+         (vec3 (- (:sdf-name (+ pos (vec3 sample-distance 0 0)))
+                  (:sdf-name (- pos (vec3 sample-distance 0 0))))
+               (- (:sdf-name (+ pos (vec3 0 sample-distance 0)))
+                  (:sdf-name (- pos (vec3 0 sample-distance 0))))
+               (- (:sdf-name (+ pos (vec3 0 0 sample-distance)))
+                  (:sdf-name (- pos (vec3 0 0 sample-distance)))))))}}}))
 
 (def perspective-camera-chunk
   (merge-chunks ray-chunk
