@@ -38,8 +38,7 @@
     (reset! gl-atom (create-gl-canvas true))
     (let [tex (create-tex :f8
                           [tex-size tex-size 4]
-                          {:3d true
-                           :wrap-mode [:clamp :clamp :repeat]})]
+                          {:wrap-mode [:clamp :clamp :repeat]})]
       (reset! tex-atom tex)
       (run-purefrag-shader! (iglu->glsl
                              {:tex-size-f (.toFixed tex-size 1)}
