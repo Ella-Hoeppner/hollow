@@ -78,9 +78,9 @@
                              channels
                              data]
                       :or {wrap-mode :repeat
-                           channels 4}
-                      three-d? :3d}]]
-  (let [texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)
+                           channels 4}}]]
+  (let [three-d? (= (count resolution) 3)
+        texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)
         tex (.createTexture gl texture-target)]
     (.bindTexture gl texture-target tex)
     (let [internal-format (({:f8 [gl.R8 gl.RG8 gl.RGB8 gl.RGBA]
