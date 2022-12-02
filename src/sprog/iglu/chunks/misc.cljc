@@ -83,3 +83,10 @@
                  (vec4 (texture tex (/ (+ gridCoords (vec2 1 1)) texSize)))
                  tweenCoords.x)
             tweenCoords.y))}}})
+
+(def paretto-transform-chunk
+  '{:functions {paretto
+                {([float float float] float)
+                 ([value shape scale]
+                  (/ (pow (* shape scale) shape)
+                     (pow value (+ shape 1))))}}})
