@@ -97,7 +97,7 @@
                                           (:sdf-name (+ ray.pos (* t ray.dir))))
                                   ("if" (< (abs distanceEstimate)
                                            :termination-threshold)
-                                        (return (+ ray.pos (* t ray.dir))))
+                                        (return t))
                                   (+= t (* distanceEstimate :step-factor))
                                   ("if" (> t maxDistance) "break"))
                                  -1)}}})))
