@@ -88,7 +88,7 @@
                   :termination-threshold termination-threshold
                   :fn-name fn-name}
                  '{:functions {:fn-name
-                               {([Ray float] vec3)
+                               {([Ray float] float)
                                 ([ray maxDistance]
                                  (=float t 0)
                                  (=int maxSteps :max-steps)
