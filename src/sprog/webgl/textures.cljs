@@ -79,7 +79,8 @@
                              data]
                       :or {wrap-mode :repeat
                            channels 4}}]]
-  (let [three-d? (= (count resolution) 3)
+  (let [three-d? (and (not (number? resolution))
+                      (= (count resolution) 3))
         texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)
         tex (.createTexture gl texture-target)]
     (.bindTexture gl texture-target tex)
@@ -104,9 +105,7 @@
                        :u32 gl.UNSIGNED_INT}
                       texture-type)]
       (if three-d?
-        (let [[width height depth] (if (number? resolution)
-                                     [resolution resolution resolution]
-                                     resolution)]
+        (let [[width height depth] resolution]
           (.texImage3D gl
                        gl.TEXTURE_3D
                        0
