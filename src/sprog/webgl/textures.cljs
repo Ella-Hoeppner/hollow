@@ -141,7 +141,7 @@
     tex))
 
 (defn delete-tex [gl & textures]
-  (doseq [tex (flatten textures)]
+  (doseq [tex (filter identity (flatten textures))]
     (.deleteTexture gl tex)))
 
 (defn tex-data-array [gl texture texture-type size]
