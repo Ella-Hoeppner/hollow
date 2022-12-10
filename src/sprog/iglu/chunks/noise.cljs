@@ -10,6 +10,32 @@
                   (+= p3 (dot p3 (+ p3.yzx 33.33)))
                   (fract (* (+ p3.x p3.y) p3.z)))}}})
 
+(def rand-normal-chunk
+  (merge-chunks rand-chunk
+                '{:functions
+                  {randNorm
+                   {([vec2] vec2)
+                    ([x]
+                     (=float angle (* 6.283185307179586 (rand x)))
+                     (=float radius
+                             (sqrt (* -2 (log (rand (+ x (vec2 100 -50)))))))
+                     (* radius (vec2 (cos angle) (sin angle))))}}}))
+
+(def rand-sphere-chunk
+  (merge-chunks rand-normal-chunk
+                '{:functions
+                  {randSphere
+                   {([vec3] vec3)
+                    ([x]
+                     (=vec2 norm1 (randNorm x.xy))
+                     (=vec2 norm2 (randNorm (+ x.yz (vec2 -153 0))))
+
+                     (* (vec3 norm1 norm2.x)
+                        (/ (pow (rand (+ x.zx (vec2 -101 60))) (/ 1 3))
+                           (sqrt (+ (* norm1.x norm1.x)
+                                    (* norm1.y norm1.y)
+                                    (* norm2.x norm2.x))))))}}}))
+
 ; based on https://thebookofshaders.com/edit.php#11/2d-snoise-clear.frag
 (def simplex-2d-chunk
   (postwalk-replace
