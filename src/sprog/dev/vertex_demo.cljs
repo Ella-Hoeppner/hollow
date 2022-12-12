@@ -1,7 +1,7 @@
 (ns sprog.dev.vertex-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-shaders!]]
             [sprog.webgl.attributes :refer [create-boj!]]
@@ -39,7 +39,7 @@
 
 (with-context @gl-atom
   (defn update-page! []
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (run-shaders! [vert-source frag-source]
                   (canvas-resolution)
                   {:matrices {"rotation"

@@ -1,7 +1,7 @@
 (ns sprog.dev.macro-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [iglu->glsl]]
@@ -31,7 +31,7 @@
 
 (defn update-page! []
   (with-context @gl-atom
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)}}))

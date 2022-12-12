@@ -3,7 +3,7 @@
             [sprog.webgl.textures :refer [create-tex
                                           copy-html-image-data!]]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core :refer-macros [with-context]]))
@@ -15,7 +15,7 @@
 
 (with-context @gl-atom
   (defn update-page! []
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (when @time-updated?-atom
       (copy-html-image-data! @tex-atom @video-element-atom))
     (run-purefrag-shader!

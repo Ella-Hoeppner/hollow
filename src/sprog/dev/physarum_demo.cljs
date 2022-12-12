@@ -1,7 +1,7 @@
 (ns sprog.dev.physarum-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-shaders!
                                          run-purefrag-shader!]]
@@ -208,7 +208,7 @@
   (defn update-page! []
     (update-agents! ambient-randomize-chance)
     (update-substrate!)
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! render-frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)}

@@ -1,7 +1,7 @@
 (ns sprog.dev.pixel-sort-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex
@@ -68,7 +68,7 @@
                            :ints {"frame" @frame-atom}}
                           {:target (second @texs-atom)})
     (swap! texs-atom reverse)
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! '{:version "300 es"
                             :precision {float highp}
                             :uniforms {size vec2

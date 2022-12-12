@@ -2,7 +2,7 @@
   (:require #_[sprog.util :as u]
             [sprog.webgl.textures :refer [html-image-tex]]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
@@ -36,7 +36,7 @@
 
 (with-context @gl-atom
   (defn update-page! []
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)

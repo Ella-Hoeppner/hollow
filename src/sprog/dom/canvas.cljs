@@ -9,46 +9,39 @@
       (.appendChild js/document.body canvas))
     gl))
 
-(defn maximize-canvas [canvas & {:keys [max-pixel-ratio]}]
+(defn maximize-canvas [canvas & {:keys [max-pixel-ratio square?]}]
   (let [raw-width js/window.innerWidth
         raw-height js/window.innerHeight
         pixel-ratio (if max-pixel-ratio
                       (min js/window.devicePixelRatio max-pixel-ratio)
                       js/window.devicePixelRatio)
-        style canvas.style
-        [width height] (mapv (partial * pixel-ratio)
-                             [raw-width raw-height])]
-    (set! (.-left style) 0)
-    (set! (.-top style) 0)
-    (set! (.-width style) (str raw-width "px"))
-    (set! (.-height style) (str raw-height "px"))
-    (set! (.-width canvas) width)
-    (set! (.-height canvas) height)))
+        style canvas.style]
+    (if square?
+      (let [raw-size (min raw-width raw-height)
+            pixel-ratio (if max-pixel-ratio
+                          (min js/window.devicePixelRatio max-pixel-ratio)
+                          js/window.devicePixelRatio)
+            size (* raw-size pixel-ratio)]
+        (set! (.-left style) (* (- raw-width raw-size) 0.5))
+        (set! (.-top style) (* (- raw-height raw-size) 0.5))
+        (set! (.-width style) (str raw-size "px"))
+        (set! (.-height style) (str raw-size "px"))
+        (set! (.-width canvas) size)
+        (set! (.-height canvas) size))
+      (let [[width height] (mapv (partial * pixel-ratio)
+                                 [raw-width raw-height])]
+        (set! (.-left style) 0)
+        (set! (.-top style) 0)
+        (set! (.-width style) (str raw-width "px"))
+        (set! (.-height style) (str raw-height "px"))
+        (set! (.-width canvas) width)
+        (set! (.-height canvas) height)))))
 
 (defn maximize-gl-canvas [gl & options]
   (apply (partial maximize-canvas gl.canvas) options))
 
-(defn square-maximize-canvas [canvas & {:keys [max-pixel-ratio]}]
-  (let [raw-width js/window.innerWidth
-        raw-height js/window.innerHeight
-        raw-size (min raw-width raw-height)
-        pixel-ratio (if max-pixel-ratio
-                      (min js/window.devicePixelRatio max-pixel-ratio)
-                      js/window.devicePixelRatio)
-        style canvas.style
-        size (* raw-size pixel-ratio)]
-    (set! (.-left style) (* (- raw-width raw-size) 0.5))
-    (set! (.-top style) (* (- raw-height raw-size) 0.5))
-    (set! (.-width style) (str raw-size "px"))
-    (set! (.-height style) (str raw-size "px"))
-    (set! (.-width canvas) size)
-    (set! (.-height canvas) size)))
-
 (defn canvas-resolution [gl]
   [gl.canvas.width gl.canvas.height])
-
-(defn square-maximize-gl-canvas [gl & options]
-  (apply (partial square-maximize-canvas gl.canvas) options))
 
 (defn save-image [canvas name]
   (.toBlob canvas

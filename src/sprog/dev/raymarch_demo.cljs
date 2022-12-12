@@ -1,7 +1,7 @@
 (ns sprog.dev.raymarch-demo
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [create-gl-canvas
-                                      square-maximize-gl-canvas
+                                      maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.input.mouse :refer [mouse-pos
@@ -96,7 +96,7 @@
 
 (defn update-page! []
   (with-context @gl-atom
-    (square-maximize-gl-canvas)
+    (maximize-gl-canvas {:square? true})
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
