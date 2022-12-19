@@ -41,6 +41,10 @@
                                (* 0.5 (- size minDim)))
                             minDim))}}})
 
+(def sigmoid-chunk
+  '{:functions {sigmoid {([float] float)
+                         ([x] (/ 1 (+ 1 (exp (- 0 x)))))}}})
+
 (def sympow-chunk
   '{:functions
     {sympow
