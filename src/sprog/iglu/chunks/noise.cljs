@@ -1,5 +1,6 @@
 (ns sprog.iglu.chunks.noise
-  (:require [clojure.walk :refer [postwalk-replace]]
+  (:require [sprog.util :as u]
+            [clojure.walk :refer [postwalk-replace]]
             [sprog.iglu.core :refer [merge-chunks]]))
 
 (def rand-chunk
@@ -368,3 +369,62 @@
                                              k))
                               (+= a (vec2 (* o.z w) w))))
                             (/ a.x a.y))}}})
+
+; based on "Gabor Noise by Example" section 3.3
+; doi:10.1145/2185520.2185569
+(defn get-gabor-kernel-chunk [dimension & [exclude-bandwidth?]]
+  (u/unquotable
+   (let [position-type ('[float vec2 vec3 vec4] (dec dimension))]
+     {:functions
+      {'gaborKernel
+       {(list (if exclude-bandwidth?
+                [position-type position-type 'float]
+                [position-type 'float position-type 'float])
+              'float)
+        (list (if exclude-bandwidth?
+                '[x frequency phase]
+                '[x bandwidth frequency phase])
+              (cond->> '(cos (+ phase (* ~(* Math/PI 2) (dot x frequency))))
+                (not exclude-bandwidth?)
+                (list '*
+                      '(exp (* ~(- Math/PI) 
+                               bandwidth
+                               bandwidth
+                               (dot x x))))))}}})))
+
+; based on "Gabor Noise by Example" section 3.3
+; doi:10.1145/2185520.2185569
+(defn get-gabor-noise-2d-chunk [frequencies
+                                & [{:keys [rand-fn exclude-bandwidth?]
+                                    :or {rand-fn rand}}]]
+  (merge-chunks
+   (get-gabor-kernel-chunk 2 exclude-bandwidth?)
+   (u/unquotable
+    '{:functions
+      {gaborNoise
+       {(~(if exclude-bandwidth?
+            '[vec2]
+            '[vec2 float]) float)
+        (~(if exclude-bandwidth?
+            '[x]
+            '[x bandwidth])
+         (* ~(cons '+
+                   (map (fn [frequency]
+                          (let [phase (* (rand-fn) Math/PI 2)
+                                offset (cons 'vec2
+                                             (u/gen 2 (- (* (rand-fn) 2) 1)))
+                                rotation-angle (* (rand-fn) Math/PI 2)
+                                rotated-frequency
+                                (list
+                                 'vec2
+                                 (* frequency (Math/cos rotation-angle))
+                                 (* frequency (Math/sin rotation-angle)))]
+                            (filter identity
+                                    '(gaborKernel
+                                      (- x ~offset)
+                                      ~(when (not exclude-bandwidth?)
+                                         'bandwidth)
+                                      ~rotated-frequency
+                                      ~phase))))
+                        frequencies))
+            ~(/ (Math/sqrt (count frequencies)))))}}})))
