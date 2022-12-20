@@ -20,7 +20,8 @@
             sprog.dev.gaussian-demo
             sprog.dev.hsv-demo
             sprog.dev.params-demo
-            sprog.dev.gabor-demo))
+            sprog.dev.gabor-demo
+            sprog.dev.oklab-mix-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -44,7 +45,8 @@
   #_(sprog.dev.gaussian-demo/init)
   #_(sprog.dev.hsv-demo/init)
   #_(sprog.dev.params-demo/init)
-  (sprog.dev.gabor-demo/init))
+  #_(sprog.dev.gabor-demo/init)
+  (sprog.dev.oklab-mix-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))
