@@ -316,29 +316,41 @@
                 (.xyxy (/ scale :TAU))))))}}})))
 
 ; fractional brownian motion
-(defn get-fbm-chunk [noise-fn noise-dimensions & noise-prefix-args]
-  (postwalk-replace
-   {:noise-expression (concat (list noise-fn)
-                              noise-prefix-args
-                              '((* f x)))
-    :vec ({1 'float
-           2 'vec2
-           3 'vec3
-           4 'vec4}
-          noise-dimensions)}
-   '{:functions
-     {fbm
-      {([:vec int float] float)
-       ([x octaves hurstExponent]
-        (=float g (exp2 (- 0 hurstExponent)))
-        (=float f 1)
-        (=float a 1)
-        (=float t 0)
-        ("for(int i=0;i<octaves;i++)"
-         (+= t (* a :noise-expression))
-         (*= f 2)
-         (*= a g))
-        t)}}}))
+(def fbm-chunk
+  (u/unquotable
+   {:macros
+    {'fbm (fn [noise-fn 
+               noise-dimensions
+               x
+               octaves
+               hurst-exponent
+               & noise-suffix-args]
+            (let [fbm-symbol (symbol (str "fbm_" noise-fn))
+                  dimension-type ({1 'float
+                                   2 'vec2
+                                   3 'vec3
+                                   4 'vec4}
+                                  (if (number? noise-dimensions)
+                                    noise-dimensions
+                                    (js/parseInt noise-dimensions)))]
+              {:chunk
+               {:functions
+                {fbm-symbol
+                 '{([~dimension-type int float]
+                    float)
+                   ([x octaves hurstExponent]
+                    (=float g (exp2 (- 0 hurstExponent)))
+                    (=float f 1)
+                    (=float a 1)
+                    (=float t 0)
+                    ("for(int i=0;i<octaves;i++)"
+                     (+= t (* a ~(concat (list noise-fn
+                                               '(* f x))
+                                         noise-suffix-args)))
+                     (*= f 2)
+                     (*= a g))
+                    t)}}}
+               :expression (list fbm-symbol x octaves hurst-exponent)}))}}))
 
 ;based on www.shadertoy.com/view/Xd23Dh
 (def voronoise-chunk

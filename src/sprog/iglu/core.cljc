@@ -11,9 +11,11 @@
   (reduce (partial merge-with merge) chunks))
 
 (defn preprocess [{:keys [constants macros] :as shader}]
-  (cond->> (apply-macros (merge macros default-macros)
-                         (dissoc shader :macros))
-    constants (prewalk-replace constants)))
+  (let [[macroexpanded-shader macro-chunks]
+        (apply-macros (merge macros default-macros)
+                      (dissoc shader :macros))]
+    (cond->> (apply combine-chunks (cons macroexpanded-shader macro-chunks))
+     constants (prewalk-replace constants))))
 
 (defn iglu->glsl
   ([shader] (->> shader
