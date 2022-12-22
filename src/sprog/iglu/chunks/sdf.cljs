@@ -4,14 +4,6 @@
             [clojure.walk :refer [postwalk-replace]]))
 
 ; SDFs based on https://iquilezles.org/articles/distfunctions/
-(def plane-sdf-chunk
-  (merge-chunks
-   ray-chunk
-   '{:functions {sdPlane
-                 {([vec3 Ray] float)
-                  ([pos planeRay]
-                   (dot (- planeRay.pos pos) planeRay.dir))}}}))
-
 (def sphere-sdf-chunk
   '{:functions {sdSphere {([vec3 vec3 float] float)
                           ([pos spherePos radius]
@@ -229,57 +221,77 @@
 
                    (:fn-name q  #_(args here)))}}}))
 
-; combinations
-
-(def sdf-union-chunk '{:functions
-                       {opUnion
-                        {([float float] float)
-                         ([d1 d2]
-                          (min d1 d2))}}})
-
-(def sdf-smooth-union-chunk '{:functions
-                              {opSmoothUnion
-                               {([float float float]
-                                 float)
-                                ([d1 d2 smooth]
-                                 (=float h (clamp (+ 0.5
-                                                     (* 0.5 (/ (- d2 d1)
-                                                               k)))
-                                                  0 1))
-
-                                 (- (mix d2 d1 h) (* k h (- 1 h))))}}})
-
-(def sdf-subtraction-chunk '{:functions  {opSubtraction
-                                          {([float float] float)
-                                           ([d1 d2] (max (* -1 d1) d2))}}})
-
-(def sdf-smooth-subtraction-chunk
+; sdf operations
+(def union-chunk
   '{:functions
-    {opSmoothUnion
-     {([float float float]
-       float)
-      ([d1 d2 smooth]
-       (=float h (clamp (- 0.5
-                           (* 0.5 (/ (- d2 d1)
-                                     k)))
-                        0 1))
+    {union
+     {([float float] float)
+      ([d1 d2]
+       (min d1 d2))}}})
 
-       (+ (mix d2 (* -1 d1) h) (* k h (- 1 h))))}}})
-
-(def sdf-intersection-chunk
-  '{:functions  {opIntersection
-                 {([float float] float)
-                  ([d1 d2] (max d1 d2))}}})
-
-(def sdf-smooth-intersectionn-chunk
+(def subtraction-chunk
   '{:functions
-    {opSmoothUnion
-     {([float float float]
-       float)
-      ([d1 d2 smooth]
-       (=float h (clamp (- 0.5
-                           (* 0.5 (/ (- d2 d1)
-                                     k)))
-                        0 1))
+    {subtraction
+     {([float float] float)
+      ([d1 d2]
+       (max (- 0 d1) d2))}}})
 
+(def intersection-chunk
+  '{:functions
+    {intersection
+     {([float float] float)
+      ([d1 d2]
+       (max d1 d2))}}})
+
+(def smooth-union-chunk
+  '{:functions
+    {smoothUnion
+     {([float float float] float)
+      ([d1 d2 k]
+       (=float h (clamp (+ (/ (* 0.5 (- d2 d1)) k) 0.5) 0 1))
+       (- (mix d2 d1 h) (* k h (- 1 h))))}}})
+
+(def smooth-intersectioon-chunk
+  '{:functions
+    {smoothIntersection
+     {([float float float] float)
+      ([d1 d2 k]
+       (=float h (clamp (- (/ (* 0.5 (- d2 d1)) k) 0.5) 0 1))
        (+ (mix d2 d1 h) (* k h (- 1 h))))}}})
+
+(def smooth-subtraction-chunk
+  '{:functions
+    {smoothSubtraction
+     {([float float float] float)
+      ([d1 d2 k]
+       (=float h (clamp (- (/ (* 0.5 (+ d2 d1)) k) 0.5) 0 1))
+       (+ (mix d2 d1 h) (* k h (- 1 h))))}}})
+
+; transformations
+
+(def onion-chunk
+  '{:functions
+    {onion
+     {([float float] float)
+      ([d h]
+       (- (abs d) h))}}})
+(def twistX-chunk
+  '{:functions
+    {twistX
+     {([vec3 float] vec3)
+      ([pos k]
+       (=float c (cos (* k pos.x)))
+       (=float s (sin (* k pos.x)))
+       (=mat2 m (mat2 c (- 0 s) s c))
+       (=vec3 q (vec3 (* m pos.yz) pos.x))
+       q)}}})
+
+(def twistY-chunk
+  '{:functions {twistY
+                {([vec3 float] vec3)
+                 ([pos k]
+                  (=float c (cos (* k pos.y)))
+                  (=float s (sin (* k pos.y)))
+                  (=mat2 m (mat2 c (- 0 s) s c))
+                  (=vec3 q (vec3 (* m pos.xz) pos.y))
+                  q)}}})
