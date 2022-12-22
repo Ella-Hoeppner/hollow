@@ -11,10 +11,10 @@
 
 (def frag-source
   (iglu->glsl
-   {:rand
-    (fn
-      ([] (rand))
-      ([minimum maximum] (+ minimum (rand (- maximum minimum)))))}
+   {:macros {:rand (fn ([] (rand))
+                     ([minimum maximum]
+                      (+ minimum
+                         (rand (- maximum minimum)))))}}
    '{:version "300 es"
      :precision {float highp}
      :uniforms {size vec2

@@ -1,6 +1,6 @@
 (ns sprog.iglu.chunks.postprocessing
   (:require [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [merge-chunks]]))
+            [sprog.iglu.core :refer [combine-chunks]]))
 
 (def gaussian-chunk
   '{:functions
@@ -62,7 +62,7 @@
           '+)))
 
 (defn create-gaussian-sample-chunk [texture-type neighborhood]
-  (merge-chunks
+  (combine-chunks
    gaussian-chunk
    (postwalk-replace
     {:sampler-type (if (= texture-type :f8)

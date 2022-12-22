@@ -1,7 +1,7 @@
 (ns sprog.iglu.chunks.noise
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [merge-chunks]]))
+            [sprog.iglu.core :refer [combine-chunks]]))
 
 (def rand-chunk
   '{:functions {rand
@@ -12,7 +12,7 @@
                   (fract (* (+ p3.x p3.y) p3.z)))}}})
 
 (def rand-normal-chunk
-  (merge-chunks rand-chunk
+  (combine-chunks rand-chunk
                 '{:functions
                   {randNorm
                    {([vec2] vec2)
@@ -23,7 +23,7 @@
                      (* radius (vec2 (cos angle) (sin angle))))}}}))
 
 (def rand-sphere-chunk
-  (merge-chunks rand-normal-chunk
+  (combine-chunks rand-normal-chunk
                 '{:functions
                   {randSphere
                    {([vec3] vec3)
@@ -300,7 +300,7 @@
 ; based on https://gamedev.stackexchange.com/a/23639
 
 (def tileable-simplex-2d-chunk
-  (merge-chunks
+  (combine-chunks
    simplex-4d-chunk
    (postwalk-replace
     {:TAU (.toFixed (* Math/PI 2) 12)}
@@ -429,7 +429,7 @@
 (defn get-gabor-noise-2d-chunk [frequencies
                                 & [{:keys [rand-fn exclude-bandwidth?]
                                     :or {rand-fn rand}}]]
-  (merge-chunks
+  (combine-chunks
    (get-gabor-kernel-chunk 2 exclude-bandwidth?)
    (u/unquotable
     '{:functions

@@ -1,31 +1,27 @@
 (ns sprog.iglu.core
-  (:require [clojure.walk :refer [prewalk-replace]]
+  (:require [clojure.walk :refer [prewalk
+                                  prewalk-replace]]
             [sprog.iglu.glsl :refer [clj-name->glsl-name
                                      parsed-iglu->glsl]]
             [sprog.iglu.parse :refer [parse]]
             [sprog.iglu.macros :refer [apply-macros
                                        default-macros]]))
 
-(defn merge-chunks [& chunks]
-  (assoc (reduce (partial merge-with merge)
-                 (map #(dissoc % :version) chunks))
-         :version "300 es"))
+(defn combine-chunks [& chunks]
+  (reduce (partial merge-with merge) chunks))
+
+(defn preprocess [{:keys [constants macros] :as shader}]
+  (cond->> (apply-macros (merge macros default-macros)
+                         (dissoc shader :macros))
+    constants (prewalk-replace constants)))
 
 (defn iglu->glsl
-  ([shader]
-   (->> shader
-        (apply-macros default-macros)
-        parse
-        parsed-iglu->glsl))
-  ([replacement-and-macro-map & chunks]
-   (let [{macros true
-          replacements false}
-         (group-by (comp fn? second) replacement-and-macro-map)]
-     (->> chunks
-          (apply merge-chunks)
-          (apply-macros (into default-macros macros))
-          (prewalk-replace (into {} replacements))
-          iglu->glsl))))
+  ([shader] (->> shader
+                 preprocess
+                 parse
+                 parsed-iglu->glsl))
+  ([first-chunk & other-chunks]
+   (iglu->glsl (apply combine-chunks (cons first-chunk other-chunks)))))
 
 (defn inline-float-uniforms [numerical-param-names & chunks]
   (let [param-uniform-names
@@ -33,7 +29,7 @@
                (mapcat #(list % (clj-name->glsl-name %))
                        numerical-param-names))]
     (prewalk-replace param-uniform-names
-                     (apply merge-chunks
+                     (apply combine-chunks
                             (concat chunks
                                     (list
                                      {:uniforms

@@ -13,7 +13,6 @@
 
 (def noise-2d-frag-source
   (iglu->glsl
-   nil
    voronoise-chunk
    '{:version "300 es"
      :precision {float highp}

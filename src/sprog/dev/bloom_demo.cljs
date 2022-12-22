@@ -15,8 +15,7 @@
 (defonce tex-atom (atom nil))
 
 (def frag-source
-  (iglu->glsl
-   nil
+  (iglu->glsl 
    (get-bloom-chunk :f8 (square-neighborhood 4 1) 5)
    '{:version "300 es"
     :precision {float highp}

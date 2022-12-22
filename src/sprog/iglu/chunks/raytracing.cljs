@@ -1,13 +1,13 @@
 (ns sprog.iglu.chunks.raytracing
   (:require [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [merge-chunks]]))
+            [sprog.iglu.core :refer [combine-chunks]]))
 
 (def ray-chunk
   '{:structs {Ray [pos vec3
                    dir vec3]}})
 
 (def plane-intersection-chunk
-  (merge-chunks ray-chunk
+  (combine-chunks ray-chunk
                 '{:functions {findPlaneIntersection
                               {([Ray Ray] float)
                                ([ray planeRay]
@@ -15,7 +15,7 @@
                                    (dot ray.dir planeRay.dir)))}}}))
 
 (def sphere-intersection-chunk
-  (merge-chunks ray-chunk
+  (combine-chunks ray-chunk
                 '{:functions
                   {findSphereIntersections
                    {([Ray vec3 float] vec2)
@@ -34,7 +34,7 @@
 
 ; based on https://iquilezles.org/articles/boxfunctions/
 (def box-intersection-chunk
-  (merge-chunks
+  (combine-chunks
    ray-chunk
    '{:structs {BoxIntersection [hit bool
                                 frontDist float
@@ -66,7 +66,7 @@
                                           (step t1.zxy t1.xyz)))))}}}))
 
 (def plane-sdf-chunk
-  (merge-chunks ray-chunk
+  (combine-chunks ray-chunk
                 '{:functions {sdPlane
                               {([vec3 Ray] float)
                                ([pos planeRay]
@@ -80,7 +80,7 @@
                                                max-steps 1024
                                                termination-threshold 0.001
                                                fn-name 'march}}]]
-  (merge-chunks ray-chunk
+  (combine-chunks ray-chunk
                 (postwalk-replace
                  {:sdf-name sdf-name
                   :step-factor step-factor
@@ -123,7 +123,7 @@
                   (:sdf-name (- pos (vec3 0 0 :sample-distance)))))))}}}))
 
 (def perspective-camera-chunk
-  (merge-chunks ray-chunk
+  (combine-chunks ray-chunk
                 '{:functions
                   {cameraRay
                    {([vec2 vec3 vec3 float] Ray)
@@ -150,7 +150,7 @@
                                                           (vec3 0)
                                                           (vec3 0))
             hit-expression '((return voxelIntersection))}}]]
-  (merge-chunks
+  (combine-chunks
    ray-chunk
    (postwalk-replace
     {:max-voxel-steps (str max-voxel-steps)
@@ -224,7 +224,7 @@
                                      default-return-expression
                                      hit-expression
                                      & [max-steps]]
-  (merge-chunks
+  (combine-chunks
    ray-chunk
    (postwalk-replace
     {:max-steps (str (or max-steps 1000000))

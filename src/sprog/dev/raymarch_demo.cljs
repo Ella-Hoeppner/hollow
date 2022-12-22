@@ -14,13 +14,14 @@
 
 (def frag-glsl
   (iglu->glsl
-   {:raymarch-step-factor 0.5
-    :max-ray-dist 5
-    :fov 0.5
-    :distortion-amplitude-factor 0.5
-    :distortion-frequency-factor 4
-    :time-factor 0.25
-    :TAU u/TAU}
+   {:constants
+    {:raymarch-step-factor 0.5
+     :max-ray-dist 5
+     :fov 0.5
+     :distortion-amplitude-factor 0.5
+     :distortion-frequency-factor 4
+     :time-factor 0.25
+     :TAU u/TAU}}
    simplex-4d-chunk
    '{:version "300 es"
      :precision {float highp

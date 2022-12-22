@@ -13,7 +13,6 @@
 
 (def noise-2d-frag-source
   (iglu->glsl
-   nil
    simplex-2d-chunk
    '{:version "300 es"
      :precision {float highp}
@@ -28,7 +27,6 @@
 
 (def noise-3d-frag-source
   (iglu->glsl
-   nil
    simplex-3d-chunk
    '{:version "300 es"
      :precision {float highp}

@@ -13,7 +13,6 @@
 
 (def frag-source
   (iglu->glsl
-   nil
    tileable-simplex-2d-chunk
    '{:version "300 es"
      :precision {float highp}

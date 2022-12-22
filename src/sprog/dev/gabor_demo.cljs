@@ -12,8 +12,7 @@
 (defonce gl-atom (atom nil))
 
 (def frag-glsl
-  (iglu->glsl
-   nil
+  (iglu->glsl 
    pos-chunk
    (get-gabor-noise-2d-chunk (u/gen 16 (* 2 (Math/pow 10 (rand))))
                              {:exclude-bandwidth? true})

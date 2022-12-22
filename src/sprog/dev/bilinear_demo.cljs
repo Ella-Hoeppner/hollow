@@ -22,7 +22,7 @@
 
 (def nearest-frag-source
   (iglu->glsl
-   {:u16-max-f (.toFixed u16-max 1)}
+   {:constants {:u16-max-f (.toFixed u16-max 1)}}
    '{:version "300 es"
      :precision {float highp
                  usampler2D highp}
@@ -34,7 +34,7 @@
 
 (def bilinear-frag-source
   (iglu->glsl
-   {:u16-max-f (.toFixed u16-max 1)}
+   {:constants {:u16-max-f (.toFixed u16-max 1)}}
    bilinear-usampler-chunk
    '{:version "300 es"
      :precision {float highp

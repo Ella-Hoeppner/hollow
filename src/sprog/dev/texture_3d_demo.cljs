@@ -41,7 +41,7 @@
                           {:wrap-mode [:clamp :clamp :repeat]})]
       (reset! tex-atom tex)
       (run-purefrag-shader! (iglu->glsl
-                             {:tex-size-f (.toFixed tex-size 1)}
+                             {:constants {:tex-size-f (.toFixed tex-size 1)}}
                              '{:version "300 es"
                                :precision {float highp
                                            sampler3D highp}

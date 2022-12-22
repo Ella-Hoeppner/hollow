@@ -19,7 +19,6 @@
 
 (def top-frag-source
   (iglu->glsl
-   {}
    (create-gaussian-sample-chunk :f8 (square-neighborhood 4 3))
    '{:version "300 es"
      :precision {float highp
@@ -40,11 +39,11 @@
 
 (def bottom-frag-source
   (iglu->glsl
-   {:gaussian-expression
-    #(prescaled-gaussian-sample-expression
-      %
-      (square-neighborhood 4 3)
-      10)}
+   {:macros {:gaussian-expression
+             #(prescaled-gaussian-sample-expression
+               %
+               (square-neighborhood 4 3)
+               10)}}
    '{:version "300 es"
      :precision {float highp
                  sampler2D highp}

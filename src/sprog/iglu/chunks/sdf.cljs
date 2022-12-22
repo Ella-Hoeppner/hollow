@@ -1,6 +1,6 @@
 (ns sprog.iglu.chunks.sdf
   (:require [sprog.iglu.chunks.raytracing :refer [ray-chunk]]
-            [sprog.iglu.core :refer [merge-chunks]]
+            [sprog.iglu.core :refer [combine-chunks]]
             [clojure.walk :refer [postwalk-replace]]))
 
 ; SDFs based on https://iquilezles.org/articles/distfunctions/

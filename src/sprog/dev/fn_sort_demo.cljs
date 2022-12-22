@@ -4,7 +4,7 @@
                                       maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.iglu.core :refer [merge-chunks]]
+            [sprog.iglu.core :refer [combine-chunks]]
             [sprog.webgl.core :refer [with-context]]))
 
 (def fn-count 50)
@@ -13,7 +13,7 @@
 
 (def frag-source
   (u/unquotable
-   (reduce merge-chunks
+   (reduce combine-chunks
            '{:version "300 es"
              :precision {float highp}
              :uniforms {size vec2}

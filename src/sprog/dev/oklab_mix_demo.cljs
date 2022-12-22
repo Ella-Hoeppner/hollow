@@ -15,7 +15,6 @@
 
 (def frag-source
   (iglu->glsl
-   nil
    mix-oklab-chunk
    (postwalk-replace {'mixOklab
                       'mixOklabBrightened}

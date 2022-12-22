@@ -37,18 +37,20 @@
 
 (def iglu-wrapper
   (partial iglu->glsl
-           {:rand (fn [minimum maximum]
-                    (+ minimum (rand (- maximum minimum))))
-            :u16-max (dec (Math/pow 2 16))
-            :substrate-resolution substrate-resolution
-            :agent-tex-resolution agent-tex-resolution
-            :substrate-spread-factor substrate-spread-factor
-            :substrate-fade-factor substrate-fade-factor
-            :sensor-distance sensor-distance
-            :sensor-spread sensor-spread
-            :agent-speed-factor agent-speed-factor
-            :agent-turn-factor agent-turn-factor
-            :TAU u/TAU}))
+           {:macros
+            {:rand (fn [minimum maximum]
+                     (+ minimum (rand (- maximum minimum))))}
+            :constants
+            {:u16-max (dec (Math/pow 2 16))
+             :substrate-resolution substrate-resolution
+             :agent-tex-resolution agent-tex-resolution
+             :substrate-spread-factor substrate-spread-factor
+             :substrate-fade-factor substrate-fade-factor
+             :sensor-distance sensor-distance
+             :sensor-spread sensor-spread
+             :agent-speed-factor agent-speed-factor
+             :agent-turn-factor agent-turn-factor
+             :TAU u/TAU}}))
 
 (def substrate-sample-chunk
   '{:precision {usampler2D highp}

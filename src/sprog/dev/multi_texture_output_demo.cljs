@@ -17,7 +17,7 @@
 
 (def render-frag-source
   (iglu->glsl
-   {:texture-resolution-f (.toFixed texture-resolution 1)}
+   {:constants {:texture-resolution-f (.toFixed texture-resolution 1)}}
    '{:version "300 es"
      :precision {float highp}
      :outputs {fragColor0 vec4

@@ -15,7 +15,6 @@
 
 (def frag-source
   (iglu->glsl
-   nil
    hsv-to-rgb-chunk
    rgb-to-hsv-chunk
    '{:version "300 es"
