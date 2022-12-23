@@ -81,26 +81,26 @@
                                                termination-threshold 0.001
                                                fn-name 'march}}]]
   (combine-chunks ray-chunk
-                (postwalk-replace
-                 {:sdf-name sdf-name
-                  :step-factor step-factor
-                  :max-steps (str (int max-steps))
-                  :termination-threshold termination-threshold
-                  :fn-name fn-name}
-                 '{:functions {:fn-name
-                               {([Ray float] float)
-                                ([ray maxDistance]
-                                 (=float t 0)
-                                 (=int maxSteps :max-steps)
-                                 ("for(int i=0;i<maxSteps;i++)"
-                                  (=float distanceEstimate
-                                          (:sdf-name (+ ray.pos (* t ray.dir))))
-                                  ("if" (< (abs distanceEstimate)
-                                           :termination-threshold)
-                                        (return t))
-                                  (+= t (* distanceEstimate :step-factor))
-                                  ("if" (> t maxDistance) "break"))
-                                 -1)}}})))
+                  (postwalk-replace
+                   {:sdf-name sdf-name
+                    :step-factor step-factor
+                    :max-steps (str (int max-steps))
+                    :termination-threshold termination-threshold
+                    :fn-name fn-name}
+                   '{:functions {:fn-name
+                                 {([Ray float] float)
+                                  ([ray maxDistance]
+                                   (=float t 0)
+                                   (=int maxSteps :max-steps)
+                                   ("for(int i=0;i<maxSteps;i++)"
+                                    (=float distanceEstimate
+                                            (:sdf-name (+ ray.pos (* t ray.dir))))
+                                    ("if" (< (abs distanceEstimate)
+                                             :termination-threshold)
+                                          (return t))
+                                    (+= t (* distanceEstimate :step-factor))
+                                    ("if" (> t maxDistance) "break"))
+                                   -1)}}})))
 
 (defn create-sdf-normal-chunk [sdf-name & [{:keys [sample-distance
                                                    fn-name]

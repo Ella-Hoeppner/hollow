@@ -416,59 +416,86 @@
 
 ; based on "Gabor Noise by Example" section 3.3
 ; doi:10.1145/2185520.2185569
-(defn get-gabor-kernel-chunk [dimension & [exclude-bandwidth?]]
+(def gabor-kernel-chunk
   (u/unquotable
-   (let [position-type ('[float vec2 vec3 vec4] (dec dimension))]
-     {:functions
-      {'gaborKernel
-       {(list (if exclude-bandwidth?
-                [position-type position-type 'float]
-                [position-type 'float position-type 'float])
-              'float)
-        (list (if exclude-bandwidth?
-                '[x frequency phase]
-                '[x bandwidth frequency phase])
-              (cond->> '(cos (+ phase (* ~(* Math/PI 2) (dot x frequency))))
-                (not exclude-bandwidth?)
-                (list '*
-                      '(exp (* ~(- Math/PI) 
-                               bandwidth
-                               bandwidth
-                               (dot x x))))))}}})))
+   {:macros
+    {'gaborKernel
+     (fn [dimensions & kernel-args]
+       (let [position-type ('[float vec2 vec3 vec4]
+                            (dec dimensions))]
+         {:chunk '{:functions
+                   {gKernel
+                    {([~position-type ~position-type float] float)
+                     ([x frequency phase]
+                      (cos (+ phase (* ~(* Math/PI 2) (dot x frequency)))))
+                     ([~position-type ~position-type float float] float)
+                     ([x frequency phase bandwidth]
+                      (* (exp (* ~(- Math/PI)
+                                 bandwidth
+                                 bandwidth
+                                 (dot x x)))
+                         (cos (+ phase (* ~(* Math/PI 2)
+                                          (dot x frequency))))))}}}
+          :expression (cons 'gKernel kernel-args)}))}}))
 
 ; based on "Gabor Noise by Example" section 3.3
 ; doi:10.1145/2185520.2185569
-(defn get-gabor-noise-2d-chunk [frequencies
-                                & [{:keys [rand-fn exclude-bandwidth?]
-                                    :or {rand-fn rand}}]]
+(def gabor-noise-2d-chunk
   (combine-chunks
-   (get-gabor-kernel-chunk 2 exclude-bandwidth?)
+   gabor-kernel-chunk
    (u/unquotable
-    '{:functions
-      {gaborNoise
-       {(~(if exclude-bandwidth?
-            '[vec2]
-            '[vec2 float]) float)
-        (~(if exclude-bandwidth?
-            '[x]
-            '[x bandwidth])
-         (* ~(cons '+
-                   (map (fn [frequency]
-                          (let [phase (* (rand-fn) Math/PI 2)
-                                offset (cons 'vec2
-                                             (u/gen 2 (- (* (rand-fn) 2) 1)))
-                                rotation-angle (* (rand-fn) Math/PI 2)
-                                rotated-frequency
-                                (list
-                                 'vec2
-                                 (* frequency (Math/cos rotation-angle))
-                                 (* frequency (Math/sin rotation-angle)))]
-                            (filter identity
-                                    '(gaborKernel
-                                      (- x ~offset)
-                                      ~(when (not exclude-bandwidth?)
-                                         'bandwidth)
-                                      ~rotated-frequency
-                                      ~phase))))
-                        frequencies))
-            ~(/ (Math/sqrt (count frequencies)))))}}})))
+    {:macros
+     {'gaborNoise
+      (fn gabor-macro [& args]
+        (let [first-arg-rand-fn? (fn? (first args))
+              rand-fn (if first-arg-rand-fn? (first args) rand)
+              frequencies (if first-arg-rand-fn? (second args) (first args))
+              noise-args (drop (if first-arg-rand-fn? 2 1)
+                               args)]
+          {:chunk
+           '{:functions
+             {gNoise
+              {([vec2] float)
+               ([x]
+                (* ~(cons
+                     '+
+                     (map (fn [frequency]
+                            (let [phase (* (rand-fn) Math/PI 2)
+                                  offset (cons 'vec2
+                                               (u/gen 2
+                                                      (- (* (rand-fn) 2) 1)))
+                                  rotation-angle (* (rand-fn) Math/PI 2)
+                                  rotated-frequency
+                                  (list
+                                   'vec2
+                                   (* frequency (Math/cos rotation-angle))
+                                   (* frequency (Math/sin rotation-angle)))]
+                              '(gaborKernel 2
+                                            (- x ~offset)
+                                            ~rotated-frequency
+                                            ~phase)))
+                          frequencies))
+                   ~(/ (Math/sqrt (count frequencies)))))
+               ([vec2 float] float)
+               ([x bandwidth]
+                (* ~(cons
+                     '+
+                     (map (fn [frequency]
+                            (let [phase (* (rand-fn) Math/PI 2)
+                                  offset (cons 'vec2
+                                               (u/gen 2
+                                                      (- (* (rand-fn) 2) 1)))
+                                  rotation-angle (* (rand-fn) Math/PI 2)
+                                  rotated-frequency
+                                  (list
+                                   'vec2
+                                   (* frequency (Math/cos rotation-angle))
+                                   (* frequency (Math/sin rotation-angle)))]
+                              '(gaborKernel 2
+                                            (- x ~offset)
+                                            ~rotated-frequency
+                                            ~phase
+                                            bandwidth)))
+                          frequencies))
+                   ~(/ (Math/sqrt (count frequencies)))))}}}
+           :expression (cons 'gNoise noise-args)}))}})))

@@ -5,7 +5,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.noise :refer [get-gabor-noise-2d-chunk]]
+            [sprog.iglu.chunks.noise :refer [gabor-noise-2d-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
             [sprog.webgl.core :refer [with-context]]))
 
@@ -13,17 +13,21 @@
 
 (def frag-glsl
   (iglu->glsl 
-   pos-chunk
-   (get-gabor-noise-2d-chunk (u/gen 16 (* 2 (Math/pow 10 (rand))))
-                             {:exclude-bandwidth? true})
-   '{:version "300 es"
-     :precision {float highp}
-     :uniforms {size vec2
-                time float}
-     :outputs {fragColor vec4}
-     :main ((=float noiseValue
-                    (gaborNoise (- (* (getPos) 2) 1)))
-            (= fragColor (vec4 (vec3 (* 0.5 (+ 1 noiseValue))) 1)))}))
+   pos-chunk 
+   gabor-noise-2d-chunk
+   (u/unquotable
+    '{:version "300 es"
+      :precision {float highp}
+      :uniforms {size vec2
+                 time float}
+      :outputs {fragColor vec4}
+      :main ((=float noiseValue
+                     (gaborNoise ~(u/gen 50 (* 2 (Math/pow 40 (rand))))
+                                 (-> (getPos)
+                                     (* 2)
+                                     (- 1))
+                                 0.5))
+             (= fragColor (vec4 (vec3 (* 0.5 (+ 1 noiseValue))) 1)))})))
 
 (defn update-page! []
   (with-context @gl-atom

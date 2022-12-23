@@ -6,8 +6,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.iglu.chunks.colors :refer [get-mid-brightened-oklab-mix-chunk
-                                              mix-oklab-chunk]]
+            [sprog.iglu.chunks.colors :refer [mix-oklab-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.webgl.core :refer [with-context]]))
 
@@ -16,9 +15,6 @@
 (def frag-source
   (iglu->glsl
    mix-oklab-chunk
-   (postwalk-replace {'mixOklab
-                      'mixOklabBrightened}
-                     (get-mid-brightened-oklab-mix-chunk))
    '{:version "300 es"
      :precision {float highp}
      :uniforms {size vec2
@@ -33,7 +29,7 @@
                  (if (> pos.y (/ 1 3))
                    (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x)
                          1)
-                   (vec4 (mixOklabBrightened (vec3 0 0 1) (vec3 1) pos.x)
+                   (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
                          1)))))}))
 
 (with-context @gl-atom
