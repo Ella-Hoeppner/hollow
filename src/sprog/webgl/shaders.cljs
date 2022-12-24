@@ -50,17 +50,25 @@
 
 (def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
 
+(defonce purefrag-vert-pos-boj-atom (atom nil))
+
+(defn purefrag-vert-pos-boj [gl]
+  (when (not @purefrag-vert-pos-boj-atom)
+    (reset! purefrag-vert-pos-boj-atom
+            (create-boj! gl
+                         2
+                         {:initial-data (js/Float32Array.
+                                         (clj->js [-1 -1
+                                                   -1 3
+                                                   3 -1]))})))
+  @purefrag-vert-pos-boj-atom)
+
 (defn create-purefrag-sprog [gl frag-source] 
   (let [sprog (create-sprog gl purefrag-vert-glsl frag-source)]
     (set-sprog-attribute! gl
                           sprog
                           "vertPos"
-                          (create-boj! gl
-                                       2
-                                       {:initial-data (js/Float32Array.
-                                                       (clj->js [-1 -1
-                                                                 -1 3
-                                                                 3 -1]))}))
+                          (purefrag-vert-pos-boj gl))
     sprog))
 
 (defn use-sprog! [gl {:keys [program] :as sprog} uniform-map attribute-map]
@@ -88,7 +96,7 @@
               sprog
               size
               uniform-map
-              nil
+              {"vertPos" (purefrag-vert-pos-boj gl)}
               0
               3
               options))
