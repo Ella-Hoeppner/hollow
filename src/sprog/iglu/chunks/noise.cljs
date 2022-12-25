@@ -414,6 +414,22 @@
                                  (= res.y d)))))
                    (vec3 (sqrt res) (abs id)))}}})
 
+(defn rand-normals [n rand-fn]
+  (take n (apply concat (repeatedly 
+                         (fn []
+                           (let [u1 (rand-fn)
+                                 u2 (rand-fn)
+                                 radius (Math/sqrt (* -2 (Math/log u1)))
+                                 angle (* u/TAU u2)]
+                             (map #(* radius (% angle))
+                                  (list Math/cos Math/sin))))))))
+
+(defn rand-n-sphere-point [n rand-fn]
+  (let [normals (rand-normals n rand-fn)
+        magnitude (apply + (map #(* % %) normals))]
+    (map #(/ % magnitude)
+         normals)))
+
 ; based on "Gabor Noise by Example" section 3.3
 ; doi:10.1145/2185520.2185569
 (def gabor-kernel-chunk
@@ -446,54 +462,56 @@
    (u/unquotable
     {:macros
      {'gaborNoise
-      (fn gabor-macro [& args]
-        (let [first-arg-rand-fn? (fn? (first args))
+      (fn gabor-macro [dimensions & args]
+        (let [position-type ('[float vec2 vec3 vec4]
+                             (dec dimensions))
+              first-arg-rand-fn? (fn? (first args))
               rand-fn (if first-arg-rand-fn? (first args) rand)
               frequencies (if first-arg-rand-fn? (second args) (first args))
               noise-args (drop (if first-arg-rand-fn? 2 1)
                                args)]
+          (u/log dimensions)
+          (u/log position-type)
+          (u/log frequencies)
+          (u/log noise-args)
           {:chunk
            '{:functions
              {gNoise
-              {([vec2] float)
+              {([~position-type] float)
                ([x]
                 (* ~(cons
                      '+
                      (map (fn [frequency]
                             (let [phase (* (rand-fn) Math/PI 2)
-                                  offset (cons 'vec2
-                                               (u/gen 2
-                                                      (- (* (rand-fn) 2) 1)))
-                                  rotation-angle (* (rand-fn) Math/PI 2)
-                                  rotated-frequency
-                                  (list
-                                   'vec2
-                                   (* frequency (Math/cos rotation-angle))
-                                   (* frequency (Math/sin rotation-angle)))]
-                              '(gaborKernel 2
+                                  offset (cons position-type
+                                               (u/gen dimensions
+                                                      (- (* (rand-fn) 2) 1)))]
+                              '(gaborKernel ~dimensions
                                             (- x ~offset)
-                                            ~rotated-frequency
+                                            ~(cons position-type
+                                                   (map (partial * frequency)
+                                                        (rand-n-sphere-point
+                                                         dimensions
+                                                         rand-fn)))
                                             ~phase)))
                           frequencies))
                    ~(/ (Math/sqrt (count frequencies)))))
-               ([vec2 float] float)
+               ([~position-type float] float)
                ([x bandwidth]
                 (* ~(cons
                      '+
                      (map (fn [frequency]
                             (let [phase (* (rand-fn) Math/PI 2)
-                                  offset (cons 'vec2
-                                               (u/gen 2
-                                                      (- (* (rand-fn) 2) 1)))
-                                  rotation-angle (* (rand-fn) Math/PI 2)
-                                  rotated-frequency
-                                  (list
-                                   'vec2
-                                   (* frequency (Math/cos rotation-angle))
-                                   (* frequency (Math/sin rotation-angle)))]
-                              '(gaborKernel 2
+                                  offset (cons position-type
+                                               (u/gen dimensions
+                                                      (- (* (rand-fn) 2) 1)))]
+                              '(gaborKernel ~dimensions
                                             (- x ~offset)
-                                            ~rotated-frequency
+                                            ~(cons position-type
+                                                   (map (partial * frequency)
+                                                        (rand-n-sphere-point
+                                                         dimensions
+                                                         rand-fn)))
                                             ~phase
                                             bandwidth)))
                           frequencies))

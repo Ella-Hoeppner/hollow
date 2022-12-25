@@ -12,8 +12,8 @@
 (defonce gl-atom (atom nil))
 
 (def frag-glsl
-  (iglu->glsl 
-   pos-chunk 
+  (iglu->glsl
+   pos-chunk
    gabor-noise-2d-chunk
    (u/unquotable
     '{:version "300 es"
@@ -21,13 +21,19 @@
       :uniforms {size vec2
                  time float}
       :outputs {fragColor vec4}
-      :main ((=float noiseValue
-                     (gaborNoise ~(u/gen 50 (* 2 (Math/pow 40 (rand))))
-                                 (-> (getPos)
-                                     (* 2)
-                                     (- 1))
-                                 0.5))
-             (= fragColor (vec4 (vec3 (* 0.5 (+ 1 noiseValue))) 1)))})))
+      :main ((= fragColor
+                (-> (gaborNoise 4
+                                ~(u/gen 30 (Math/pow 200 (rand)))
+                                (-> (getPos)
+                                    (* 2)
+                                    (- 1)
+                                    (vec4 (sin time)
+                                          (cos time)))
+                                0.1)
+                    (+ 1)
+                    (* 0.5)
+                    vec3
+                    (vec4 1))))})))
 
 (defn update-page! []
   (with-context @gl-atom
@@ -36,7 +42,7 @@
      frag-glsl
      (canvas-resolution)
      {:floats {"size" (canvas-resolution)
-               "time" (u/seconds-since-startup)}})
+               "time" (* 0.01 (u/seconds-since-startup))}})
     (js/requestAnimationFrame update-page!)))
 
 (defn init []
