@@ -469,11 +469,7 @@
               rand-fn (if first-arg-rand-fn? (first args) rand)
               frequencies (if first-arg-rand-fn? (second args) (first args))
               noise-args (drop (if first-arg-rand-fn? 2 1)
-                               args)]
-          (u/log dimensions)
-          (u/log position-type)
-          (u/log frequencies)
-          (u/log noise-args)
+                               args)] 
           {:chunk
            '{:functions
              {gNoise
