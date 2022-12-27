@@ -216,7 +216,9 @@
                       :definition args})))
            (let [args-list (join ", "
                                  (mapv (fn [type name]
-                                         (str type " " name))
+                                         (str type 
+                                              " "
+                                              (clj-name->glsl-name name)))
                                        in args))
                  signature (str out " " name "(" args-list ")")]
              (conj (seq (into [signature]
