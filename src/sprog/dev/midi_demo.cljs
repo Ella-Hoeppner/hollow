@@ -1,110 +1,99 @@
 (ns sprog.dev.midi-demo
   (:require
    [sprog.util :as u]
-   [sprog.input.midi :refer [initialize-midi]]
+   [sprog.input.midi :refer [add-midi-callback]]
    [sprog.iglu.core :refer [iglu->glsl]]
    [sprog.dom.canvas :refer [create-gl-canvas
                              maximize-gl-canvas
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-   [sprog.webgl.core :refer [with-context]] 
+   [sprog.webgl.core :refer [with-context]]
    [sprog.iglu.chunks.misc :refer [pos-chunk
                                    rescale-chunk]]
    [sprog.iglu.chunks.noise :refer [simplex-3d-chunk]]))
 
-; state map atom and update fn, to organize and contain global state
-(def state (atom {:smooth-factor 0.2}))
-(def update-state! 
-  #(swap! state merge %))
+(def smooth-factor 0.2)
+
+(defonce circle-radius-atom (atom 0))
+(defonce circle-radius-target-atom (atom 1))
+(defonce noise-scale-atom (atom 0))
+(defonce noise-scale-target-atom (atom 1))
 
 ; WebGL context atom
 (defonce gl-atom (atom nil))
 
 ; midi event callback
-(defn midi-event-handler [message] 
-(let [[command channel note velocity]
-      message] 
- (update-state! {:note-target note
-                 :velocity-target velocity})))
+(defn midi-event-handler [{:keys [note velocity]}]
+  (reset! circle-radius-target-atom (/ note 127))
+  (reset! noise-scale-target-atom (/ velocity 127)))
 
-; "pure" fragment shader
-(def frag-source 
+; shader source
+(def frag-glsl
   (iglu->glsl
-   {}
-   pos-chunk 
+   pos-chunk
    rescale-chunk
    simplex-3d-chunk
    '{:version "300 es"
      :precision {float highp}
      :uniforms {size vec2
-                frame float
-                note float
-                velocity float}
-     :outputs {fragColor vec4} 
-     :functions {circle 
-                 {([vec2 vec2 float float] float)
-                  ([pos circlePos radius smoothFactor]
-                   (=float d (length (- pos circlePos)))
-                   (=float t (smoothstep radius (- radius smoothFactor) d))
-                   t)}} 
+                time float
+                circleRadius float
+                noiseScale float}
+     :outputs {fragColor vec4}
      :main ((=vec2 pos (getPos))
-            (=float time (* frame 0.05)) 
             
-            ; create background gradient
+            ; determine if current pixel is inside or outside noisey circle
+            (=float circleValue
+                    (->> pos
+                         ; find signed distance to circle at center of screen
+                         (- (vec2 0.5))
+                         length
+                         (- circleRadius)
+                         ; add offset to distance with noise function
+                         (+ (* noiseScale (snoise3D (vec3 (* 10 pos) time))))
+                         ; separate inside and outside with smoothstep
+                         (smoothstep 0 0.01)))
+
+            ; define colors
             (=vec3 background (mix (vec3 0.529 0.807 0.921) (vec3 1) pos.y))
+            (=vec3 circleInterior (vec3 0.760 0.698 0.501))
             
-            ; circle distance fn
-            (=float circle (circle pos 
-                                   ; here noise is added to cicle coordinates 
-                                   ; with amplitude controlled by velocity
-                                   (+ (vec2 0.5) 
-                                      (* (snoise3D (vec3 (* 10 pos) time))
-                                         (rescale 0 127 0 0.05 velocity)))
-                                   ; radius controlled by midi note #
-                                   (rescale 0 127 0.05 0.3 note)
-                                   0.01))
+            ; tween background and circle color
+            (=vec3 col (mix background circleInterior circleValue))
             
-            ; color inside circle
-            (=vec3 circleCol (vec3 0.760 0.698 0.501))
-            ; tweening background and circle color with distance 
-            (=vec3 col (mix background circleCol circle))
-            ; output to current pixel 
+            ; output to pixel 
             (= fragColor (vec4 col 1)))}))
 
-(defn update-page! []
+(defn render []
   (with-context @gl-atom
     ; stretch canvas to fit window
     (maximize-gl-canvas)
-    ; run shader frag-source, at canvas resolution, with uniforms in map
+    ; run shader, at canvas resolution, with uniforms in map
     (run-purefrag-shader!
-     frag-source
+     frag-glsl
      (canvas-resolution)
      {:floats {"size" (canvas-resolution)
-               "frame" (:frame @state)
-               "note" (:note @state)
-               "velocity" (:velocity @state)}})
-    ; updating global state, in this case lerping midi values
-    ; and incementing time counter
-    (update-state! {:frame (inc (:frame @state))
-                    :note (u/scale (:note @state)
-                                 (:note-target @state)
-                                 (:smooth-factor @state))
-                    :velocity (u/scale (:velocity @state)
-                                    (:velocity-target @state)
-                                    (:smooth-factor @state))}) 
-    ; start/continue render loop
-    (js/requestAnimationFrame update-page!)))
+               "time" (u/seconds-since-startup)
+               "circleRadius" (u/scale 0.05 0.3 @circle-radius-atom)
+               "noiseScale" (u/scale 0 0.05 @noise-scale-atom)}})))
+
+(defn update-states! []
+  (swap! circle-radius-atom 
+         #(u/scale % @circle-radius-target-atom smooth-factor))
+  (swap! noise-scale-atom 
+         #(u/scale % @noise-scale-target-atom smooth-factor)))
+
+(defn update-page! [] 
+  (render)
+  (update-states!)
+  (js/requestAnimationFrame update-page!))
 
 (defn init []
-  ; creating WebGL context
+  ; create WebGL context
   (reset! gl-atom (create-gl-canvas true))
-  ; setting initial state
-  (update-state! {:frame 0
-                  :note 0
-                  :note-target 127
-                  :velocity 0
-                  :velocity-target 127})
-  ; initializing midi(will throw error on failure) and passing callback
-  (initialize-midi midi-event-handler)
-  ;start animation loop
+  
+  ; initialize midi and register midi event callback
+  (add-midi-callback midi-event-handler)
+  
+  ;start update loop
   (update-page!))
