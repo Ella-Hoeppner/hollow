@@ -469,10 +469,11 @@
               rand-fn (if first-arg-rand-fn? (first args) rand)
               frequencies (if first-arg-rand-fn? (second args) (first args))
               noise-args (drop (if first-arg-rand-fn? 2 1)
-                               args)] 
+                               args)
+              fn-name (gensym 'gNoise)]
           {:chunk
            '{:functions
-             {gNoise
+             {~fn-name
               {([~position-type] float)
                ([x]
                 (* ~(cons
@@ -512,4 +513,4 @@
                                             bandwidth)))
                           frequencies))
                    ~(/ (Math/sqrt (count frequencies)))))}}}
-           :expression (cons 'gNoise noise-args)}))}})))
+           :expression (cons fn-name noise-args)}))}})))
