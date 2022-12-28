@@ -2,14 +2,14 @@
   (:require [sprog.util :as u]))
 
 (defn recieve-midi-message [callback message]
-  (let [[command-and-channel note velocity] message.data]
+  (let [[command-and-channel note velocity] (seq message.data)]
     (callback {:command (bit-shift-right command-and-channel 4)
                :channel (bit-and command-and-channel 0xf)
                :note note
                :velocity velocity})))
 
 (defn on-midi-success [callback midi-access]
-  (doseq [input midi-access.inputs]
+  (doseq [[_ input] midi-access.inputs]
     (set! input.onmidimessage (partial recieve-midi-message callback))))
 
 (defn add-midi-callback 
