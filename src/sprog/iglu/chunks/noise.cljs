@@ -456,7 +456,7 @@
 
 ; based on "Gabor Noise by Example" section 3.3
 ; doi:10.1145/2185520.2185569
-(def gabor-noise-2d-chunk
+(def gabor-noise-chunk
   (combine-chunks
    gabor-kernel-chunk
    (u/unquotable

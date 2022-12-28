@@ -47,10 +47,10 @@
   #_(sprog.dev.gaussian-demo/init)
   #_(sprog.dev.hsv-demo/init)
   #_(sprog.dev.params-demo/init)
-  #_(sprog.dev.gabor-demo/init)
+  (sprog.dev.gabor-demo/init)
   #_(sprog.dev.oklab-mix-demo/init)
   #_(sprog.dev.fbm-demo/init)
-  (sprog.dev.midi-demo/init))
+  #_(sprog.dev.midi-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" (fn [_] (init))))

@@ -5,7 +5,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.noise :refer [gabor-noise-2d-chunk]]
+            [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
             [sprog.webgl.core :refer [with-context]]))
 
@@ -14,7 +14,7 @@
 (def frag-glsl
   (iglu->glsl
    pos-chunk
-   gabor-noise-2d-chunk
+   gabor-noise-chunk
    (u/unquotable
     '{:version "300 es"
       :precision {float highp}
