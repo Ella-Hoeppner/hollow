@@ -1,33 +1,20 @@
 (ns sprog.input.midi
   (:require [sprog.util :as u]))
 
-; callback should be fn that accepts 4 element vec
-; a parsed midi message, command, channel,
-; note, and velocity in that order
-(defn get-midi-message [callback message]
-  (let [data (into [] (js->clj message.data))
-        command (bit-shift-right (first data) 4)
-        channel (bit-and (first data) 0xf)
-        note (second data)
-        velocity (last data)]
-    (callback [command
-               channel
-               note
-               velocity])))
+(defn recieve-midi-message [callback message]
+  (let [[command-and-channel note velocity] (seq message.data)]
+    (callback {:command (bit-shift-right command-and-channel 4)
+               :channel (bit-and command-and-channel 0xf)
+               :note note
+               :velocity velocity})))
 
-(defn on-midi-failure []
-  (js/console.log "cannot enable MIDI!"))
+(defn on-midi-success [callback midi-access]
+  (doseq [[_ input] midi-access.inputs]
+    (set! input.onmidimessage (partial recieve-midi-message callback))))
 
-(defn on-midi-success  [midi-access callback]
-  (js/console.log "MIDI enabled")
-  
-  (->   midi-access
-        .-inputs
-        (.forEach (fn [input]
-                    (set! input.onmidimessage
-                          (partial get-midi-message callback))))))
-
-(defn initialize-midi [callback]
-  (-> (.requestMIDIAccess js/navigator)
-      (.then #(on-midi-success % callback))
-      (.catch #(on-midi-failure))))
+(defn add-midi-callback 
+  "`callback`: a function that accepts a map containing the keys :command,
+   :channel, :note, and :velocity."
+  [callback]
+  (.then (.requestMIDIAccess js/navigator)
+         (partial on-midi-success callback)))
