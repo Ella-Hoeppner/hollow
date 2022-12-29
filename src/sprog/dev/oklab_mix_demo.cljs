@@ -8,9 +8,8 @@
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.iglu.chunks.colors :refer [mix-oklab-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context]]))
-
-(defonce gl-atom (atom nil))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def frag-source
   (iglu->glsl
@@ -32,16 +31,14 @@
                    (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
                          1)))))}))
 
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [gl]
+  (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)
-                                    "mouse" (mouse-pos)}})
-    (js/requestAnimationFrame update-page!))
+                                    "mouse" (mouse-pos)}}))
+  gl)
 
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-
-    (update-page!)))
+(defn init []
+  (start-update-loop! update-page! (create-gl-canvas true)))

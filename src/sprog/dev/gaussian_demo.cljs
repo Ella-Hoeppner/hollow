@@ -12,10 +12,8 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [html-image-tex]]
-            [sprog.webgl.core :refer-macros [with-context]]))
-
-(defonce gl-atom (atom nil))
-(defonce html-image-atom (atom nil))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def top-frag-source
   (iglu->glsl
@@ -61,8 +59,8 @@
                             (* (clamp blurFactor 0 1)
                                (/ (vec2 :x :y) texSize)))))))}))
 
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [{:keys [gl texture] :as state}]
+  (with-context gl
     (let [[width height] (canvas-resolution)
           half-height (* height 0.5)]
       (maximize-gl-canvas)
@@ -70,15 +68,17 @@
                             [0 half-height width half-height]
                             {:floats {"size" [width height]
                                       "blurFactor" (first (mouse-pos))}
-                             :textures {"tex" @html-image-atom}})
+                             :textures {"tex" texture}})
       (run-purefrag-shader! bottom-frag-source
                             [width half-height]
                             {:floats {"size" [width height]
                                       "blurFactor" (- 1 (first (mouse-pos)))}
-                             :textures {"tex" @html-image-atom}})
-      (js/requestAnimationFrame update-page!)))
-  
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-    (reset! html-image-atom (html-image-tex "img"))
-    (update-page!)))
+                             :textures {"tex" texture}})))
+  state)
+
+(defn init []
+  (let [gl (create-gl-canvas true)]
+    (start-update-loop! update-page!
+                        {:gl gl
+                         :texture (with-context gl
+                                    (html-image-tex "img"))})))

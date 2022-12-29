@@ -6,18 +6,13 @@
                                       maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.core :refer-macros [with-context]]))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
-(defonce gl-atom (atom nil))
-(defonce tex-atom (atom nil))
-(defonce video-element-atom (atom nil))
-(defonce time-updated?-atom (atom nil))
-
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [{:keys [gl texture video] :as state}]
+  (with-context gl
     (maximize-gl-canvas {:square? true})
-    (when @time-updated?-atom
-      (copy-html-image-data! @tex-atom @video-element-atom))
+    (copy-html-image-data! texture video)
     (run-purefrag-shader!
      '{:version "300 es"
        :precision {float highp}
@@ -30,18 +25,24 @@
                           (vec2 pos.x (- 1 pos.y)))))}
      (canvas-resolution)
      {:floats {"size" (canvas-resolution)}
-      :textures {"tex" @tex-atom}})
-    (js/requestAnimationFrame update-page!))
+      :textures {"tex" texture}}))
+  state)
 
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-    (let [video (js/document.createElement "video")]
-      (set! video.src "./test_video.mp4")
-      (set! video.muted "muted")
-      (set! video.loop "true")
-      (.play video)
-      (.addEventListener video "timeupdate" #(reset! time-updated?-atom true))
-      (reset! video-element-atom video)
-
-      (reset! tex-atom (create-tex :f8 1)))
-    (update-page!)))
+(defn init []
+  (let [video (js/document.createElement "video")]
+    (set! video.src "./test_video.mp4")
+    (set! video.muted "muted")
+    (set! video.loop "true")
+    (.play video)
+    (.addEventListener video
+                       "timeupdate"
+                       (let [started?-atom (atom false)]
+                         #(or @started?-atom
+                              (do (reset! started?-atom true)
+                                  (start-update-loop!
+                                   update-page!
+                                   (let [gl (create-gl-canvas true)]
+                                     {:gl gl
+                                      :texture (with-context gl
+                                                 (create-tex :f8 1))
+                                      :video video}))))))))

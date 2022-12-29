@@ -4,12 +4,11 @@
                                       maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.core :refer [with-context]]))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
-(defonce gl-atom (atom nil))
-
-(defn update-page! []
-  (with-context @gl-atom
+(defn update-page! [gl]
+  (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
      '{:version "300 es"
@@ -19,9 +18,8 @@
        :main ((=vec2 pos (/ gl_FragCoord.xy size))
               (= fragColor (vec4 pos 0 1)))}
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)}})
-    (js/requestAnimationFrame update-page!)))
+     {:floats {"size" (canvas-resolution)}}))
+  gl)
 
 (defn init []
-  (reset! gl-atom (create-gl-canvas true))
-  (update-page!))
+  (start-update-loop! update-page! (create-gl-canvas true)))

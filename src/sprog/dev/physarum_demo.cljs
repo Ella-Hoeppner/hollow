@@ -10,7 +10,8 @@
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer-macros [with-context]]))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def substrate-resolution 1000)
 (def agent-tex-resolution 100)
@@ -27,13 +28,6 @@
 (def agent-turn-factor 0.1)
 
 (def ambient-randomize-chance 0)
-
-(defonce gl-atom (atom nil))
-
-(defonce substrate-texs-atom (atom nil))
-(defonce agent-texs-atom (atom nil))
-
-(defonce frame-atom (atom nil))
 
 (def iglu-wrapper
   (partial iglu->glsl
@@ -175,22 +169,26 @@
                    :u16-max)
                 0)))}))
 
-(with-context @gl-atom
-  (defn update-agents! [randomize-chance]
-    (let [[front-tex back-tex] @agent-texs-atom
-          substrate-tex (first @substrate-texs-atom)]
-      (run-purefrag-shader! agent-logic-frag-source
-                            agent-tex-resolution
-                            {:floats {"randomizeChance" randomize-chance
-                                      "time" @frame-atom}
-                             :textures {"substrate" substrate-tex
-                                        "agentTex" front-tex}}
-                            {:target back-tex}))
-    (swap! agent-texs-atom reverse))
+(defn update-agents! [randomize-chance
+                      {:keys [gl substrate-textures agent-textures]
+                       :as state}]
+  (let [[front-tex back-tex] agent-textures
+        substrate-tex (first substrate-textures)]
+   (with-context gl
+     (run-purefrag-shader! agent-logic-frag-source
+                           agent-tex-resolution
+                           {:floats {"randomizeChance" randomize-chance
+                                     "time" (u/seconds-since-startup)}
+                            :textures {"substrate" substrate-tex
+                                       "agentTex" front-tex}}
+                           {:target back-tex})))
+  (update state :agent-textures reverse))
 
-  (defn update-substrate! []
-    (let [[front-tex back-tex] @substrate-texs-atom
-          agent-tex (first @agent-texs-atom)]
+(defn update-substrate! [{:keys [gl substrate-textures agent-textures]
+                          :as state}]
+  (let [[front-tex back-tex] substrate-textures
+        agent-tex (first agent-textures)]
+    (with-context gl
       (run-shaders! [particle-vert-source-u16 particle-frag-source-u16]
                     substrate-resolution
                     {:textures {"particleTex" agent-tex}
@@ -204,30 +202,28 @@
       (run-purefrag-shader! substrate-logic-frag-source
                             substrate-resolution
                             {:textures {"substrate" front-tex}}
-                            {:target back-tex}))
-    (swap! substrate-texs-atom reverse))
+                            {:target back-tex})))
+  (update state :substrate-textures reverse))
 
-  (defn update-page! []
-    (update-agents! ambient-randomize-chance)
-    (update-substrate!)
+(defn update-page! [{:keys [gl substrate-textures] :as state}]
+  (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! render-frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)}
-                           :textures {"substrate" (first
-                                                   @substrate-texs-atom)}})
-    (swap! frame-atom inc)
-    (js/requestAnimationFrame update-page!))
+                           :textures {"substrate"
+                                      (first substrate-textures)}}))
+  (->> state
+       (update-agents! ambient-randomize-chance)
+       update-substrate!))
 
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-    (reset! substrate-texs-atom
-            (u/gen 2 (create-tex :u16 substrate-resolution)))
-    (reset! agent-texs-atom
-            (u/gen 2 (create-tex :u16 agent-tex-resolution)))
-
-    (reset! frame-atom 0)
-
-    (update-agents! 1)
-
-    (update-page!)))
+(defn init []
+  (let [gl (create-gl-canvas true)]
+    (with-context gl
+      (->> {:gl gl
+            :substrate-textures
+            (u/gen 2 (create-tex :u16 substrate-resolution))
+            :agent-textures
+            (u/gen 2 (create-tex :u16 agent-tex-resolution))}
+           (update-agents! 1)
+           (start-update-loop! update-page!)))))

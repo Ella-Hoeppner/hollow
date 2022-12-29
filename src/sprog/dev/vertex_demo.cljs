@@ -5,7 +5,8 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-shaders!]]
             [sprog.webgl.attributes :refer [create-boj!]]
-            [sprog.webgl.core :refer-macros [with-context]]))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def pos-buffer-data [0 0
                       1 0
@@ -14,11 +15,6 @@
 (def color-buffer-data [1 0 0
                         0 1 0
                         0 0 1])
-
-(defonce gl-atom (atom nil))
-
-(defonce pos-boj-atom (atom nil))
-(defonce color-boj-atom (atom nil))
 
 (def vert-source
   '{:version "300 es"
@@ -37,8 +33,8 @@
     :outputs {fragColor vec4}
     :main ((= fragColor (vec4 color 1)))})
 
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [{:keys [gl pos-boj color-boj] :as state}]
+  (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-shaders! [vert-source frag-source]
                   (canvas-resolution)
@@ -46,18 +42,21 @@
                               (let [angle (u/seconds-since-startup)]
                                 [(Math/cos angle) (- (Math/sin angle))
                                  (Math/sin angle) (Math/cos angle)])}}
-                  {"vertexPos" @pos-boj-atom
-                   "vertexColor" @color-boj-atom}
+                  {"vertexPos" pos-boj
+                   "vertexColor" color-boj}
                   0
-                  3)
-    (js/requestAnimationFrame update-page!))
+                  3))
+  state)
 
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-    (reset! pos-boj-atom
-            (create-boj! 2
-                         {:initial-data (js/Float32Array. pos-buffer-data)}))
-    (reset! color-boj-atom
-            (create-boj! 3
-                         {:initial-data (js/Float32Array. color-buffer-data)}))
-    (update-page!)))
+(defn init []
+  (let [gl (create-gl-canvas true)]
+    (with-context gl
+      (start-update-loop!
+       update-page!
+       {:gl gl
+        :pos-boj (create-boj! 2
+                              {:initial-data
+                               (js/Float32Array. pos-buffer-data)})
+        :color-boj (create-boj! 3
+                                {:initial-data
+                                 (js/Float32Array. color-buffer-data)})}))))

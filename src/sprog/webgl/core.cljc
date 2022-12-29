@@ -21,3 +21,14 @@
                            form))
                        body)
              'do))))
+
+#?(:cljs
+   (defn start-update-loop!
+     ([update-fn]
+      ((fn f []
+         (update-fn)
+         (js/requestAnimationFrame f))))
+     ([update-fn initial-state]
+      ((fn f [state]
+         (js/requestAnimationFrame (partial f (update-fn state))))
+       initial-state))))

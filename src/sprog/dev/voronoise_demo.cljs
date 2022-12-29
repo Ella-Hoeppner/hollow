@@ -7,9 +7,8 @@
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context]]))
-
-(defonce gl-atom (atom nil))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def noise-2d-frag-source
   (iglu->glsl
@@ -28,17 +27,15 @@
                                                 (sin time)))))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
-(defn update-page! []
-  (with-context @gl-atom
+(defn update-page! [gl]
+  (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! noise-2d-frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)
                                     "mouse" (mouse-pos)
                                     "time" (u/seconds-since-startup)}}))
-  (js/requestAnimationFrame update-page!))
+  gl)
 
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (reset! gl-atom gl))
-  (update-page!))
+  (start-update-loop! update-page! (create-gl-canvas true)))

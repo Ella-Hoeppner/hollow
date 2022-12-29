@@ -8,10 +8,8 @@
             [sprog.iglu.chunks.colors :refer [hsv-to-rgb-chunk
                                               rgb-to-hsv-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context]]))
-
-(defonce gl-atom (atom nil))
-(defonce tex-atom (atom nil))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def frag-source
   (iglu->glsl
@@ -32,18 +30,19 @@
             (= fragColor (vec4 outRGB
                                1)))}))
 
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [{:keys [gl texture] :as state}]
+  (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)
                                     "mouse" (mouse-pos)}
-                           :textures {"tex" @tex-atom}})
-    (js/requestAnimationFrame update-page!))
+                           :textures {"tex" texture}}))
+  state)
 
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-    (reset! tex-atom (html-image-tex "img"))
-
-    (update-page!)))
+(defn init []
+  (let [gl (create-gl-canvas true)]
+    (start-update-loop! update-page!
+                        {:gl gl
+                         :texture (with-context gl
+                                    (html-image-tex "img"))})))

@@ -7,10 +7,11 @@
                              maximize-gl-canvas
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-   [sprog.webgl.core :refer [with-context]]
    [sprog.iglu.chunks.misc :refer [pos-chunk
                                    rescale-chunk]]
-   [sprog.iglu.chunks.noise :refer [simplex-3d-chunk]]))
+   [sprog.iglu.chunks.noise :refer [simplex-3d-chunk]]
+   [sprog.webgl.core :refer [with-context
+                             start-update-loop!]]))
 
 (def smooth-factor 0.2)
 
@@ -18,9 +19,6 @@
 (defonce circle-radius-target-atom (atom 1))
 (defonce noise-scale-atom (atom 0))
 (defonce noise-scale-target-atom (atom 1))
-
-; WebGL context atom
-(defonce gl-atom (atom nil))
 
 ; midi event callback
 (defn midi-event-handler [{:keys [note velocity]}]
@@ -64,8 +62,8 @@
             ; output to pixel 
             (= fragColor (vec4 col 1)))}))
 
-(defn render []
-  (with-context @gl-atom
+(defn render [gl]
+  (with-context gl
     ; stretch canvas to fit window
     (maximize-gl-canvas)
     ; run shader, at canvas resolution, with uniforms in map
@@ -83,17 +81,14 @@
   (swap! noise-scale-atom 
          #(u/scale % @noise-scale-target-atom smooth-factor)))
 
-(defn update-page! [] 
-  (render)
+(defn update-page! [gl]
+  (render gl)
   (update-states!)
-  (js/requestAnimationFrame update-page!))
+  gl)
 
 (defn init []
-  ; create WebGL context
-  (reset! gl-atom (create-gl-canvas true))
-  
   ; initialize midi and register midi event callback
   (add-midi-callback midi-event-handler)
   
   ;start update loop
-  (update-page!))
+  (start-update-loop! update-page! (create-gl-canvas true)))

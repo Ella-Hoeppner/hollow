@@ -7,15 +7,10 @@
             [sprog.webgl.textures :refer [create-tex
                                           html-image-tex]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.webgl.core :refer-macros [with-context]]))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def sort-resolution 1000)
-
-(defonce gl-atom (atom nil))
-
-(defonce frame-atom (atom nil))
-
-(defonce texs-atom (atom nil))
 
 ; adapted from https://www.shadertoy.com/view/wsSczw
 (def logic-frag-source
@@ -58,16 +53,15 @@
               comparisonValue
               currentValue)))))})
 
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [{:keys [gl frame textures] :as state}]
+  (with-context gl
     (run-purefrag-shader! logic-frag-source
                           sort-resolution
                           {:floats {"size" [sort-resolution sort-resolution]
                                     "threshold" (first (mouse-pos))}
-                           :textures {"tex" (first @texs-atom)}
-                           :ints {"frame" @frame-atom}}
-                          {:target (second @texs-atom)})
-    (swap! texs-atom reverse)
+                           :textures {"tex" (first textures)}
+                           :ints {"frame" frame}}
+                          {:target (second textures)})
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! '{:version "300 es"
                             :precision {float highp}
@@ -78,28 +72,30 @@
                                    (= fragColor (texture tex pos)))}
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)}
-                           :textures {"tex" (first @texs-atom)}})
+                           :textures {"tex" (second textures)}}))
+  (-> state
+      (update :frame inc)
+      (update :textures reverse)))
 
-    (swap! frame-atom inc)
-    (js/requestAnimationFrame update-page!))
-
-  (defn init []
-    (let [gl (create-gl-canvas true)]
-      (reset! gl-atom gl)
-      (reset! frame-atom 0)
-      (reset! texs-atom (u/gen 2 (create-tex :f8 sort-resolution)))
-      (run-purefrag-shader! '{:version "300 es"
-                              :precision {float highp}
-                              :uniforms {size vec2
-                                         tex sampler2D}
-                              :outputs {fragColor vec4}
-                              :main ((=vec2 pos (/ gl_FragCoord.xy size))
-                                     (= pos.y (- 1 pos.y))
-                                     (= fragColor (texture tex pos)))}
-                            sort-resolution
-                            {:floats {"size"
-                                      [sort-resolution sort-resolution]}
-                             :textures {"tex"
-                                        (html-image-tex "img")}}
-                            {:target (first @texs-atom)}))
-    (update-page!)))
+(defn init []
+  (let [gl (create-gl-canvas true)]
+    (with-context gl
+      (let [textures (u/gen 2 (create-tex :f8 sort-resolution))]
+        (run-purefrag-shader! '{:version "300 es"
+                                :precision {float highp}
+                                :uniforms {size vec2
+                                           tex sampler2D}
+                                :outputs {fragColor vec4}
+                                :main ((=vec2 pos (/ gl_FragCoord.xy size))
+                                       (= pos.y (- 1 pos.y))
+                                       (= fragColor (texture tex pos)))}
+                              sort-resolution
+                              {:floats {"size"
+                                        [sort-resolution sort-resolution]}
+                               :textures {"tex"
+                                          (html-image-tex "img")}}
+                              {:target (first textures)})
+        (start-update-loop! update-page!
+                            {:gl gl
+                             :textures textures
+                             :frame 0})))))

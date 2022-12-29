@@ -7,9 +7,8 @@
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
-            [sprog.webgl.core :refer [with-context]]))
-
-(defonce gl-atom (atom nil))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def frag-glsl
   (iglu->glsl
@@ -35,16 +34,15 @@
                     vec3
                     (vec4 1))))})))
 
-(defn update-page! []
-  (with-context @gl-atom
+(defn update-page! [gl]
+  (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
      {:floats {"size" (canvas-resolution)
-               "time" (* 0.01 (u/seconds-since-startup))}})
-    (js/requestAnimationFrame update-page!)))
+               "time" (* 0.01 (u/seconds-since-startup))}}))
+  gl)
 
 (defn init []
-  (reset! gl-atom (create-gl-canvas true))
-  (update-page!))
+  (start-update-loop! update-page! (create-gl-canvas true)))

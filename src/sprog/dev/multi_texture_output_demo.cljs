@@ -6,14 +6,10 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer-macros [with-context]]))
+            [sprog.webgl.core :refer [with-context
+                                      start-update-loop!]]))
 
 (def texture-resolution 8)
-
-(defonce gl-atom (atom nil))
-
-(defonce texture-1-atom (atom nil))
-(defonce texture-2-atom (atom nil))
 
 (def render-frag-source
   (iglu->glsl
@@ -47,25 +43,28 @@
                 (texture tex2 (* (- pos (vec2 0.5 0))
                                  (vec2 2 1))))))})
 
-(with-context @gl-atom
-  (defn update-page! []
+(defn update-page! [{:keys [gl tex1 tex2] :as state}]
+  (with-context gl
     (maximize-gl-canvas)
-    (run-purefrag-shader!
-     draw-frag-source
-     (canvas-resolution)
-     {:floats {"size" (canvas-resolution)}
-      :textures {"tex1" @texture-1-atom
-                 "tex2" @texture-2-atom}})
-    (js/requestAnimationFrame update-page!))
+    (run-purefrag-shader! draw-frag-source
+                          (canvas-resolution)
+                          {:floats {"size" (canvas-resolution)}
+                           :textures {"tex1" tex1
+                                      "tex2" tex2}}))
+  state)
 
-  (defn init []
-    (reset! gl-atom (create-gl-canvas true))
-    (doseq [tex-atom [texture-1-atom
-                      texture-2-atom]]
-      (reset! tex-atom
-              (create-tex :f8 texture-resolution {:filter-mode :nearest})))
-    (run-purefrag-shader! render-frag-source
-                          texture-resolution
-                          {}
-                          {:target [@texture-1-atom @texture-2-atom]})
-    (update-page!)))
+(defn init []
+  (let [gl (create-gl-canvas true)]
+    (with-context gl
+      (let [[tex1 tex2]
+            (u/gen 2 (create-tex :f8
+                                 texture-resolution
+                                 {:filter-mode :nearest}))]
+        (run-purefrag-shader! render-frag-source
+                              texture-resolution
+                              {}
+                              {:target [tex1 tex2]})
+        (start-update-loop! update-page!
+                            {:gl gl
+                             :tex1 tex1
+                             :tex2 tex2})))))
