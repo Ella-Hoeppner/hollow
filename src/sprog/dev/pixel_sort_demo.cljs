@@ -1,14 +1,14 @@
 (ns sprog.dev.pixel-sort-demo
   (:require [sprog.util :as u]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex
                                           html-image-tex]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def sort-resolution 1000)
 
@@ -53,7 +53,8 @@
               comparisonValue
               currentValue)))))})
 
-(defn update-page! [{:keys [gl frame textures] :as state}]
+
+(defn update-page! [gl {:keys [frame textures] :as state}]
   (with-context gl
     (run-purefrag-shader! logic-frag-source
                           sort-resolution
@@ -77,25 +78,24 @@
       (update :frame inc)
       (update :textures reverse)))
 
+(defn init-page! [gl]
+  (with-context gl
+    (let [textures (u/gen 2 (create-tex :f8 sort-resolution))]
+      (run-purefrag-shader! '{:version "300 es"
+                              :precision {float highp}
+                              :uniforms {size vec2
+                                         tex sampler2D}
+                              :outputs {fragColor vec4}
+                              :main ((=vec2 pos (/ gl_FragCoord.xy size))
+                                     (= pos.y (- 1 pos.y))
+                                     (= fragColor (texture tex pos)))}
+                            sort-resolution
+                            {:floats {"size" [sort-resolution sort-resolution]}
+                             :textures {"tex" (html-image-tex "img")}}
+                            {:target (first textures)})
+      {:textures textures
+       :frame 0})))
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (with-context gl
-      (let [textures (u/gen 2 (create-tex :f8 sort-resolution))]
-        (run-purefrag-shader! '{:version "300 es"
-                                :precision {float highp}
-                                :uniforms {size vec2
-                                           tex sampler2D}
-                                :outputs {fragColor vec4}
-                                :main ((=vec2 pos (/ gl_FragCoord.xy size))
-                                       (= pos.y (- 1 pos.y))
-                                       (= fragColor (texture tex pos)))}
-                              sort-resolution
-                              {:floats {"size"
-                                        [sort-resolution sort-resolution]}
-                               :textures {"tex"
-                                          (html-image-tex "img")}}
-                              {:target (first textures)})
-        (start-update-loop! update-page!
-                            {:gl gl
-                             :textures textures
-                             :frame 0})))))
+  (start-sprog! init-page!
+               update-page!))

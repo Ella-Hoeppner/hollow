@@ -45,4 +45,4 @@
   (sprog.dev.midi-demo/init))
 
 (defn pre-init []
-  (js/window.addEventListener "load" (fn [_] (init))))
+  (js/window.addEventListener "load" init))

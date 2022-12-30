@@ -1,13 +1,12 @@
 (ns sprog.dev.multi-texture-output-demo
   (:require [sprog.util :as u]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def texture-resolution 8)
 
@@ -43,7 +42,7 @@
                 (texture tex2 (* (- pos (vec2 0.5 0))
                                  (vec2 2 1))))))})
 
-(defn update-page! [{:keys [gl tex1 tex2] :as state}]
+(defn update-page! [gl {:keys [tex1 tex2] :as state}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! draw-frag-source
@@ -53,18 +52,19 @@
                                       "tex2" tex2}}))
   state)
 
+(defn init-page! [gl]
+  (with-context gl
+    (let [[tex1 tex2]
+          (u/gen 2 (create-tex :f8
+                               texture-resolution
+                               {:filter-mode :nearest}))]
+      (run-purefrag-shader! render-frag-source
+                            texture-resolution
+                            {}
+                            {:target [tex1 tex2]})
+      {:tex1 tex1
+       :tex2 tex2})))
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (with-context gl
-      (let [[tex1 tex2]
-            (u/gen 2 (create-tex :f8
-                                 texture-resolution
-                                 {:filter-mode :nearest}))]
-        (run-purefrag-shader! render-frag-source
-                              texture-resolution
-                              {}
-                              {:target [tex1 tex2]})
-        (start-update-loop! update-page!
-                            {:gl gl
-                             :tex1 tex1
-                             :tex2 tex2})))))
+  (start-sprog! init-page!
+               update-page!))

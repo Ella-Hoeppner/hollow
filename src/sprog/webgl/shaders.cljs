@@ -50,18 +50,20 @@
 
 (def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
 
-(defonce purefrag-vert-pos-boj-atom (atom nil))
+(defonce purefrag-vert-pos-bojs-atom (atom {}))
 
 (defn purefrag-vert-pos-boj [gl]
-  (when (not @purefrag-vert-pos-boj-atom)
-    (reset! purefrag-vert-pos-boj-atom
-            (create-boj! gl
-                         2
-                         {:initial-data (js/Float32Array.
-                                         (clj->js [-1 -1
-                                                   -1 3
-                                                   3 -1]))})))
-  @purefrag-vert-pos-boj-atom)
+  (when (not (@purefrag-vert-pos-bojs-atom gl))
+    (swap! purefrag-vert-pos-bojs-atom
+           assoc
+           gl
+           (create-boj! gl
+                        2
+                        {:initial-data (js/Float32Array.
+                                        (clj->js [-1 -1
+                                                  -1 3
+                                                  3 -1]))})))
+  (@purefrag-vert-pos-bojs-atom gl))
 
 (defn create-purefrag-sprog [gl frag-source] 
   (let [sprog (create-sprog gl purefrag-vert-glsl frag-source)]

@@ -4,8 +4,9 @@
                                       maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]
             [sprog.iglu.core :refer [inline-float-uniforms]]))
 
 (def shader-keywords
@@ -23,14 +24,13 @@
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= fragColor (vec4 :r :g :b 1)))}))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! shader-source
                           (canvas-resolution)
                           {:floats (merge shader-keywords
-                                          {"size" (canvas-resolution)})}))
-  gl)
+                                          {"size" (canvas-resolution)})})))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

@@ -10,8 +10,9 @@
             [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
                                                  particle-frag-source-u16]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def substrate-resolution 1000)
 (def agent-tex-resolution 100)
@@ -199,13 +200,13 @@
                     (* 6 agent-tex-resolution agent-tex-resolution)
                     {:target front-tex})
 
-      (run-purefrag-shader! substrate-logic-frag-source
+      (run-purefrag-shader! substrate-logic-frag-source 
                             substrate-resolution
                             {:textures {"substrate" front-tex}}
                             {:target back-tex})))
   (update state :substrate-textures reverse))
 
-(defn update-page! [{:keys [gl substrate-textures] :as state}]
+(defn update-page! [gl {:keys [substrate-textures] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! render-frag-source
@@ -217,13 +218,15 @@
        (update-agents! ambient-randomize-chance)
        update-substrate!))
 
+(defn init-page! [gl]
+  (with-context gl
+    (->> {:gl gl
+          :substrate-textures
+          (u/gen 2 (create-tex :u16 substrate-resolution))
+          :agent-textures
+          (u/gen 2 (create-tex :u16 agent-tex-resolution))}
+         (update-agents! 1))))
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (with-context gl
-      (->> {:gl gl
-            :substrate-textures
-            (u/gen 2 (create-tex :u16 substrate-resolution))
-            :agent-textures
-            (u/gen 2 (create-tex :u16 agent-tex-resolution))}
-           (update-agents! 1)
-           (start-update-loop! update-page!)))))
+  (start-sprog! init-page!
+                update-page!))

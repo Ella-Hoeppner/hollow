@@ -7,8 +7,9 @@
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def noise-2d-frag-source
   (iglu->glsl
@@ -34,8 +35,7 @@
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)
                                     "mouse" (mouse-pos)
-                                    "time" (u/seconds-since-startup)}}))
-  gl)
+                                    "time" (u/seconds-since-startup)}})))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

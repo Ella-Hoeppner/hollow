@@ -7,8 +7,9 @@
             [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def u16-max (dec (Math/pow 2 16)))
 
@@ -44,7 +45,7 @@
      :main ((=vec2 pos (/ (- gl_FragCoord.xy offset) size))
             (= fragColor (/ (textureBilinear tex pos) :u16-max-f)))}))
 
-(defn update-page! [{:keys [gl texture] :as state}]
+(defn update-page! [gl {:keys [texture] :as state}]
   (with-context gl
     (maximize-gl-canvas)
     (let [[width height] (canvas-resolution)
@@ -60,13 +61,13 @@
                              :textures {"tex" texture}})))
   state)
 
+(defn init-page! [gl]
+  {:gl gl
+   :texture (with-context gl
+              (create-tex :u16
+                          2
+                          {:wrap-mode :clamp
+                           :data (js/Uint16Array. pixel-data)}))})
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (start-update-loop!
-     update-page!
-     {:gl gl
-      :texture (with-context gl
-                 (create-tex :u16
-                             2
-                             {:wrap-mode :clamp
-                              :data (js/Uint16Array. pixel-data)}))})))
+  (start-sprog! init-page! update-page!))

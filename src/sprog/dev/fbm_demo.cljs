@@ -8,8 +8,9 @@
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core 
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def frag-source
   (iglu->glsl
@@ -30,7 +31,7 @@
                                (* 0.5)))
                      1)))}))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
@@ -40,4 +41,4 @@
   gl)
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

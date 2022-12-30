@@ -8,8 +8,9 @@
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.iglu.chunks.colors :refer [mix-oklab-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def frag-source
   (iglu->glsl
@@ -31,14 +32,13 @@
                    (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
                          1)))))}))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)
-                                    "mouse" (mouse-pos)}}))
-  gl)
+                                    "mouse" (mouse-pos)}})))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

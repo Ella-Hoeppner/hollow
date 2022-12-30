@@ -7,8 +7,9 @@
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                              simplex-3d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def noise-2d-frag-source
   (iglu->glsl
@@ -38,7 +39,7 @@
                                   0.5))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (let [[width height] (canvas-resolution)
           resolution [width height]
@@ -50,8 +51,7 @@
       (run-purefrag-shader! noise-3d-frag-source
                             [half-width 0 half-width height]
                             {:floats {"size" resolution
-                                      "time" (u/seconds-since-startup)}})))
-  gl)
+                                      "time" (u/seconds-since-startup)}}))))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

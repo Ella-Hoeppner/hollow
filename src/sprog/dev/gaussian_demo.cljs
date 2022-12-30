@@ -12,8 +12,9 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [html-image-tex]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer [start-sprog!]
+             :refer-macros [with-context]]))
 
 (def top-frag-source
   (iglu->glsl
@@ -59,7 +60,7 @@
                             (* (clamp blurFactor 0 1)
                                (/ (vec2 :x :y) texSize)))))))}))
 
-(defn update-page! [{:keys [gl texture] :as state}]
+(defn update-page! [gl {:keys [texture] :as state}]
   (with-context gl
     (let [[width height] (canvas-resolution)
           half-height (* height 0.5)]
@@ -76,9 +77,9 @@
                              :textures {"tex" texture}})))
   state)
 
+(defn init-page! [gl]
+  {:texture (with-context gl
+              (html-image-tex "img"))})
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (start-update-loop! update-page!
-                        {:gl gl
-                         :texture (with-context gl
-                                    (html-image-tex "img"))})))
+  (start-sprog! init-page! update-page!))

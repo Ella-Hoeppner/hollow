@@ -8,8 +8,9 @@
             [sprog.iglu.chunks.colors :refer [hsv-to-rgb-chunk
                                               rgb-to-hsv-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def frag-source
   (iglu->glsl
@@ -30,7 +31,7 @@
             (= fragColor (vec4 outRGB
                                1)))}))
 
-(defn update-page! [{:keys [gl texture] :as state}]
+(defn update-page! [gl {:keys [texture] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
@@ -40,9 +41,9 @@
                            :textures {"tex" texture}}))
   state)
 
+(defn init-page! [gl]
+  {:texture (with-context gl
+              (html-image-tex "img"))})
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (start-update-loop! update-page!
-                        {:gl gl
-                         :texture (with-context gl
-                                    (html-image-tex "img"))})))
+  (start-sprog! init-page! update-page!))

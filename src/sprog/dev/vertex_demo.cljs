@@ -5,8 +5,9 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-shaders!]]
             [sprog.webgl.attributes :refer [create-boj!]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def pos-buffer-data [0 0
                       1 0
@@ -33,7 +34,7 @@
     :outputs {fragColor vec4}
     :main ((= fragColor (vec4 color 1)))})
 
-(defn update-page! [{:keys [gl pos-boj color-boj] :as state}]
+(defn update-page! [gl {:keys [pos-boj color-boj] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-shaders! [vert-source frag-source]
@@ -48,15 +49,15 @@
                   3))
   state)
 
+(defn init-page! [gl]
+  (with-context gl
+    {:pos-boj (create-boj! 2
+                           {:initial-data
+                            (js/Float32Array. pos-buffer-data)})
+     :color-boj (create-boj! 3
+                             {:initial-data
+                              (js/Float32Array. color-buffer-data)})}))
+
 (defn init []
-  (let [gl (create-gl-canvas true)]
-    (with-context gl
-      (start-update-loop!
-       update-page!
-       {:gl gl
-        :pos-boj (create-boj! 2
-                              {:initial-data
-                               (js/Float32Array. pos-buffer-data)})
-        :color-boj (create-boj! 3
-                                {:initial-data
-                                 (js/Float32Array. color-buffer-data)})}))))
+  (start-sprog! init-page!
+                update-page!))

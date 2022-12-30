@@ -1,9 +1,10 @@
 (ns sprog.dom.canvas
   (:require [sprog.util :as u]))
 
-(defn create-gl-canvas [& [append-to-body?]]
+(defn create-gl-canvas [id & [append-to-body?]]
   (let [canvas (js/document.createElement "canvas")
         gl (.getContext canvas "webgl2")]
+    (set! (.-id canvas) (str id))
     (when append-to-body?
       (set! (.-position canvas.style) "absolute")
       (.appendChild js/document.body canvas))

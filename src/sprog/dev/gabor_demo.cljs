@@ -7,8 +7,9 @@
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core 
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def frag-glsl
   (iglu->glsl
@@ -34,15 +35,14 @@
                     vec3
                     (vec4 1))))})))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
      {:floats {"size" (canvas-resolution)
-               "time" (* 0.01 (u/seconds-since-startup))}}))
-  gl)
+               "time" (* 0.01 (u/seconds-since-startup))}})))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

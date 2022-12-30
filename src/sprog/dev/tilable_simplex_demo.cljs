@@ -7,8 +7,9 @@
             [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def frag-source
   (iglu->glsl
@@ -32,14 +33,13 @@
                                noiseValue
                                1)))}))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {:floats {"size" (canvas-resolution)
-                                    "mouse" (mouse-pos)}}))
-  gl)
+                                    "mouse" (mouse-pos)}})))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

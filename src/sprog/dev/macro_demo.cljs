@@ -5,8 +5,9 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
 (def frag-source
   (iglu->glsl
@@ -28,13 +29,12 @@
                  (vec4 1)
                  (vec4 0 0 0 1))))}))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)}}))
-  gl)
+                          {:floats {"size" (canvas-resolution)}})))
 
 (defn init []
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

@@ -10,8 +10,10 @@
    [sprog.iglu.chunks.misc :refer [pos-chunk
                                    rescale-chunk]]
    [sprog.iglu.chunks.noise :refer [simplex-3d-chunk]]
-   [sprog.webgl.core :refer [with-context
-                             start-update-loop!]]))
+   [sprog.webgl.core 
+    :refer-macros [with-context]
+    :refer [start-sprog!
+            sprog-state]]))
 
 (def smooth-factor 0.2)
 
@@ -81,14 +83,13 @@
   (swap! noise-scale-atom 
          #(u/scale % @noise-scale-target-atom smooth-factor)))
 
-(defn update-page! [gl]
+(defn update-page! [gl _]
   (render gl)
-  (update-states!)
-  gl)
+  (update-states!))
 
 (defn init []
   ; initialize midi and register midi event callback
   (add-midi-callback midi-event-handler)
   
   ;start update loop
-  (start-update-loop! update-page! (create-gl-canvas true)))
+  (start-sprog! nil update-page!))

@@ -78,7 +78,7 @@
                                                  fn-name]
                                           :or {step-factor 1
                                                max-steps 1024
-                                               termination-threshold 0.001
+                                               termination-threshold 0.0001
                                                fn-name 'march}}]]
   (combine-chunks ray-chunk
                   (postwalk-replace

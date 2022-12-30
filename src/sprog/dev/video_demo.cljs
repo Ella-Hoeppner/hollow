@@ -6,10 +6,11 @@
                                       maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.webgl.core :refer [with-context
-                                      start-update-loop!]]))
+            [sprog.webgl.core 
+             :refer-macros [with-context]
+             :refer [start-sprog!]]))
 
-(defn update-page! [{:keys [gl texture video] :as state}]
+(defn update-page! [gl {:keys [texture video] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (copy-html-image-data! texture video)
@@ -34,15 +35,14 @@
     (set! video.muted "muted")
     (set! video.loop "true")
     (.play video)
-    (.addEventListener video
-                       "timeupdate"
-                       (let [started?-atom (atom false)]
-                         #(or @started?-atom
-                              (do (reset! started?-atom true)
-                                  (start-update-loop!
-                                   update-page!
-                                   (let [gl (create-gl-canvas true)]
-                                     {:gl gl
-                                      :texture (with-context gl
-                                                 (create-tex :f8 1))
-                                      :video video}))))))))
+    (.addEventListener
+     video
+     "timeupdate"
+     (let [started?-atom (atom false)]
+       #(or @started?-atom
+            (do (reset! started?-atom true)
+                (start-sprog!
+                 (fn [gl]
+                   {:texture (create-tex gl :f8 1)
+                    :video video})
+                 update-page!)))))))
