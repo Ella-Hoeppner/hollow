@@ -1,5 +1,6 @@
 (ns sprog.iglu.chunks.raytracing
-  (:require [clojure.walk :refer [postwalk-replace]]
+  (:require [sprog.util :as u]
+            [clojure.walk :refer [postwalk-replace]]
             [sprog.iglu.core :refer [combine-chunks]]))
 
 (def ray-chunk
@@ -72,35 +73,38 @@
                                ([pos planeRay]
                                 (dot (- planeRay.pos pos) planeRay.dir))}}}))
 
-(defn create-raymarch-chunk [sdf-name & [{:keys [step-factor
-                                                 max-steps
-                                                 termination-threshold
-                                                 fn-name]
-                                          :or {step-factor 1
-                                               max-steps 1024
-                                               termination-threshold 0.0001
-                                               fn-name 'march}}]]
-  (combine-chunks ray-chunk
-                  (postwalk-replace
-                   {:sdf-name sdf-name
-                    :step-factor step-factor
-                    :max-steps (str (int max-steps))
-                    :termination-threshold termination-threshold
-                    :fn-name fn-name}
-                   '{:functions {:fn-name
-                                 {([Ray float] float)
-                                  ([ray maxDistance]
-                                   (=float t 0)
-                                   (=int maxSteps :max-steps)
-                                   ("for(int i=0;i<maxSteps;i++)"
-                                    (=float distanceEstimate
-                                            (:sdf-name (+ ray.pos (* t ray.dir))))
-                                    ("if" (< (abs distanceEstimate)
-                                             :termination-threshold)
-                                          (return t))
-                                    (+= t (* distanceEstimate :step-factor))
-                                    ("if" (> t maxDistance) "break"))
-                                   -1)}}})))
+(def raymarch-chunk
+  (combine-chunks
+   ray-chunk
+   {:macros
+    {'raymarch
+     (fn [sdf-name
+          ray
+          maxDistance
+          & [{:keys [step-factor
+                     max-steps
+                     termination-threshold]
+              :or {step-factor 1
+                   max-steps 1024
+                   termination-threshold 0.0001}}]]
+       (let [fn-name (gensym 'march)]
+         (u/unquotable
+          '{:chunk
+            {:functions
+             {~fn-name
+              {([Ray float] float)
+               ([ray maxDistance]
+                (=float t 0)
+                (~(str "for(int i=0;i<" max-steps ";i++)")
+                 (=float distanceEstimate
+                         (~sdf-name (+ ray.pos (* t ray.dir))))
+                 ("if" (< (abs distanceEstimate)
+                          ~termination-threshold)
+                       (return t))
+                 (+= t (* distanceEstimate ~step-factor))
+                 ("if" (> t maxDistance) "break"))
+                -1)}}}
+            :expression ~(list fn-name ray maxDistance)})))}}))
 
 (defn create-sdf-normal-chunk [sdf-name & [{:keys [sample-distance
                                                    fn-name]

@@ -1,5 +1,6 @@
 (ns sprog.iglu.chunks.misc
-  (:require [clojure.walk :refer [postwalk 
+  (:require [sprog.util :as u]
+            [clojure.walk :refer [postwalk
                                   postwalk-replace]]))
 
 (def trivial-vert-source
@@ -94,3 +95,44 @@
                  ([value shape scale]
                   (/ (pow (* shape scale) shape)
                      (pow value (+ shape 1))))}}})
+
+(def gradient-chunk
+  (u/unquotable
+   {:macros {'findGradient
+             (fn [dimensions function-name sample-distance pos]
+               (let [gradient-fn-name (gensym 'gradient)
+                     dimension-type (case dimensions
+                                      1 'float
+                                      2 'vec2
+                                      3 'vec3
+                                      4 'vec4)]
+                 {:chunk
+                  {:functions
+                   {gradient-fn-name
+                    '{([~dimension-type] ~dimension-type)
+                      ([x]
+                       ~(if (= dimensions 1)
+                          '(- (~function-name (+ x ~sample-distance))
+                              (~function-name (- x ~sample-distance)))
+                          (cons
+                           dimension-type
+                           (map (fn [dim]
+                                  '(- (~function-name
+                                       (+ x
+                                          ~(cons dimension-type
+                                                 (take dimensions
+                                                       (concat
+                                                        (repeat dim 0)
+                                                        (list sample-distance)
+                                                        (repeat 0))))))
+                                      (~function-name
+                                       (- x
+                                          ~(cons dimension-type
+                                                 (take dimensions
+                                                       (concat
+                                                        (repeat dim 0)
+                                                        (list sample-distance)
+                                                        (repeat 0))))))))
+                                (range dimensions)))))}}}
+                  :expression (list gradient-fn-name
+                                    pos)}))}}))

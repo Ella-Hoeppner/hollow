@@ -20,7 +20,6 @@
                                        :vert gl.VERTEX_SHADER}
                                       shader-type)
                                      shader-type))]
-    shader
     (.shaderSource gl shader source-glsl)
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
