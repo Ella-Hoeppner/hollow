@@ -1,7 +1,8 @@
 (ns sprog.iglu.chunks.noise
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [combine-chunks]]))
+            [sprog.iglu.core :refer [combine-chunks]]
+            [sprog.tools.math :refer [rand-n-sphere-point]]))
 
 (def rand-chunk
   '{:functions {rand
@@ -413,22 +414,6 @@
                       ("else if" (< d res.y)
                                  (= res.y d)))))
                    (vec3 (sqrt res) (abs id)))}}})
-
-(defn rand-normals [n rand-fn]
-  (take n (apply concat (repeatedly 
-                         (fn []
-                           (let [u1 (rand-fn)
-                                 u2 (rand-fn)
-                                 radius (Math/sqrt (* -2 (Math/log u1)))
-                                 angle (* u/TAU u2)]
-                             (map #(* radius (% angle))
-                                  (list Math/cos Math/sin))))))))
-
-(defn rand-n-sphere-point [n rand-fn]
-  (let [normals (rand-normals n rand-fn)
-        magnitude (apply + (map #(* % %) normals))]
-    (map #(/ % magnitude)
-         normals)))
 
 ; based on "Gabor Noise by Example" section 3.3
 ; doi:10.1145/2185520.2185569
