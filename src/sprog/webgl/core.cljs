@@ -11,7 +11,7 @@
   (js/requestAnimationFrame update-sprogs!))
 
 (defn start-sprog!
-  ([sprog-name init-fn update-fn]
+  ([sprog-name init-fn-or-value update-fn]
    (when-let [old-canvas (js/document.getElementById (str sprog-name))]
      (.removeChild old-canvas.parentNode old-canvas))
    (when (nil? @sprogs-atom) (update-sprogs!))
@@ -19,13 +19,14 @@
      (swap! sprogs-atom
             assoc
             sprog-name
-            {:state (atom (if (nil? init-fn)
-                            nil
-                            (init-fn gl)))
+            {:state (atom
+                     (if (fn? init-fn-or-value)
+                       (init-fn-or-value gl)
+                       init-fn-or-value))
              :gl gl
              :update-fn update-fn})))
-  ([init-fn update-fn]
-   (start-sprog! :default init-fn update-fn)))
+  ([init-fn-or-value update-fn]
+   (start-sprog! :default init-fn-or-value update-fn)))
 
 (defn sprog-state [& sprog-name]
   (:state (@sprogs-atom (or sprog-name :default))))
