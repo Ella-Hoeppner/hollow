@@ -35,7 +35,7 @@
                     vec3
                     (vec4 1))))})))
 
-(defn update-page! [gl _]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!

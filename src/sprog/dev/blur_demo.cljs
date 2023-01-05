@@ -1,4 +1,4 @@
-(ns sprog.dev.gaussian-demo
+(ns sprog.dev.blur-demo
   (:require [sprog.util :as u]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.postprocessing 
@@ -60,7 +60,7 @@
                             (* (clamp blurFactor 0 1)
                                (/ (vec2 :x :y) texSize)))))))}))
 
-(defn update-page! [gl {:keys [texture] :as state}]
+(defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
     (let [[width height] (canvas-resolution)
           half-height (* height 0.5)]

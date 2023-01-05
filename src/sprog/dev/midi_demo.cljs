@@ -83,7 +83,7 @@
   (swap! noise-scale-atom 
          #(u/scale % @noise-scale-target-atom smooth-factor)))
 
-(defn update-page! [gl _]
+(defn update-page! [{:keys [gl]}]
   (render gl)
   (update-states!))
 

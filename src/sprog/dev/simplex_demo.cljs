@@ -39,7 +39,7 @@
                                   0.5))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
-(defn update-page! [gl _]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (let [[width height] (canvas-resolution)
           resolution [width height]

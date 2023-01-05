@@ -13,7 +13,7 @@
             sprog.dev.webcam-demo
             sprog.dev.bloom-demo
             sprog.dev.texture-3d-demo
-            sprog.dev.gaussian-demo
+            sprog.dev.blur-demo
             sprog.dev.hsv-demo
             sprog.dev.params-demo
             sprog.dev.gabor-demo
@@ -37,7 +37,7 @@
   #_(sprog.dev.webcam-demo/init)
   #_(sprog.dev.bloom-demo/init)
   #_(sprog.dev.texture-3d-demo/init)
-  #_(sprog.dev.gaussian-demo/init)
+  #_(sprog.dev.blur-demo/init)
   #_(sprog.dev.hsv-demo/init)
   #_(sprog.dev.params-demo/init)
   #_(sprog.dev.gabor-demo/init)

@@ -54,7 +54,7 @@
               currentValue)))))})
 
 
-(defn update-page! [gl {:keys [frame textures] :as state}]
+(defn update-page! [{:keys [gl frame textures] :as state}]
   (with-context gl
     (run-purefrag-shader! logic-frag-source
                           sort-resolution

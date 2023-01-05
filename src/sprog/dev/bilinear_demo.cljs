@@ -45,7 +45,7 @@
      :main ((=vec2 pos (/ (- gl_FragCoord.xy offset) size))
             (= fragColor (/ (textureBilinear tex pos) :u16-max-f)))}))
 
-(defn update-page! [gl {:keys [texture] :as state}]
+(defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
     (maximize-gl-canvas)
     (let [[width height] (canvas-resolution)

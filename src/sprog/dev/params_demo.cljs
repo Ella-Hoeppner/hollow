@@ -24,7 +24,7 @@
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= fragColor (vec4 :r :g :b 1)))}))
 
-(defn update-page! [gl _]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! shader-source

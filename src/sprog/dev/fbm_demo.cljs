@@ -31,14 +31,13 @@
                                (* 0.5)))
                      1)))}))
 
-(defn update-page! [gl _]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
      frag-source
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)}}))
-  gl)
+     {:floats {"size" (canvas-resolution)}})))
 
 (defn init []
   (start-sprog! nil update-page!))

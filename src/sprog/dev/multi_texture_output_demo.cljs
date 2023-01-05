@@ -42,7 +42,7 @@
                 (texture tex2 (* (- pos (vec2 0.5 0))
                                  (vec2 2 1))))))})
 
-(defn update-page! [gl {:keys [tex1 tex2] :as state}]
+(defn update-page! [{:keys [gl tex1 tex2] :as state}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! draw-frag-source

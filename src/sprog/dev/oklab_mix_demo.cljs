@@ -32,7 +32,7 @@
                    (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
                          1)))))}))
 
-(defn update-page! [gl _]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-source

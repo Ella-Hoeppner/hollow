@@ -12,7 +12,7 @@
 
 (def tex-size 6)
 
-(defn update-page! [gl {:keys [texture] :as state}]
+(defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! '{:version "300 es"

@@ -206,7 +206,7 @@
                             {:target back-tex})))
   (update state :substrate-textures reverse))
 
-(defn update-page! [gl {:keys [substrate-textures] :as state}]
+(defn update-page! [{:keys [gl substrate-textures] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! render-frag-source

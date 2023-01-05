@@ -34,7 +34,7 @@
     :outputs {fragColor vec4}
     :main ((= fragColor (vec4 color 1)))})
 
-(defn update-page! [gl {:keys [pos-boj color-boj] :as state}]
+(defn update-page! [{:keys [gl pos-boj color-boj] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-shaders! [vert-source frag-source]

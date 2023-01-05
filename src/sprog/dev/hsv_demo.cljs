@@ -31,7 +31,7 @@
             (= fragColor (vec4 outRGB
                                1)))}))
 
-(defn update-page! [gl {:keys [texture] :as state}]
+(defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source

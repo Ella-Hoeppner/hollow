@@ -11,7 +11,7 @@
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
-(defn update-page! [gl {:keys [texture video] :as state}]
+(defn update-page! [{:keys [gl texture video] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (copy-html-image-data! texture video)

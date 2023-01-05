@@ -28,7 +28,7 @@
                                                 (sin time)))))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
-(defn update-page! [gl]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! noise-2d-frag-source

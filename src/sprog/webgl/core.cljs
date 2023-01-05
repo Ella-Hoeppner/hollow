@@ -7,7 +7,9 @@
 (defn update-sprogs! []
   (doseq [sprog (vals @sprogs-atom)]
     (when-let [{:keys [state gl update-fn]} sprog]
-      (swap! state (partial update-fn gl))))
+      (swap! state assoc :gl gl)
+      (swap! state update-fn)
+      (swap! state assoc :gl gl)))
   (js/requestAnimationFrame update-sprogs!))
 
 (defn start-sprog!
