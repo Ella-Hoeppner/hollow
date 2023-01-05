@@ -111,28 +111,29 @@
                    {gradient-fn-name
                     '{([~dimension-type] ~dimension-type)
                       ([x]
-                       ~(if (= dimensions 1)
-                          '(- (~function-name (+ x ~sample-distance))
-                              (~function-name (- x ~sample-distance)))
-                          (cons
-                           dimension-type
-                           (map (fn [dim]
-                                  '(- (~function-name
-                                       (+ x
-                                          ~(cons dimension-type
-                                                 (take dimensions
-                                                       (concat
-                                                        (repeat dim 0)
-                                                        (list sample-distance)
-                                                        (repeat 0))))))
-                                      (~function-name
-                                       (- x
-                                          ~(cons dimension-type
-                                                 (take dimensions
-                                                       (concat
-                                                        (repeat dim 0)
-                                                        (list sample-distance)
-                                                        (repeat 0))))))))
-                                (range dimensions)))))}}}
+                       (/ ~(if (= dimensions 1)
+                             '(- (~function-name (+ x ~sample-distance))
+                                 (~function-name (- x ~sample-distance)))
+                             (cons
+                              dimension-type
+                              (map (fn [dim]
+                                     '(- (~function-name
+                                          (+ x
+                                             ~(cons dimension-type
+                                                    (take dimensions
+                                                          (concat
+                                                           (repeat dim 0)
+                                                           (list sample-distance)
+                                                           (repeat 0))))))
+                                         (~function-name
+                                          (- x
+                                             ~(cons dimension-type
+                                                    (take dimensions
+                                                          (concat
+                                                           (repeat dim 0)
+                                                           (list sample-distance)
+                                                           (repeat 0))))))))
+                                   (range dimensions))))
+                          (* sample-distance 2)))}}}
                   :expression (list gradient-fn-name
                                     pos)}))}}))
