@@ -134,6 +134,6 @@
                                                            (list sample-distance)
                                                            (repeat 0))))))))
                                    (range dimensions))))
-                          (* sample-distance 2)))}}}
+                          (* ~sample-distance 2)))}}}
                   :expression (list gradient-fn-name
                                     pos)}))}}))
