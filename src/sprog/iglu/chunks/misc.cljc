@@ -137,3 +137,29 @@
                           (* ~sample-distance 2)))}}}
                   :expression (list gradient-fn-name
                                     pos)}))}}))
+
+(def vmax-chunk
+  '{:functions 
+    {vmax 
+     {([vec2] float)
+      ([v] 
+       (max v.x v.y))
+      ([vec3] float)
+      ([v]
+       (max v.x (max v.y v.z)))
+      ([vec4] float)
+      ([v]
+       (max v.x (max v.y (max v.z v.w))))}}})
+
+(def vmin-chunk 
+  '{:functions
+    {vmin 
+     {([vec2] float)
+      ([v]
+       (min v.x v.y))
+      ([vec3] float)
+      ([v]
+       (min v.x (min v.y v.z)))
+      ([vec4] float)
+      ([v]
+       (min v.x (min v.y (min v.z v.w))))}}})
