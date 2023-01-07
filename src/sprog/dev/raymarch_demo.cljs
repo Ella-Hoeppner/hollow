@@ -50,23 +50,24 @@
       {rotationMatrix
        {([] mat3)
         ([]
-         (=vec2 mouseControl (-> mouse 
+         (=vec2 mouseControl (-> mouse
                                  (* 2)
                                  (- 1)))
          (* (yRotationMatrix mouseControl.x)
             (xRotationMatrix mouseControl.y)))}
-       sdf {([vec3] float)
-            ([x]
-             (*= x (rotationMatrix))
-             (+ (sdSphere x (vec3 0) ~sphere-radius)
-                (* ~max-distortion
-                   (-> (gaborNoise 4
-                                   [3 4 5 6]
-                                   (vec4 x
-                                         (* 0.25 time)))
-                       sigmoid
-                       (* 2)
-                       (- 1)))))}}
+       sdf
+       {([vec3] float)
+        ([x]
+         (*= x (rotationMatrix))
+         (+ (sdSphere x (vec3 0) ~sphere-radius)
+            (* ~max-distortion
+               (-> (gaborNoise 4
+                               [3 4 5 6]
+                               (vec4 x
+                                     (* 0.25 time)))
+                   sigmoid
+                   (* 2)
+                   (- 1)))))}}
       :main ((=vec2 pos (getPos))
              (=Ray ray (Ray (vec3 0 0 -1)
                             (-> pos

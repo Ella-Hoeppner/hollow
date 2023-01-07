@@ -256,7 +256,7 @@
 
 
 
-(def smooth-intersectioon-chunk
+(def smooth-intersection-chunk
   '{:functions
     {smoothIntersection
      {([float float float] float)
@@ -382,30 +382,76 @@
 
 (def finite-repitition-chunk
   '{:functions
-    {finiteRepition
-     {([vec3 vec3 float] vec3)
-      ([pos grid period]
+    {finiteRepitition
+     {([float float float] float)
+      ([pos bound size]
        (- pos
-          (* period (clamp (round (/ pos period)) (- 0 grid) grid))))}}})
+          (* size (clamp (round (/ pos size)) (- 0 bounds) bounds))))
+      ([vec2 vec2 float] vec2)
+      ([pos bounds size]
+       (- pos
+          (* size (clamp (round (/ pos size)) (- 0 bounds) bounds))))
+      ([vec3 vec3 float] vec3)
+      ([pos bounds size]
+       (- pos
+          (* size (clamp (round (/ pos size)) (- 0 bounds) bounds))))}}})
 
-(def radial-repitition-chunk
-  '{:constants {:PI Math/PI}
-    :functions
-    {repRadial
-     {([vec2  float] vec2)
-      ([axis reps]
-       (=float angle (/ (* 2 :PI) reps))
-       (=float a (+ (atan axis.y axis.x)
-                    (/ angle 2)))
-       (=float r (length axis))
-       (=float c (floor (/ a angle)))
-       (= a (- (mod a angle) (/ angle 2)))
-       (= axis (* (vec2 (cos a)
-                        (sin a))
-                  r))
-       ("if" (>= (abs c) (/ reps 2))
-             (= c (abs c)))
+(def mirrored-repitition-chunk
+  '{:functions
+    {mirrored-repitition-chunk
+     {([float float] float)
+      ([pos size]
+       (=float halfsize (* size 0.5))
+       (=float c (floor (/ (+ poss halfsize) size)))
+       (= pos (- (mod (+ pos halfsize) size) halfsize))
+       (*= pos (- (* (mod c 2) 2) 1))
+       c)
+      ([vec2 vec2] vec2)
+      ([pos size]
+       (=vec2 halfsize (* size 0.5))
+       (=vec2 c (floor (/ (+ poss halfsize) size)))
+       (= pos (- (mod (+ pos halfsize) size) halfsize))
+       (*= pos (- (* (mod c (vec2 2)) 2) (vec2 1)))
+       c)
+      ([vec3 vec3] vec3)
+      ([pos size]
+       (=vec3 halfsize (* size 0.5))
+       (=vec3 c (floor (/ (+ poss halfsize) size)))
+       (= pos (- (mod (+ pos halfsize) size) halfsize))
+       (*= pos (- (* (mod c (vec3 2)) 2) (vec3 1)))
        c)}}})
+
+(def polar-repitition-chunk
+  (u/unquotable
+   '{:functions
+     {polarRepitition
+      {([vec2  float] vec2)
+       ([axis reps]
+        (=float angle (/ (* 2 ~Math/PI) reps))
+        (=float a (+ (atan axis.y axis.x)
+                     (/ angle 2)))
+        (=float r (length axis))
+        (=float c (floor (/ a angle)))
+        (= a (- (mod a angle) (/ angle 2)))
+        (= axis (* (vec2 (cos a)
+                         (sin a))
+                   r))
+        ("if" (>= (abs c) (/ reps 2))
+              (= c (abs c)))
+        c)}}}))
+
+; reflects space over one axis
+(def domain-reflection-chunk
+  '{:functions
+    {opReflect
+    {([vec3 vec3 float] float)
+     ([pos normal offset]
+      (=float t (+ (dot p normal) offset))
+      ("if" (< t 0)
+       (= pos (- pos (* 2 t normal))))
+      (if (< t 0)
+        -1
+        1))}}})
 
 ; column and stair operations that produce those shapes at interection point
 (def union-column-chunk
@@ -536,25 +582,25 @@
 (def blob-sdf-chunk
   (u/unquotable
    '{:constants {:PHI ~(+ (* (Math/sqrt 5) 0.5) 0.5)}
-    :functions 
-    {sdBlob 
-     {([vec3 float float] float)
-      ([pos radius distortionFactor]
-       (= pos (abs pos))
-       ("if" (< pos.x (max pos.y pos.z))
-             (= pos pos.yzx))
-       ("if" (< pos.x (max pos.y pos.z))
-             (= pos pos.yzx))
-       (=float b (max
-                  (max
-                   (max (dot pos (normalize (vec3 1)))
-                        (dot pos.xz (normalize (vec2 (+ :PHI 1) 1))))
-                   (dot pos.yx (normalize (vec2 1 :PHI))))
-                  (dot pos.xz (normalize (vec2 1 :PHI)))))
-       (=float l (length pos))
-       (- l
-          (+ radius
-             (* distortionFactor
-                (cos (min (* (sqrt (- 1.01 (/ b l)))
-                             (* 4 ~Math/PI))
-                          ~Math/PI))))))}}}))
+     :functions
+     {sdBlob
+      {([vec3 float float] float)
+       ([pos radius distortionFactor]
+        (= pos (abs pos))
+        ("if" (< pos.x (max pos.y pos.z))
+              (= pos pos.yzx))
+        ("if" (< pos.x (max pos.y pos.z))
+              (= pos pos.yzx))
+        (=float b (max
+                   (max
+                    (max (dot pos (normalize (vec3 1)))
+                         (dot pos.xz (normalize (vec2 (+ :PHI 1) 1))))
+                    (dot pos.yx (normalize (vec2 1 :PHI))))
+                   (dot pos.xz (normalize (vec2 1 :PHI)))))
+        (=float l (length pos))
+        (- l
+           (+ radius
+              (* distortionFactor
+                 (cos (min (* (sqrt (- 1.01 (/ b l)))
+                              (* 4 ~Math/PI))
+                           ~Math/PI))))))}}}))
