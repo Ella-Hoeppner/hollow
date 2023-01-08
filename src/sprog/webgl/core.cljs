@@ -31,7 +31,7 @@
    (start-sprog! :default init-fn-or-value update-fn)))
 
 (defn sprog-state [& sprog-name]
-  (:state (@sprogs-atom (or sprog-name :default))))
+  @(:state (@sprogs-atom (or sprog-name :default))))
 
 (defn set-sprog-state!
   ([sprog-name new-state]
