@@ -11,7 +11,8 @@
                                 create-boj!
                                 copy-html-image-data!
                                 html-image-tex
-                                max-texture-size}]
+                                max-texture-size
+                                set-boj-data!}]
     (conj (postwalk (fn [form]
                       (if (and (seq? form)
                                (contextful-functions (first form)))

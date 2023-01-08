@@ -1,13 +1,14 @@
 (ns sprog.webgl.attributes)
 
-(defn set-boj-data! [gl {:keys [buffer usage]} data] 
+(defn set-boj-data! [gl {:keys [buffer usage] :as boj} data] 
   (.bindBuffer gl
                gl.ARRAY_BUFFER
                buffer)
   (.bufferData gl
                gl.ARRAY_BUFFER
                data
-               usage))
+               usage)
+  boj)
 
 (defn create-boj! [gl num-components & [{:keys [type
                                                 normalized
