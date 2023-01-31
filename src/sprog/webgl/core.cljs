@@ -30,6 +30,10 @@
   ([init-fn-or-value update-fn]
    (start-sprog! :default init-fn-or-value update-fn)))
 
+(defn stop-sprog!
+  ([sprog-name] (swap! sprogs-atom dissoc sprog-name))
+  ([] (stop-sprog! :default)))
+
 (defn sprog-state [& sprog-name]
   @(:state (@sprogs-atom (or sprog-name :default))))
 
@@ -47,21 +51,15 @@
   ([new-state]
    (set-sprog-state! :default new-state)))
 
-(defn update-sprog-state! [& args]
-  (let [[sprog-name update-fn update-fn-args]
-        (if (keyword? (first args))
-          [(first args) (second args) (drop 2 args)]
-          [:default (first args) (rest args)])]
-    (swap! sprogs-atom
-           update
-           sprog-name
-           update
-           :state
-           (fn [state]
-             (apply (partial swap! state update-fn)
-                    update-fn-args)
-             state))
-    @(get-in @sprogs-atom [sprog-name :state])))
+(defn update-sprog-state!
+  ([sprog-name update-fn]
+   (swap! sprogs-atom
+          update-in
+          [sprog-name :state]
+          update-fn)
+   @(get-in @sprogs-atom [sprog-name :state]))
+  ([update-fn]
+   (update-sprog-state! :default update-fn)))
 
 (defn sprog-context [& sprog-name]
   (:gl (@sprogs-atom (or sprog-name :default))))
