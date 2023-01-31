@@ -53,9 +53,7 @@
 
 (defn update-sprog-state!
   ([sprog-name update-fn]
-   (swap! sprogs-atom
-          update-in
-          [sprog-name :state]
+   (swap! (get-in @sprogs-atom [sprog-name :state])
           update-fn)
    @(get-in @sprogs-atom [sprog-name :state]))
   ([update-fn]
