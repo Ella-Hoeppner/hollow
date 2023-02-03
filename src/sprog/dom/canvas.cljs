@@ -41,6 +41,29 @@
 (defn maximize-gl-canvas [gl & options]
   (apply (partial maximize-canvas gl.canvas) options))
 
+(defn resize-canvas [canvas pixel-dimensions & {:keys [max-pixel-ratio]}]
+  (let [pixel-ratio (if max-pixel-ratio
+                      (min js/window.devicePixelRatio max-pixel-ratio)
+                      js/window.devicePixelRatio)
+        style canvas.style
+        [width height] (if (number? pixel-dimensions)
+                         [pixel-dimensions pixel-dimensions]
+                         pixel-dimensions)
+        raw-width js/window.innerWidth
+        raw-height js/window.innerHeight
+        [style-width style-height] (mapv #(/ % pixel-ratio) [width height])]
+    (set! (.-left style) (max 0
+                              (* 0.5 (- raw-width style-width))))
+    (set! (.-top style) (max 0
+                             (* 0.5 (- raw-height style-height))))
+    (set! (.-width style) (str (/ width pixel-ratio) "px"))
+    (set! (.-height style) (str (/ height pixel-ratio) "px"))
+    (set! (.-width canvas) width)
+    (set! (.-height canvas) height)))
+
+(defn resize-gl-canvas [gl pixel-dimensions & options]
+  (apply (partial resize-canvas gl.canvas pixel-dimensions) options))
+
 (defn canvas-resolution [gl]
   [gl.canvas.width gl.canvas.height])
 

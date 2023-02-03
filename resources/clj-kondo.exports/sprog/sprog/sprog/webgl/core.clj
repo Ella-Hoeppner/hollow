@@ -7,6 +7,7 @@
                                 run-purefrag-shader!
                                 run-shaders!
                                 maximize-gl-canvas
+                                resize-gl-canvas
                                 canvas-resolution
                                 create-boj!
                                 copy-html-image-data!
