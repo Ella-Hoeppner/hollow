@@ -138,6 +138,7 @@
                               :nearest))
                         wrap-mode
                         three-d?)
+    (.bindTexture gl texture-target nil)
     tex))
 
 (defn delete-tex [gl & textures]
