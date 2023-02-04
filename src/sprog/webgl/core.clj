@@ -12,7 +12,7 @@
                                 create-boj!
                                 copy-html-image-data!
                                 html-image-tex
-                                max-texture-size
+                                max-tex-size
                                 set-boj-data!}]
     (conj (postwalk (fn [form]
                       (if (and (seq? form)
