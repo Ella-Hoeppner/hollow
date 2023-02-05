@@ -59,5 +59,10 @@
   ([update-fn]
    (update-sprog-state! :default update-fn)))
 
+(defn merge-sprog-state!
+  ([sprog-name new-state-map]
+   (update-sprog-state! sprog-name #(merge % new-state-map)))
+  ([new-state-map] (merge-sprog-state! :default new-state-map)))
+
 (defn sprog-context [& sprog-name]
   (:gl (@sprogs-atom (or sprog-name :default))))
