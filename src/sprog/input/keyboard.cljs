@@ -1,12 +1,37 @@
 (ns sprog.input.keyboard)
 
 (defonce key-callbacks (atom {}))
+(defonce key-toggles (atom {}))
+(defonce key-cycles (atom {}))
 
 (defn keydown [event]
-  (doseq [callback (@key-callbacks (.-key event))]
-    (callback)))
+  (let [key (.-key event)]
+    (swap! key-toggles
+           (fn [toggle-map]
+             (update toggle-map key not)))
+    (swap! key-cycles
+           (fn [cycle-map]
+             (update cycle-map
+                     key
+                     (fn [cycle]
+                       (when cycle
+                         (let [[values index] cycle]
+                           [values (mod (inc index) (count values))]))))))
+    (doseq [callback (@key-callbacks key)]
+      (callback))))
 
 (js/document.addEventListener "keydown" keydown)
+
+(defn key-toggled? [key-str & [default-value]]
+  (when (nil? (@key-toggles key-str))
+    (swap! key-toggles assoc key-str (boolean default-value)))
+  (@key-toggles key-str))
+
+(defn key-cycle [key-str cycle & [default-index]]
+  (when (nil? (@key-cycles key-str))
+    (swap! key-cycles assoc key-str [cycle (int default-index)]))
+  (let [[values index] (@key-cycles key-str)]
+    (values index)))
 
 (defn add-key-callback [key-name callback]
   (swap! key-callbacks
