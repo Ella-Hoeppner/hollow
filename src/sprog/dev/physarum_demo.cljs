@@ -178,10 +178,10 @@
    (with-context gl
      (run-purefrag-shader! agent-logic-frag-source
                            agent-tex-resolution
-                           {:floats {"randomizeChance" randomize-chance
-                                     "time" (u/seconds-since-startup)}
-                            :textures {"substrate" substrate-tex
-                                       "agentTex" front-tex}}
+                           {"randomizeChance" randomize-chance
+                            "time" (u/seconds-since-startup)
+                            "substrate" substrate-tex
+                            "agentTex" front-tex}
                            {:target back-tex})))
   (update state :agent-textures reverse))
 
@@ -192,9 +192,9 @@
     (with-context gl
       (run-shaders! [particle-vert-source-u16 particle-frag-source-u16]
                     substrate-resolution
-                    {:textures {"particleTex" agent-tex}
-                     :floats {"size" substrate-resolution
-                              "radius" agent-radius}}
+                    {"particleTex" agent-tex
+                     "size" substrate-resolution
+                     "radius" agent-radius}
                     {}
                     0
                     (* 6 agent-tex-resolution agent-tex-resolution)
@@ -202,7 +202,7 @@
 
       (run-purefrag-shader! substrate-logic-frag-source 
                             substrate-resolution
-                            {:textures {"substrate" front-tex}}
+                            {"substrate" front-tex}
                             {:target back-tex})))
   (update state :substrate-textures reverse))
 
@@ -211,9 +211,8 @@
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! render-frag-source
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)}
-                           :textures {"substrate"
-                                      (first substrate-textures)}}))
+                          {"size" (canvas-resolution)
+                           "substrate" (first substrate-textures)}))
   (->> state
        (update-agents! ambient-randomize-chance)
        update-substrate!))

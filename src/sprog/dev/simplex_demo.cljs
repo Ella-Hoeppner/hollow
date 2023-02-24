@@ -47,11 +47,11 @@
       (maximize-gl-canvas)
       (run-purefrag-shader! noise-2d-frag-source
                             [half-width height]
-                            {:floats {"size" resolution}})
+                            {"size" resolution})
       (run-purefrag-shader! noise-3d-frag-source
                             [half-width 0 half-width height]
-                            {:floats {"size" resolution
-                                      "time" (u/seconds-since-startup)}}))))
+                            {"size" resolution
+                             "time" (u/seconds-since-startup)}))))
 
 (defn init []
   (start-sprog! nil update-page!))

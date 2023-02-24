@@ -47,9 +47,9 @@
     (maximize-gl-canvas)
     (run-purefrag-shader! draw-frag-source
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)}
-                           :textures {"tex1" tex1
-                                      "tex2" tex2}}))
+                          {"size" (canvas-resolution)
+                           "tex1" tex1
+                           "tex2" tex2}))
   state)
 
 (defn init-page! [gl]

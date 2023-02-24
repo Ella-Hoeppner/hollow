@@ -1,160 +1,97 @@
 (ns sprog.webgl.uniforms
-  (:require [sprog.iglu.glsl :refer [clj-name->glsl-name]]))
+  (:require [sprog.util :as u]
+            [sprog.iglu.glsl :refer [clj-name->glsl-name]]))
 
 (defn ensure-uniform-present! [gl
-                               {:keys [program uniforms-atom]}
+                               {:keys [program uniform-locations-atom]}
                                uniform-name]
-  (when (not (@uniforms-atom uniform-name))
-    (swap! uniforms-atom
+  (when (not (@uniform-locations-atom uniform-name))
+    (swap! uniform-locations-atom
            assoc
            uniform-name
            (.getUniformLocation gl
                                 program
                                 uniform-name))))
 
-(defn set-sprog-uniform-1i! [gl
-                             {:keys [uniforms-atom] :as sprog}
-                             uniform-name
-                             value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform1i gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-int! [gl location value]
+  (.uniform1i gl location value))
 
-(defn set-sprog-uniform-2iv! [gl
-                              {:keys [uniforms-atom] :as sprog}
-                              uniform-name
-                              value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform2iv gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-ivec2! [gl location value]
+  (.uniform2iv gl location value))
 
-(defn set-sprog-uniform-3iv! [gl
-                              {:keys [uniforms-atom] :as sprog}
-                              uniform-name
-                              value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform3iv gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-ivec3! [gl location value]
+  (.uniform3iv gl location value))
 
-(defn set-sprog-uniform-4iv! [gl
-                              {:keys [uniforms-atom] :as sprog}
-                              uniform-name
-                              value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform4iv gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-ivec4! [gl location value]
+  (.uniform4iv gl location value))
 
-(defn set-sprog-uniform-1f! [gl
-                             {:keys [uniforms-atom] :as sprog}
-                             uniform-name
-                             value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform1f gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-float! [gl location value]
+  (.uniform1f gl location value))
 
-(defn set-sprog-uniform-2fv! [gl
-                              {:keys [uniforms-atom] :as sprog}
-                              uniform-name
-                              value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform2fv gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-vec2! [gl location value]
+  (.uniform2fv gl location value))
 
-(defn set-sprog-uniform-3fv! [gl
-                              {:keys [uniforms-atom] :as sprog}
-                              uniform-name
-                              value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform3fv gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-vec3! [gl location value]
+  (.uniform3fv gl location value))
 
-(defn set-sprog-uniform-4fv! [gl
-                              {:keys [uniforms-atom] :as sprog}
-                              uniform-name
-                              value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniform4fv gl (@uniforms-atom uniform-glsl-name) value)))
+(defn set-uniform-vec4! [gl location value]
+  (.uniform4fv gl location value))
 
-(defn set-sprog-uniform-mat2! [gl
-                               {:keys [uniforms-atom] :as sprog}
-                               uniform-name
-                               value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniformMatrix2fv gl (@uniforms-atom uniform-glsl-name) false value)))
+(defn set-uniform-mat2! [gl location value]
+  (.uniformMatrix2fv gl location false value))
 
-(defn set-sprog-uniform-mat3! [gl
-                               {:keys [uniforms-atom] :as sprog}
-                               uniform-name
-                               value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniformMatrix3fv gl (@uniforms-atom uniform-glsl-name) false value)))
+(defn set-uniform-mat3! [gl location value]
+  (.uniformMatrix3fv gl location false value))
 
-(defn set-sprog-uniform-mat4! [gl 
-                               {:keys [uniforms-atom] :as sprog}
-                               uniform-name
-                               value]
-  (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-    (ensure-uniform-present! gl sprog uniform-glsl-name)
-    (.uniformMatrix4fv gl (@uniforms-atom uniform-glsl-name) false value)))
+(defn set-uniform-mat4! [gl location value]
+  (.uniformMatrix4fv gl location false value))
 
-(defn set-sprog-float-uniform! [gl sprog uniform-name value]
-  ((cond
-     (number? value) set-sprog-uniform-1f!
-     (== (count value) 2) set-sprog-uniform-2fv!
-     (== (count value) 3) set-sprog-uniform-3fv!
-     (== (count value) 4) set-sprog-uniform-4fv!)
-   gl sprog uniform-name value))
-
-(defn set-sprog-float-uniforms! [gl sprog name-value-map]
-  (doseq [[name value] name-value-map]
-    (set-sprog-float-uniform! gl sprog name value)))
-
-(defn set-sprog-int-uniform! [gl sprog uniform-name value]
-  ((cond
-     (number? value) set-sprog-uniform-1i!
-     (== (count value) 2) set-sprog-uniform-2iv!
-     (== (count value) 3) set-sprog-uniform-3iv!
-     (== (count value) 4) set-sprog-uniform-4iv!)
-   gl sprog uniform-name value))
-
-(defn set-sprog-int-uniforms! [gl sprog name-value-map]
-  (doseq [[name value] name-value-map]
-    (set-sprog-int-uniform! gl sprog name value)))
-
-(defn set-sprog-mat-uniform! [gl sprog uniform-name value]
-  ((cond
-     (number? value) set-sprog-uniform-1f!
-     (== (count value) 4) set-sprog-uniform-mat2!
-     (== (count value) 9) set-sprog-uniform-mat3!
-     (== (count value) 16) set-sprog-uniform-mat4!)
-   gl sprog uniform-name value))
-
-(defn set-sprog-mat-uniforms! [gl sprog name-mat-map]
-  (doseq [[name value] name-mat-map]
-    (set-sprog-mat-uniform! gl sprog name value)))
-
-(defn set-sprog-tex-uniforms! [gl sprog name-tex-2d-map name-tex-3d-map]
-  (let [name-tex-2d-vec (vec name-tex-2d-map)
-        name-tex-3d-vec (vec name-tex-3d-map)]
-    (doseq [i (range (count name-tex-2d-vec))]
-      (let [[name tex] (name-tex-2d-vec i)]
-        (.activeTexture gl (+ gl.TEXTURE0 i))
-        (.bindTexture gl gl.TEXTURE_2D tex)
-        (set-sprog-uniform-1i! gl sprog name i)))
-    (doseq [i (range (count name-tex-3d-vec))]
-      (let [[name tex] (name-tex-3d-vec i)
-            index (+ i (count name-tex-2d-vec))]
-        (.activeTexture gl (+ gl.TEXTURE0 index))
-        (.bindTexture gl gl.TEXTURE_3D tex)
-        (set-sprog-uniform-1i! gl sprog name index)))))
-
-(defn set-sprog-uniforms! [gl 
-                           sprog 
-                           {:keys [floats ints textures textures-3d matrices]}]
-  (set-sprog-float-uniforms! gl sprog floats)
-  (set-sprog-int-uniforms! gl sprog ints)
-  (set-sprog-tex-uniforms! gl sprog textures textures-3d)
-  (set-sprog-mat-uniforms! gl sprog matrices))
+(defn set-sprog-uniforms! [gl
+                           {:keys [uniform-type-map uniform-locations-atom]
+                            :as sprog}
+                           uniforms]
+  (reduce
+   (fn [texture-index [uniform-name value]]
+     (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
+       (if-let [uniform-type (uniform-type-map uniform-name)]
+         (do (ensure-uniform-present! gl
+                                      sprog
+                                      uniform-glsl-name)
+             (if (#{"sampler2D" "usampler2D" "sampler3D" "usampler3D"}
+                  uniform-type)
+               (do (.activeTexture gl (+ gl.TEXTURE0 texture-index))
+                   (.bindTexture gl
+                                 (if (#{"sampler3D" "usampler3D"}
+                                      uniform-type)
+                                   gl.TEXTURE_3D
+                                   gl.TEXTURE_2D)
+                                 value)
+                   (set-uniform-int! gl
+                                     (@uniform-locations-atom uniform-glsl-name)
+                                     texture-index)
+                   (inc texture-index))
+               (do ((case uniform-type
+                      "float" set-uniform-float!
+                      "vec2" set-uniform-vec2!
+                      "vec3" set-uniform-vec3!
+                      "vec4" set-uniform-vec4!
+                      "int" set-uniform-int!
+                      "ivec2" set-uniform-ivec2!
+                      "ivec3" set-uniform-ivec3!
+                      "ivec4" set-uniform-ivec4!
+                      "mat2" set-uniform-mat2!
+                      "mat3" set-uniform-mat3!
+                      "mat4" set-uniform-mat4!
+                      (throw (str "SPROG: Unrecognized uniform type \""
+                                  uniform-type
+                                  "\" for uniform \""
+                                  uniform-name
+                                  "\"")))
+                    gl
+                    (@uniform-locations-atom uniform-glsl-name)
+                    value)
+                   texture-index)))
+         (throw
+          (str "SPROG: No uniform \"" uniform-glsl-name "\" in shader")))))
+   0
+   uniforms))

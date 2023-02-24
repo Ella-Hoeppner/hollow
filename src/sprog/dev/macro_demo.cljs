@@ -34,7 +34,7 @@
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)}})))
+                          {"size" (canvas-resolution)})))
 
 (defn init []
   (start-sprog! nil update-page!))

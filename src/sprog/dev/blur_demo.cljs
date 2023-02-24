@@ -67,14 +67,14 @@
       (maximize-gl-canvas)
       (run-purefrag-shader! top-frag-source
                             [0 half-height width half-height]
-                            {:floats {"size" [width height]
-                                      "blurFactor" (first (mouse-pos))}
-                             :textures {"tex" texture}})
+                             {"size" [width height]
+                              "blurFactor" (first (mouse-pos))
+                              "tex" texture})
       (run-purefrag-shader! bottom-frag-source
                             [width half-height]
-                            {:floats {"size" [width height]
-                                      "blurFactor" (- 1 (first (mouse-pos)))}
-                             :textures {"tex" texture}})))
+                            {"size" [width height]
+                             "blurFactor" (- 1 (first (mouse-pos)))
+                             "tex" texture})))
   state)
 
 (defn init-page! [gl]

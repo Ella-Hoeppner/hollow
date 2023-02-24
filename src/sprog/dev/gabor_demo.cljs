@@ -41,8 +41,8 @@
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)
-               "time" (* 0.01 (u/seconds-since-startup))}})))
+     {"size" (canvas-resolution)
+      "time" (* 0.01 (u/seconds-since-startup))})))
 
 (defn init []
   (start-sprog! nil update-page!))

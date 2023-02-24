@@ -11,12 +11,8 @@
             [clojure.string :refer [split-lines
                                     join]]))
 
-(defn create-shader [gl shader-type source]
-  (let [source-glsl
-        (if (string? source)
-          source
-          (iglu->glsl source))
-        shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
+(defn create-shader [gl shader-type source-glsl]
+  (let [shader (.createShader gl (or ({:frag gl.FRAGMENT_SHADER
                                        :vert gl.VERTEX_SHADER}
                                       shader-type)
                                      shader-type))]
@@ -24,10 +20,10 @@
     (.compileShader gl shader)
     (if (.getShaderParameter gl shader gl.COMPILE_STATUS)
       shader
-      (do (u/log (join "\n"
-                       (map #(str %2 ":\t" %1)
-                            (split-lines source-glsl)
-                            (rest (range)))))
+      (do (join "\n"
+                (map #(str %2 ":\t" %1)
+                     (split-lines source-glsl)
+                     (rest (range))))
           (throw (js/Error. (str (.getShaderInfoLog gl shader))))))))
 
 (defn create-program [gl vert-shader frag-shader]
@@ -39,13 +35,30 @@
       program
       (throw (js/Error. (str (.getProgramInfoLog gl program)))))))
 
-(defn create-sprog [gl vert-source frag-source]
-  (let [program (create-program gl
-                                (create-shader gl :vert vert-source)
-                                (create-shader gl :frag frag-source))]
+(defn create-sprog [gl vert-source frag-source] 
+  (let [vert-glsl (if (string? vert-source)
+                    vert-source
+                    (iglu->glsl vert-source))
+        frag-glsl (if (string? frag-source)
+                    frag-source
+                    (iglu->glsl frag-source))
+        program (create-program gl
+                                (create-shader gl :vert vert-glsl)
+                                (create-shader gl :frag frag-glsl))]
     {:program program
-     :uniforms-atom (atom {})
-     :attributes-atom (atom {})}))
+     :uniform-locations-atom (atom {})
+     :attribute-locations-atom (atom {})
+     :uniform-type-map
+     (into {}
+           (map #(-> %
+                     (clojure.string/replace #"uniform\s+" "")
+                     (clojure.string/split #"\s+")
+                     reverse
+                     vec)
+                (re-seq #"uniform\s+[A-Za-z0-9]+\s+[A-Za-z0-9]+"
+                        (str vert-glsl
+                             "\n"
+                             frag-glsl))))}))
 
 (def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
 

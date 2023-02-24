@@ -33,9 +33,9 @@
     (maximize-gl-canvas)
     (run-purefrag-shader! noise-2d-frag-source
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)
-                                    "mouse" (mouse-pos)
-                                    "time" (u/seconds-since-startup)}})))
+                          {"size" (canvas-resolution)
+                           "mouse" (mouse-pos)
+                           "time" (u/seconds-since-startup)})))
 
 (defn init []
   (start-sprog! nil update-page!))

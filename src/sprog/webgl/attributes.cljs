@@ -33,10 +33,10 @@
     boj))
 
 (defn ensure-attribute-present! [gl
-                                 {:keys [program attributes-atom]} 
+                                 {:keys [program attribute-locations-atom]} 
                                  attrib-name-str]
-  (when (not (@attributes-atom attrib-name-str))
-    (swap! attributes-atom 
+  (when (not (@attribute-locations-atom attrib-name-str))
+    (swap! attribute-locations-atom 
            assoc
            attrib-name-str
            (.getAttribLocation gl
@@ -44,7 +44,7 @@
                                attrib-name-str))))
 
 (defn set-sprog-attribute! [gl
-                            {:keys [attributes-atom] :as sprog}
+                            {:keys [attribute-locations-atom] :as sprog}
                             attrib-name
                             {:keys [buffer
                                     num-components
@@ -54,7 +54,7 @@
                                     offset]}]
   (let [attrib-name-str (str attrib-name)]
     (ensure-attribute-present! gl sprog attrib-name-str)
-    (let [location (@attributes-atom attrib-name)]
+    (let [location (@attribute-locations-atom attrib-name)]
       (.bindBuffer gl gl.ARRAY_BUFFER buffer)
       (.enableVertexAttribArray gl location)
       (.vertexAttribPointer gl

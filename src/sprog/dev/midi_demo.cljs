@@ -72,10 +72,10 @@
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)
-               "time" (u/seconds-since-startup)
-               "circleRadius" (u/scale 0.05 0.3 @circle-radius-atom)
-               "noiseScale" (u/scale 0 0.05 @noise-scale-atom)}})))
+     {"size" (canvas-resolution)
+      "time" (u/seconds-since-startup)
+      "circleRadius" (u/scale 0.05 0.3 @circle-radius-atom)
+      "noiseScale" (u/scale 0 0.05 @noise-scale-atom)})))
 
 (defn update-states! []
   (swap! circle-radius-atom 

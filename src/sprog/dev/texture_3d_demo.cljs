@@ -27,9 +27,9 @@
                                       (texture tex
                                                (vec3 pos (mod time 1)))))}
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)
-                                    "time" (u/seconds-since-startup)}
-                           :textures-3d {"tex" texture}}))
+                          {"size" (canvas-resolution)
+                           "time" (u/seconds-since-startup)
+                           "tex" texture}))
   state)
 
 (defn init-page! [gl]

@@ -14,8 +14,7 @@
             sprog.dev.bloom-demo
             sprog.dev.texture-3d-demo
             sprog.dev.blur-demo
-            sprog.dev.hsv-demo
-            sprog.dev.params-demo
+            sprog.dev.hsv-demo 
             sprog.dev.gabor-demo
             sprog.dev.oklab-mix-demo
             sprog.dev.fbm-demo
@@ -39,7 +38,6 @@
   #_(sprog.dev.texture-3d-demo/init)
   #_(sprog.dev.blur-demo/init)
   #_(sprog.dev.hsv-demo/init)
-  #_(sprog.dev.params-demo/init)
   #_(sprog.dev.gabor-demo/init)
   #_(sprog.dev.oklab-mix-demo/init)
   #_(sprog.dev.fbm-demo/init)

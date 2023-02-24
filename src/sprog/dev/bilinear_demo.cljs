@@ -52,13 +52,13 @@
           half-width (* width 0.5)]
       (run-purefrag-shader! nearest-frag-source
                             [half-width height]
-                            {:floats {"size" [half-width height]}
-                             :textures {"tex" texture}})
+                            {"size" [half-width height]
+                             "tex" texture})
       (run-purefrag-shader! bilinear-frag-source
                             [half-width 0 half-width height]
-                            {:floats {"size" [half-width height]
-                                      "offset" [half-width 0]}
-                             :textures {"tex" texture}})))
+                            {"size" [half-width height]
+                             "offset" [half-width 0]
+                             "tex" texture})))
   state)
 
 (defn init-page! [gl]

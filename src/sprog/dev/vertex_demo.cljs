@@ -39,10 +39,10 @@
     (maximize-gl-canvas {:square? true})
     (run-shaders! [vert-source frag-source]
                   (canvas-resolution)
-                  {:matrices {"rotation"
-                              (let [angle (u/seconds-since-startup)]
-                                [(Math/cos angle) (- (Math/sin angle))
-                                 (Math/sin angle) (Math/cos angle)])}}
+                  {"rotation"
+                   (let [angle (u/seconds-since-startup)]
+                     [(Math/cos angle) (- (Math/sin angle))
+                      (Math/sin angle) (Math/cos angle)])}
                   {"vertexPos" pos-boj
                    "vertexColor" color-boj}
                   0

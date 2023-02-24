@@ -13,7 +13,6 @@
                                             gradient-chunk]]
             [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -91,9 +90,8 @@
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)
-               "time" (u/seconds-since-startup)
-               "mouse" (mouse-pos)}})))
+     {"size" (canvas-resolution)
+      "time" (u/seconds-since-startup)})))
 
 (defn init []
   (start-sprog! nil update-page!))

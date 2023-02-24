@@ -36,9 +36,9 @@
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)
-                                    "mouse" (mouse-pos)}
-                           :textures {"tex" texture}}))
+                          {"size" (canvas-resolution)
+                           "mouse" (mouse-pos)
+                           "tex" texture}))
   state)
 
 (defn init-page! [gl]

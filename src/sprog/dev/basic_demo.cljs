@@ -18,7 +18,7 @@
        :main ((=vec2 pos (/ gl_FragCoord.xy size))
               (= fragColor (vec4 pos 0 1)))}
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)}})))
+     {"size" (canvas-resolution)})))
 
 (defn init []
   (start-sprog! nil update-page!))

@@ -58,10 +58,10 @@
   (with-context gl
     (run-purefrag-shader! logic-frag-source
                           sort-resolution
-                          {:floats {"size" [sort-resolution sort-resolution]
-                                    "threshold" (first (mouse-pos))}
-                           :textures {"tex" (first textures)}
-                           :ints {"frame" frame}}
+                          {"size" [sort-resolution sort-resolution]
+                           "threshold" (first (mouse-pos))
+                           "tex" (first textures)
+                           "frame" frame}
                           {:target (second textures)})
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! '{:version "300 es"
@@ -72,8 +72,8 @@
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
                                    (= fragColor (texture tex pos)))}
                           (canvas-resolution)
-                          {:floats {"size" (canvas-resolution)}
-                           :textures {"tex" (second textures)}}))
+                          {"size" (canvas-resolution)
+                           "tex" (second textures)}))
   (-> state
       (update :frame inc)
       (update :textures reverse)))
@@ -90,8 +90,8 @@
                                      (= pos.y (- 1 pos.y))
                                      (= fragColor (texture tex pos)))}
                             sort-resolution
-                            {:floats {"size" [sort-resolution sort-resolution]}
-                             :textures {"tex" (html-image-tex "img")}}
+                            {"size" [sort-resolution sort-resolution]
+                             "tex" (html-image-tex "img")}
                             {:target (first textures)})
       {:textures textures
        :frame 0})))

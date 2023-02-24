@@ -25,8 +25,8 @@
                  (texture tex
                           (vec2 pos.x (- 1 pos.y)))))}
      (canvas-resolution)
-     {:floats {"size" (canvas-resolution)}
-      :textures {"tex" texture}}))
+     {"size" (canvas-resolution)
+      "tex" texture}))
   state)
 
 (defn init []
