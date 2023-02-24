@@ -1,6 +1,7 @@
 (ns sprog.input.keyboard)
 
 (defonce key-callbacks (atom {}))
+(defonce key-downs (atom {}))
 (defonce key-toggles (atom {}))
 (defonce key-cycles (atom {}))
 
@@ -17,10 +18,19 @@
                        (when cycle
                          (let [[values index] cycle]
                            [values (mod (inc index) (count values))]))))))
+    (swap! key-downs assoc key true)
     (doseq [callback (@key-callbacks key)]
       (callback))))
 
+(defn keyup [event]
+  (let [key (.-key event)]
+    (swap! key-downs assoc key false)))
+
 (js/document.addEventListener "keydown" keydown)
+(js/document.addEventListener "keyup" keyup)
+
+(defn key-down? [key-str]
+  (@key-downs key-str))
 
 (defn key-toggled? [key-str & [default-value]]
   (when (nil? (@key-toggles key-str))
