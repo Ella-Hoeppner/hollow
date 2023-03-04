@@ -1,9 +1,13 @@
 (ns sprog.dom.canvas
   (:require [sprog.util :as u]))
 
-(defn create-gl-canvas [id & [append-to-body?]]
+(defn create-gl-canvas [id & {:keys [append-to-body?
+                                     preserve-drawing-buffer?]}]
   (let [canvas (js/document.createElement "canvas")
-        gl (.getContext canvas "webgl2")]
+        gl (.getContext canvas 
+                        "webgl2"
+                        (clj->js {"preserveDrawingBuffer"
+                                  (boolean preserve-drawing-buffer?)}))]
     (set! (.-id canvas) (str id))
     (when append-to-body?
       (set! (.-position canvas.style) "absolute")

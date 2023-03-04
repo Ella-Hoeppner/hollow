@@ -12,23 +12,29 @@
       (swap! state assoc :gl gl)))
   (js/requestAnimationFrame update-sprogs!))
 
-(defn start-sprog!
-  ([sprog-name init-fn-or-value update-fn]
-   (when-let [old-canvas (js/document.getElementById (str sprog-name))]
-     (.removeChild old-canvas.parentNode old-canvas))
-   (when (nil? @sprogs-atom) (update-sprogs!))
-   (let [gl (create-gl-canvas sprog-name true)]
-     (swap! sprogs-atom
-            assoc
-            sprog-name
-            {:state (atom
-                     (if (fn? init-fn-or-value)
-                       (init-fn-or-value gl)
-                       init-fn-or-value))
-             :gl gl
-             :update-fn update-fn})))
-  ([init-fn-or-value update-fn]
-   (start-sprog! :default init-fn-or-value update-fn)))
+(defn start-sprog! [init-fn-or-value
+                    update-fn
+                    & [{:keys [name
+                               append-to-body?
+                               preserve-drawing-buffer?]
+                        :or {name :default
+                             append-to-body? true}}]]
+  (when-let [old-canvas (js/document.getElementById (str name))]
+    (.removeChild old-canvas.parentNode old-canvas))
+  (when (nil? @sprogs-atom) (update-sprogs!))
+  (let [gl (create-gl-canvas
+            name
+            {:append-to-body? append-to-body?
+             :preserve-drawing-buffer? preserve-drawing-buffer?})]
+    (swap! sprogs-atom
+           assoc
+           name
+           {:state (atom
+                    (if (fn? init-fn-or-value)
+                      (init-fn-or-value gl)
+                      init-fn-or-value))
+            :gl gl
+            :update-fn update-fn})))
 
 (defn stop-sprog!
   ([sprog-name] (swap! sprogs-atom dissoc sprog-name))
