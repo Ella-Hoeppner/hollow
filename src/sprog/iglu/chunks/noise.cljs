@@ -499,3 +499,42 @@
                           frequencies))
                    ~(/ (Math/sqrt (count frequencies)))))}}}
            :expression (cons fn-name noise-args)}))}})))
+
+(def wobbly-sine-chunk
+  (u/unquotable
+   {:macros
+    {'wobble3D
+     (fn wobbly-sine [input rand-fn & args]
+       (let [valid-arg? (fn? rand-fn)
+             multiple-amplitudes? (> (count args) 1)
+             phase-mod-amplitude-1 (or (first args) 2)
+             phase-mod-amplitude-2 (if multiple-amplitudes?
+                                     (last args)
+                                     phase-mod-amplitude-1)
+             rand-tau #(cons 'vec3 (u/gen 3
+                                          (if valid-arg?
+                                            (rand-fn u/TAU)
+                                            (rand u/TAU))))
+             rand-vec #(cons 'vec3 (u/gen 3
+                                          (if valid-arg?
+                                            (Math/pow 2 (rand-fn -0.3 0.3))
+                                            (Math/pow 2 (- (rand 0.6) 0.3)))))
+             fn-name (gensym 'wsin)]
+         {:chunk
+          '{:functions
+            {~fn-name
+             {([vec3] float)
+              ([pos]
+               (dot (sin (+ (* pos ~(rand-vec))
+                            (* ~phase-mod-amplitude-1
+                               (sin (* pos.yzx
+                                       ~(rand-vec))))
+                            ~(rand-tau)
+                            ~(rand-tau)))
+                    (sin (+ (* pos.zyx ~(rand-vec))
+                            (* ~phase-mod-amplitude-2
+                               (sin (* pos.zxy
+                                       ~(rand-vec))))
+                            ~(rand-tau)
+                            ~(rand-tau)))))}}}
+          :expression (list fn-name input)}))}}))
