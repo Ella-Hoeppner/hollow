@@ -1,7 +1,10 @@
 (ns sprog.util
   #?(:clj (:require [clojure.walk :refer [prewalk-replace
-                                          prewalk]]))
-  #?(:cljs (:require-macros [sprog.util])))
+                                          prewalk]]
+                    [clojure.pprint :refer [pprint]]
+                    ))
+  #?(:cljs (:require [cljs.pprint :refer [pprint]])
+           (:require-macros [sprog.util])))
 
 (defn now []
   #?(:cljs (js/Date.now)
@@ -21,6 +24,12 @@
     #?(:cljs (js/console.table (clj->js table))
        :clj (prn tables)))
   (last tables))
+
+(defn pretty-log [& vals]
+  (doseq [val vals]
+         #?(:cljs (pprint val)
+            :clj (pprint val)))
+  (last vals))
 
 (defn scale
   ([from-min from-max to-min to-max value]
