@@ -1,10 +1,9 @@
 (ns sprog.util
   #?(:clj (:require [clojure.walk :refer [prewalk-replace
                                           prewalk]]
-                    [clojure.pprint :refer [pprint]]
-                    ))
-  #?(:cljs (:require [cljs.pprint :refer [pprint]])
-           (:require-macros [sprog.util])))
+                    [clojure.pprint :refer [pprint]]))
+  #?(:cljs (:require [cljs.pprint :refer [pprint]]))
+  #?(:cljs (:require-macros [sprog.util])))
 
 (defn now []
   #?(:cljs (js/Date.now)
