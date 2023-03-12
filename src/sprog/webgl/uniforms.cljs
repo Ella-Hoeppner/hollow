@@ -28,6 +28,21 @@
 (defn set-uniform-ivec4! [gl location value]
   (.uniform4iv gl location value))
 
+(defn set-uniform-uint! [gl location value]
+  (.uniform1ui gl location value))
+
+(defn set-uniform-uint-array! [gl location value]
+  (.uniform1uiv gl location value))
+
+(defn set-uniform-uvec2! [gl location value]
+  (.uniform2uiv gl location value))
+
+(defn set-uniform-uvec3! [gl location value]
+  (.uniform3uiv gl location value))
+
+(defn set-uniform-uvec4! [gl location value]
+  (.uniform4uiv gl location value))
+
 (def convert-bool #(if (boolean? %) 
                      (if %
                        (long 1)
@@ -123,6 +138,19 @@
                       (or (= "ivec4" uniform-type)
                           (re-find #"ivec4\[[0-9]+\]" uniform-type))
                       set-uniform-ivec4!
+
+                      (= "uint" uniform-type) set-uniform-uint!
+                      (re-find #"uint\[[0-9]+\]" uniform-type)
+                      set-uniform-uint-array!
+                      (or (= "uvec2" uniform-type)
+                          (re-find #"uvec2\[[0-9]+\]" uniform-type))
+                      set-uniform-uvec2!
+                      (or (= "uvec3" uniform-type)
+                          (re-find #"uvec3\[[0-9]+\]" uniform-type))
+                      set-uniform-uvec3!
+                      (or (= "uvec4" uniform-type)
+                          (re-find #"uvec4\[[0-9]+\]" uniform-type))
+                      set-uniform-uvec4!
 
                       (= "bool" uniform-type) set-uniform-bool!
                       (re-find #"bool\[[0-9]+\]" uniform-type)
