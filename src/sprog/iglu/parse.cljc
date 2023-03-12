@@ -56,12 +56,15 @@
    :expression ::expression))
 
 (s/def ::body (s/+ (s/spec ::subexpression)))
+(s/def ::signature (s/cat :in (s/coll-of ::type) :out ::type))
 (s/def ::function (s/cat :args (s/coll-of symbol?) :body ::body))
-(s/def ::signature (s/cat :in (s/coll-of symbol?) :out symbol?))
 (s/def ::functions (s/map-of symbol?
                              (s/map-of ::signature
                                        ::function
                                        :conform-keys true)))
+(s/def ::structs (s/map-of symbol?
+                          (s/and vector?
+                                 (s/coll-of ::subexpression))))
 (s/def ::main ::body)
 
 (s/def ::shader (s/keys :opt-un [::version
@@ -74,7 +77,8 @@
                                  ::inputs
                                  ::outputs
                                  ::main
-                                 ::functions]))
+                                 ::functions
+                                 ::structs]))
 
 (defn parse [content]
   (let [parsed-content (s/conform ::shader content)]

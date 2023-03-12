@@ -3,7 +3,6 @@
              :refer [join
                      starts-with?
                      ends-with?
-                     includes?
                      replace]
              :rename {replace string-replace}]
             [clojure.walk :refer [walk]]
@@ -231,11 +230,11 @@
 (defn ->struct [[name fields]]
   (str "struct "
        name
-       "{\n"
+       " {\n"
        (apply str
               (map (fn [[field-name field-type]]
                      (str "  " field-type " " field-name ";\n"))
-                   (partition 2 fields)))
+                   (partition 2 (map ->subexpression fields))))
        "}"))
 
 (defn ->function [[name signature-function-map]]
@@ -248,16 +247,20 @@
                      {:fn name
                       :signature in
                       :definition args})))
-           (let [args-list (join ", "
-                                 (mapv (fn [type name]
-                                         (str type 
-                                              " "
-                                              (clj-name->glsl-name name)))
-                                       in args))
-                 signature (str out " " name "(" args-list ")")]
+           (let [signature (str (parse-type out)
+                                " "
+                                name
+                                "("
+                                (join ", "
+                                      (mapv (fn [type name]
+                                              (str (parse-type type)
+                                                   " "
+                                                   (clj-name->glsl-name name)))
+                                            in args))
+                                ")")]
              (conj (seq (into [signature]
                               (let [body-lines (mapv ->statement body)]
-                                (if (= 'void out)
+                                (if (= '[:type-name void] out)
                                   body-lines
                                   (conj
                                    (vec (butlast body-lines))
@@ -365,7 +368,7 @@
                                  functions]
                           :as parsed-iglu}]
   (let [full-functions (cond-> functions
-                         main (assoc 'main {{:in [] :out 'void}
+                         main (assoc 'main {{:in [] :out '[:type-name void]}
                                             {:args [] :body main}}))
         full-qualifiers (merge qualifiers (layout-qualifiers layout))]
     (->> (into (cond-> []
