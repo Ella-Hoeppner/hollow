@@ -29,7 +29,7 @@
 
 (def axis-rotation-chunk
   '{:functions
-    {axisRoationMatrix
+    {axisRotationMatrix
      {([vec3 float] mat3)
       ([axis angle]
        (= axis (normalize axis))
