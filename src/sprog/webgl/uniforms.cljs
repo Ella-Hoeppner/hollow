@@ -28,6 +28,26 @@
 (defn set-uniform-ivec4! [gl location value]
   (.uniform4iv gl location value))
 
+(def convert-bool #(if (boolean? %) 
+                     (if %
+                       (long 1)
+                       (long 0))
+                     %))
+(defn set-uniform-bool! [gl location value]
+  (set-uniform-int! gl location (convert-bool value)))
+
+(defn set-uniform-bool-array! [gl location value]
+  (set-uniform-int-array! gl location (mapv convert-bool value)))
+
+(defn set-uniform-bvec2! [gl location value]
+  (set-uniform-ivec2! gl location (mapv convert-bool value)))
+
+(defn set-uniform-bvec3! [gl location value]
+  (set-uniform-ivec3! gl location (mapv convert-bool value)))
+
+(defn set-uniform-bvec4! [gl location value]
+  (set-uniform-ivec4! gl location (mapv convert-bool value)))
+
 (defn set-uniform-float! [gl location value]
   (.uniform1f gl location value))
 
@@ -103,6 +123,19 @@
                       (or (= "ivec4" uniform-type)
                           (re-find #"ivec4\[[0-9]+\]" uniform-type))
                       set-uniform-ivec4!
+
+                      (= "bool" uniform-type) set-uniform-bool!
+                      (re-find #"bool\[[0-9]+\]" uniform-type)
+                      set-uniform-bool-array!
+                      (or (= "bvec2" uniform-type)
+                          (re-find #"bvec2\[[0-9]+\]" uniform-type))
+                      set-uniform-bvec2!
+                      (or (= "bvec3" uniform-type)
+                          (re-find #"bvec3\[[0-9]+\]" uniform-type))
+                      set-uniform-bvec3!
+                      (or (= "bvec4" uniform-type)
+                          (re-find #"bvec4\[[0-9]+\]" uniform-type))
+                      set-uniform-bvec4!
 
                       (or (= "mat2" uniform-type)
                           (re-find #"mat2\[[0-9]+\]" uniform-type))

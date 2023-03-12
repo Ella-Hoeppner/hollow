@@ -16,15 +16,15 @@
       :precision {float highp}
       :uniforms {size vec2
                  color-vectors [vec3 2]
-                 decisions [int 3]}
+                 decisions bvec3}
       :outputs {fragColor vec4}
       :functions
-      {decide-colors {([[vec3 2] [int 3]] vec3)
+      {decide-colors {([[vec3 2] bvec3] vec3)
                       ([c d]
                        (vec3
-                        (.r (if (== [d 0] "1") [c 0] [c 1]))
-                        (.g (if (== [d 1] "1") [c 0] [c 1]))
-                        (.b (if (== [d 2] "1") [c 0] [c 1]))))}}
+                        (.r (if (== d.x "true") [c 0] [c 1]))
+                        (.g (if (== d.y "true") [c 0] [c 1]))
+                        (.b (if (== d.z "true") [c 0] [c 1]))))}}
       :main
       ((= fragColor
           (vec4 (decide-colors color-vectors decisions)
@@ -42,8 +42,8 @@
       "decisions" (mapv #(if (> (Math/sin (* u/TAU
                                              (+ (u/seconds-since-startup) %)))
                                 0)
-                           1
-                           0)
+                           true
+                           false)
                         (u/prange 3 true))})))
 
 (defn init []
