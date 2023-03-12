@@ -3,13 +3,15 @@
             [expound.alpha :as expound]))
 
 (defn int-literal? [x]
-  (and (or (symbol? x)
-           (str x))
-       (let [x-str (str x)
-             first-letter (first x-str)
-             remainder (subs x-str 1)]
-         (and (= first-letter \i)
-              (re-matches #"[0-9]+" remainder)))))
+  (or (and (string? x)
+           (re-matches #"[0-9]+" x))
+      (and (or (symbol? x)
+               (string?  x))
+           (let [x-str (str x)
+                 first-letter (first x-str)
+                 remainder (subs x-str 1)]
+             (and (= first-letter \i)
+                  (re-matches #"[0-9]+" remainder))))))
 
 (s/def ::type (s/or
                :type-name symbol?
@@ -34,13 +36,24 @@
 (s/def ::expression (s/cat
                      :fn-name fn-name?
                      :args (s/* ::subexpression)))
-(s/def ::subexpression (s/or
-                        :number number?
-                        :int-literal int-literal?
-                        :symbol symbol?
-                        :string string?
-                        :accessor (s/and vector? ::expression)
-                        :expression ::expression))
+(s/def ::subexpression
+  (s/or
+   :number number?
+   :int-literal int-literal?
+   :symbol symbol?
+   :string string?
+   :array-literal (s/and vector?
+                         (s/cat :type-name symbol?
+                                :array-length (s/or :int-literal int-literal?
+                                                    :number number?)
+                                :values (s/and vector?
+                                               (s/* ::subexpression))))
+   :accessor (s/and vector?
+                    (s/cat :array-name symbol?
+                           :array-index (s/or :int-literal int-literal?
+                                              :number number?))
+                    #_::expression)
+   :expression ::expression))
 
 (s/def ::body (s/+ (s/spec ::subexpression)))
 (s/def ::function (s/cat :args (s/coll-of symbol?) :body ::body))

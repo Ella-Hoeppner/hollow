@@ -33,6 +33,11 @@
     "-"
     "_")))
 
+(defn- parse-type [[k v]]
+  (case k
+    :type-name v
+    :array (str (:type-name v) "[" (:size v) "]")))
+
 ;; multimethods
 
 (defmulti ->function-call
@@ -43,7 +48,8 @@
       (int-literal? fn-name) ::int-literal
       ('#{? if} fn-name) ::inline-conditional
       ('#{+ - * / % < > <= >= == != || && "^^"} fn-name) ::operator
-      ('#{= += -= *= "/="} fn-name) ::assignment
+      (= '= fn-name) ::assignment
+      ('#{+= -= *= "/="} fn-name) ::augment
       (#{"if" "else if" "switch" "for" "while"} fn-name) ::block-with-expression
       (string? fn-name) ::block
       (-> fn-name str (starts-with? "=")) ::local-assignment
@@ -61,11 +67,24 @@
 (defmethod ->function-call ::do-block [_ args]
   (map ->statement args))
 
-(defmethod ->function-call ::assignment [fn-name args]
+(defmethod ->function-call ::augment [fn-name args]
   (when-not (= 2 (count args))
     (throw (ex-info (str fn-name " requires 2 args") {})))
   (let [[sym val] args]
     (str (->subexpression sym) " " fn-name " " (->subexpression val))))
+
+(defmethod ->function-call ::assignment [fn-name args]
+  (case (count args)
+    2 (let [[sym val] args]
+        (str (->subexpression sym) " = " (->subexpression val)))
+    3 (let [[type sym val] args]
+        (str
+         (->subexpression type)
+         " "
+         (->subexpression sym)
+         " = "
+         (->subexpression val)))
+    (throw (ex-info (str fn-name " requires 2 args") {}))))
 
 (defmethod ->function-call ::local-assignment [fn-name args]
   (when-not (= 2 (count args))
@@ -140,18 +159,23 @@
       (str "(" ret ")")
       ret)))
 
-(defmethod ->subexpression :accessor [[_ expression]]
-  (let [{:keys [fn-name args]} expression]
-    (->> args
-         (map #(str "[" (->subexpression %) "]"))
-         join
-         (str fn-name))))
+(defmethod ->subexpression :accessor [[_ {:keys [array-name array-index]}]]
+  (str array-name
+       "["
+       (let [[array-index-type array-index-value] array-index]
+         (case array-index-type
+           :int-literal (->subexpression array-index)
+           :number (str array-index-value)))
+       "]"))
 
 (defmethod ->subexpression :number [[_ number]]
   (num->glsl-str number))
 
 (defmethod ->subexpression :int-literal [[_ literal]]
-  (parse-int (subs (str literal) 1)))
+  (parse-int (let [literal-str (str literal)]
+               (if (= (first literal-str) \i)
+                 (subs literal-str 1)
+                 literal-str))))
 
 (defmethod ->subexpression :symbol [[_ symbol]]
   (clj-name->glsl-name symbol))
@@ -159,12 +183,22 @@
 (defmethod ->subexpression :string [[_ string]]
   string)
 
-;; var definitions
+(defmethod ->subexpression :array-literal [[_ {:keys [type-name 
+                                                      array-length 
+                                                      values]}]]
+  (str type-name
+       "["
+       (let [[array-index-type array-index-value] array-length]
+         (case array-index-type
+           :int-literal (->subexpression array-length)
+           :number (str array-index-value)))
+       "]("
+       (apply str
+              (rest (interleave (repeat ", ")
+                                (map ->subexpression values))))
+       ")"))
 
-(defn- parse-type [[k v]]
-  (case k
-    :type-name v
-    :array (str (:type-name v) "[" (:size v) "]")))
+;; var definitions
 
 (defn ->precision [[type precision]]
   (str "precision " precision " " type))
@@ -328,7 +362,8 @@
                                  qualifiers
                                  layout
                                  main
-                                 functions]}]
+                                 functions]
+                          :as parsed-iglu}]
   (let [full-functions (cond-> functions
                          main (assoc 'main {{:in [] :out 'void}
                                             {:args [] :body main}}))

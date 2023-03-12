@@ -1,25 +1,5 @@
 (ns sprog.dev.startup
-  (:require sprog.dev.basic-demo
-            sprog.dev.multi-texture-output-demo
-            sprog.dev.pixel-sort-demo
-            sprog.dev.physarum-demo
-            sprog.dev.simplex-demo
-            sprog.dev.tilable-simplex-demo
-            sprog.dev.macro-demo
-            sprog.dev.bilinear-demo
-            sprog.dev.vertex-demo
-            sprog.dev.voronoise-demo
-            sprog.dev.video-demo
-            sprog.dev.webcam-demo
-            sprog.dev.bloom-demo
-            sprog.dev.texture-3d-demo
-            sprog.dev.blur-demo
-            sprog.dev.hsv-demo 
-            sprog.dev.gabor-demo
-            sprog.dev.oklab-mix-demo
-            sprog.dev.fbm-demo
-            sprog.dev.midi-demo
-            sprog.dev.raymarch-demo))
+  (:require sprog.dev.array-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -42,7 +22,8 @@
   #_(sprog.dev.oklab-mix-demo/init)
   #_(sprog.dev.fbm-demo/init)
   #_(sprog.dev.midi-demo/init)
-  (sprog.dev.raymarch-demo/init))
+  #_(sprog.dev.raymarch-demo/init)
+  (sprog.dev.array-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" init))
