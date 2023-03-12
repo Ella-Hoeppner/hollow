@@ -16,6 +16,9 @@
 (defn set-uniform-int! [gl location value]
   (.uniform1i gl location value))
 
+(defn set-uniform-int-array! [gl location value]
+  (.uniform1iv gl location value))
+
 (defn set-uniform-ivec2! [gl location value]
   (.uniform2iv gl location value))
 
@@ -27,6 +30,9 @@
 
 (defn set-uniform-float! [gl location value]
   (.uniform1f gl location value))
+
+(defn set-uniform-float-array! [gl location value]
+  (.uniform1fv gl location value))
 
 (defn set-uniform-vec2! [gl location value]
   (.uniform2fv gl location value))
@@ -70,23 +76,49 @@
                                      (@uniform-locations-atom uniform-glsl-name)
                                      texture-index)
                    (inc texture-index))
-               (do ((case uniform-type
-                      "float" set-uniform-float!
-                      "vec2" set-uniform-vec2!
-                      "vec3" set-uniform-vec3!
-                      "vec4" set-uniform-vec4!
-                      "int" set-uniform-int!
-                      "ivec2" set-uniform-ivec2!
-                      "ivec3" set-uniform-ivec3!
-                      "ivec4" set-uniform-ivec4!
-                      "mat2" set-uniform-mat2!
-                      "mat3" set-uniform-mat3!
-                      "mat4" set-uniform-mat4!
-                      (throw (str "SPROG: Unrecognized uniform type \""
-                                  uniform-type
-                                  "\" for uniform \""
-                                  uniform-name
-                                  "\"")))
+               (do ((cond
+                      (= "float" uniform-type)
+                      set-uniform-float!
+                      (re-find #"float\[[0-9]+\]" uniform-type)
+                      set-uniform-float-array!
+                      (or (= "vec2" uniform-type)
+                          (re-find #"vec2\[[0-9]+\]" uniform-type))
+                      set-uniform-vec2!
+                      (or (= "vec3" uniform-type)
+                          (re-find #"vec3\[[0-9]+\]" uniform-type))
+                      set-uniform-vec3!
+                      (or (= "vec4" uniform-type)
+                          (re-find #"vec4\[[0-9]+\]" uniform-type))
+                      set-uniform-vec4!
+
+                      (= "int" uniform-type) set-uniform-int!
+                      (re-find #"int\[[0-9]+\]" uniform-type)
+                      set-uniform-int-array!
+                      (or (= "ivec2" uniform-type)
+                          (re-find #"ivec2\[[0-9]+\]" uniform-type))
+                      set-uniform-ivec2!
+                      (or (= "ivec3" uniform-type)
+                          (re-find #"ivec3\[[0-9]+\]" uniform-type))
+                      set-uniform-ivec3!
+                      (or (= "ivec4" uniform-type)
+                          (re-find #"ivec4\[[0-9]+\]" uniform-type))
+                      set-uniform-ivec4!
+
+                      (or (= "mat2" uniform-type)
+                          (re-find #"mat2\[[0-9]+\]" uniform-type))
+                      set-uniform-mat2!
+                      (or (= "mat3" uniform-type)
+                          (re-find #"mat3\[[0-9]+\]" uniform-type))
+                      set-uniform-mat3!
+                      (or (= "mat4" uniform-type)
+                          (re-find #"mat4\[[0-9]+\]" uniform-type))
+                      set-uniform-mat4!
+
+                      :else (throw (str "SPROG: Unrecognized uniform type \""
+                                        uniform-type
+                                        "\" for uniform \""
+                                        uniform-name
+                                        "\"")))
                     gl
                     (@uniform-locations-atom uniform-glsl-name)
                     value)

@@ -19,7 +19,8 @@
             sprog.dev.oklab-mix-demo
             sprog.dev.fbm-demo
             sprog.dev.midi-demo
-            sprog.dev.raymarch-demo))
+            sprog.dev.raymarch-demo
+            sprog.dev.array-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -42,7 +43,8 @@
   #_(sprog.dev.oklab-mix-demo/init)
   #_(sprog.dev.fbm-demo/init)
   #_(sprog.dev.midi-demo/init)
-  (sprog.dev.raymarch-demo/init))
+  #_(sprog.dev.raymarch-demo/init)
+  (sprog.dev.array-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" init))
