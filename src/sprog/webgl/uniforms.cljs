@@ -58,8 +58,8 @@
                            uniforms]
   (reduce
    (fn [texture-index [uniform-name value]]
-     (let [uniform-glsl-name (clj-name->glsl-name uniform-name)]
-       (if-let [uniform-type (uniform-type-map uniform-name)]
+     (let [uniform-glsl-name (str (clj-name->glsl-name uniform-name))]
+       (if-let [uniform-type (uniform-type-map uniform-glsl-name)]
          (do (ensure-uniform-present! gl
                                       sprog
                                       uniform-glsl-name)

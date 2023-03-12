@@ -43,7 +43,7 @@
       program
       (throw (js/Error. (str (.getProgramInfoLog gl program)))))))
 
-(defn create-sprog [gl vert-source frag-source] 
+(defn create-sprog [gl vert-source frag-source]
   (let [vert-glsl (if (string? vert-source)
                     vert-source
                     (iglu->glsl vert-source))
@@ -63,7 +63,7 @@
                      (clojure.string/split #"\s+")
                      reverse
                      vec)
-                (re-seq #"uniform\s+[A-Za-z0-9\[\]]+\s+[A-Za-z0-9]+"
+                (re-seq #"uniform\s+[A-Za-z0-9\[\]]+\s+[A-Za-z0-9_]+"
                         (str vert-glsl
                              "\n"
                              frag-glsl))))}))

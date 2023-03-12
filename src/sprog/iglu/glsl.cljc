@@ -1,5 +1,6 @@
 (ns sprog.iglu.glsl
-  (:require [clojure.string
+  (:require [sprog.util :as u]
+            [clojure.string
              :refer [join
                      starts-with?
                      ends-with?
@@ -138,7 +139,10 @@
   (str (->subexpression (first args)) "[" fn-name "]"))
 
 (defmethod ->function-call :default [fn-name args]
-  (str fn-name "(" (join ", " (mapv ->subexpression args)) ")"))
+  (str (clj-name->glsl-name fn-name)
+       "("
+       (join ", " (mapv ->subexpression args))
+       ")"))
 
 ;; ->statement
 
@@ -203,13 +207,13 @@
   (str "precision " precision " " type))
 
 (defn ->uniform [[name type]]
-  (str "uniform " (parse-type type) " " name))
+  (str "uniform " (parse-type type) " " (clj-name->glsl-name name)))
 
 (defn ->attribute [[name type]]
-  (str "attribute " (parse-type type) " " name))
+  (str "attribute " (parse-type type) " " (clj-name->glsl-name name)))
 
 (defn ->varying [[name type]]
-  (str "varying " (parse-type type) " " name))
+  (str "varying " (parse-type type) " " (clj-name->glsl-name name)))
 
 (defn ->inout [in-or-out qualifiers [name type]]
   (str (when qualifiers
@@ -249,7 +253,7 @@
                       :definition args})))
            (let [signature (str (parse-type out)
                                 " "
-                                name
+                                (clj-name->glsl-name name)
                                 "("
                                 (join ", "
                                       (mapv (fn [type name]
