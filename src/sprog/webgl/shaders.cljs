@@ -63,7 +63,7 @@
                      (clojure.string/split #"\s+")
                      reverse
                      vec)
-                (re-seq #"uniform\s+[A-Za-z0-9]+\s+[A-Za-z0-9]+"
+                (re-seq #"uniform\s+[A-Za-z0-9\[\]]+\s+[A-Za-z0-9]+"
                         (str vert-glsl
                              "\n"
                              frag-glsl))))}))

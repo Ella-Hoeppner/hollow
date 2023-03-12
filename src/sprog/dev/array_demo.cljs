@@ -15,27 +15,19 @@
     '{:version "300 es"
       :precision {float highp}
       :uniforms {size vec2
-                 testUniform [float 10]}
+                 colors [vec3 2]
+                 decisions [int 3]}
       :outputs {fragColor vec4}
-      :structs {TestStruct [x [float 5]
-                            y int]}
       :functions
-      {f {([[float 5] [float 5]] [float 5])
-          ([x y]
-           [float 5 [(+ [x 0] [y 0]) 0 0 0 0]])}}
+      {decideColors {([[vec3 2] [int 3]] vec3)
+                     ([c d]
+                      (vec3
+                       (.r (if (== [d 0] "1") [c 0] [c 1]))
+                       (.g (if (== [d 1] "1") [c 0] [c 1]))
+                       (.b (if (== [d 2] "1") [c 0] [c 1]))))}}
       :main
-      ((=vec2 pos (/ gl_FragCoord.xy size))
-       (= [float 5]
-          a
-          [float 5 [1 2 3 4 5]])
-       (= TestStruct
-          t
-          (TestStruct [float 5 [0 1 2 3 4]]
-                      "5"))
-
-       (= fragColor
-          (vec4 pos
-                0
+      ((= fragColor
+          (vec4 (decideColors colors decisions)
                 1)))})))
 
 (defn update-page! [{:keys [gl]}]
@@ -44,7 +36,15 @@
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
-     {"size" (canvas-resolution)})))
+     {"size" (canvas-resolution)
+      "colors" [1 1 1
+                0 0 0]
+      "decisions" (mapv #(if (> (Math/sin (* u/TAU
+                                             (+ (u/seconds-since-startup) %)))
+                                0)
+                           1
+                           0)
+                        (u/prange 3 true))})))
 
 (defn init []
   (start-sprog! nil update-page!))
