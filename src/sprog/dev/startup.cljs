@@ -20,7 +20,8 @@
             sprog.dev.fbm-demo
             sprog.dev.midi-demo
             sprog.dev.raymarch-demo
-            sprog.dev.array-demo))
+            sprog.dev.array-demo
+            sprog.dev.stencil-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -44,7 +45,8 @@
   #_(sprog.dev.fbm-demo/init)
   #_(sprog.dev.midi-demo/init)
   #_(sprog.dev.raymarch-demo/init)
-  (sprog.dev.array-demo/init))
+  #_(sprog.dev.array-demo/init)
+  (sprog.dev.stencil-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" init))

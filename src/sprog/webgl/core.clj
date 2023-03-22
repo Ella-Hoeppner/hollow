@@ -10,6 +10,10 @@
                                 resize-gl-canvas
                                 canvas-resolution
                                 create-boj!
+                                clear!
+                                enable!
+                                set-stencil-func!
+                                set-stencil-op!
                                 copy-html-image-data!
                                 html-image-tex
                                 max-tex-size

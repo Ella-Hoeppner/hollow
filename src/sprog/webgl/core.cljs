@@ -8,7 +8,7 @@
   (doseq [sprog (vals @sprogs-atom)]
     (when-let [{:keys [state gl update-fn]} sprog]
       (swap! state assoc :gl gl)
-      (swap! state update-fn)
+      (when update-fn (swap! state update-fn))
       (swap! state assoc :gl gl)))
   (js/requestAnimationFrame update-sprogs!))
 
@@ -16,7 +16,8 @@
                     update-fn
                     & [{:keys [name
                                append-to-body?
-                               preserve-drawing-buffer?]
+                               preserve-drawing-buffer?
+                               stencil?]
                         :or {name :default
                              append-to-body? true}}]]
   (when-let [old-canvas (js/document.getElementById (str name))]
@@ -25,7 +26,8 @@
   (let [gl (create-gl-canvas
             name
             {:append-to-body? append-to-body?
-             :preserve-drawing-buffer? preserve-drawing-buffer?})]
+             :preserve-drawing-buffer? preserve-drawing-buffer?
+             :stencil? stencil?})]
     (swap! sprogs-atom
            assoc
            name
@@ -72,3 +74,86 @@
 
 (defn sprog-context [& sprog-name]
   (:gl (@sprogs-atom (or sprog-name :default))))
+
+(defn clear! [gl & clear-masks]
+  (.clear gl (apply bit-or (map #(or ({:color gl.COLOR_BUFFER_BIT
+                                       :depth gl.DEPTH_BUFFER_BIT
+                                       :stencil gl.STENCIL_BUFFER_BIT
+                                       :all (bit-or gl.COLOR_BUFFER_BIT
+                                                    gl.DEPTH_BUFFER_BIT
+                                                    gl.STENCIL_BUFFER_BIT)}
+                                      %)
+                                     %)
+                                clear-masks))))
+
+(defn enable! [gl & enable-values]
+  (doseq [enable-value enable-values]
+    (.enable gl
+             (or ({:blend gl.BLEND
+                   :cull-face gl.CULL_FACE
+                   :depth-test gl.DEPTH_TEST
+                   :dither gl.DITHER
+                   :polygon-offset-fill gl.POLYGON_OFFSET_FILL
+                   :sample-alpha-to-coverage gl.SAMPLE_ALPHA_TO_COVERAGE
+                   :sample-coverage gl.SAMPLE_COVERAGE
+                   :scissor-test gl.SCISSOR_TEST
+                   :stencil-test gl.STENCIL_TEST}
+                  enable-value)
+                 enable-value))))
+
+(defn disable! [gl & enable-values]
+  (doseq [enable-value enable-values]
+    (.disable gl
+              (or ({:blend gl.BLEND
+                    :cull-face gl.CULL_FACE
+                    :depth-test gl.DEPTH_TEST
+                    :dither gl.DITHER
+                    :polygon-offset-fill gl.POLYGON_OFFSET_FILL
+                    :sample-alpha-to-coverage gl.SAMPLE_ALPHA_TO_COVERAGE
+                    :sample-coverage gl.SAMPLE_COVERAGE
+                    :scissor-test gl.SCISSOR_TEST
+                    :stencil-test gl.STENCIL_TEST}
+                   enable-value)
+                  enable-value))))
+
+(defn set-stencil-func! [gl func & [ref mask]]
+  (.stencilFunc gl
+                (or ({:never gl.NEVER
+                      :less gl.LESS
+                      :< gl.LESS
+                      :equal gl.EQUAL
+                      := gl.EQUAL
+                      :lequal gl.LEQUAL
+                      :<= gl.LEQUAL
+                      :greater gl.GREATER
+                      :> gl.GREATER
+                      :not-equal gl.NOTEQUAL
+                      :not= gl.NOTEQUAL
+                      :gequal gl.GEQUAL
+                      :>= gl.GEQUAL
+                      :always gl.ALWAYS} func)
+                    func)
+                (or ref 0)
+                (or mask 0xff)))
+
+(defn set-stencil-op! [gl & op-params]
+  (let [[fail zfail zpass]
+        (take 3
+              (concat (map (fn [op-param]
+                             (or ({:keep gl.KEEP
+                                   :zero gl.ZERO
+                                   0 gl.ZERO
+                                   :replace gl.REPLACE
+                                   :incr gl.INCR
+                                   :inc gl.INCR
+                                   :incr-wrap gl.INCR_WRAP
+                                   :inc-wrap gl.INCR_WRAP
+                                   :decr gl.DECR
+                                   :dec gl.DEC
+                                   :decr-wrap gl.DECR_WARP
+                                   :invert gl.INVERT}
+                                  op-param)
+                                 op-param))
+                           op-params)
+                      (repeat gl.KEEP)))]
+    (.stencilOp gl fail zfail zpass)))
