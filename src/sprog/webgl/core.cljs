@@ -136,24 +136,32 @@
                 (or ref 0)
                 (or mask 0xff)))
 
-(defn set-stencil-op! [gl & op-params]
-  (let [[fail zfail zpass]
-        (take 3
-              (concat (map (fn [op-param]
-                             (or ({:keep gl.KEEP
-                                   :zero gl.ZERO
-                                   0 gl.ZERO
-                                   :replace gl.REPLACE
-                                   :incr gl.INCR
-                                   :inc gl.INCR
-                                   :incr-wrap gl.INCR_WRAP
-                                   :inc-wrap gl.INCR_WRAP
-                                   :decr gl.DECR
-                                   :dec gl.DEC
-                                   :decr-wrap gl.DECR_WARP
-                                   :invert gl.INVERT}
-                                  op-param)
-                                 op-param))
-                           op-params)
-                      (repeat gl.KEEP)))]
-    (.stencilOp gl fail zfail zpass)))
+(defn set-stencil-op!
+  ([gl fail zfail zpass]
+   (let [[gl-fail gl-zfail gl-zpass]
+         (map (fn [op-param]
+                (or ({:keep gl.KEEP
+                      :zero gl.ZERO
+                      0 gl.ZERO
+                      :replace gl.REPLACE
+                      :incr gl.INCR
+                      :inc gl.INCR
+                      :incr-wrap gl.INCR_WRAP
+                      :inc-wrap gl.INCR_WRAP
+                      :decr gl.DECR
+                      :dec gl.DEC
+                      :decr-wrap gl.DECR_WARP
+                      :invert gl.INVERT}
+                     op-param)
+                    op-param
+                    gl.KEEP))
+              [fail zfail zpass])]
+     (.stencilOp gl gl-fail gl-zfail gl-zpass)))
+  ([gl all]
+   (set-stencil-op! gl all all all)))
+
+(defn set-color-mask!
+  ([gl r g b a]
+   (.colorMask gl (boolean r) (boolean g) (boolean b) (boolean a)))
+  ([gl all-channels]
+   (set-color-mask! gl all-channels all-channels all-channels all-channels)))

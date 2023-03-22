@@ -14,6 +14,7 @@
                                 enable!
                                 set-stencil-func!
                                 set-stencil-op!
+                                set-color-mask!
                                 copy-html-image-data!
                                 html-image-tex
                                 max-tex-size

@@ -21,7 +21,8 @@
             sprog.dev.midi-demo
             sprog.dev.raymarch-demo
             sprog.dev.array-demo
-            sprog.dev.stencil-demo))
+            sprog.dev.stencil-demo
+            sprog.dev.nonconvex-polygon-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -46,7 +47,8 @@
   #_(sprog.dev.midi-demo/init)
   #_(sprog.dev.raymarch-demo/init)
   #_(sprog.dev.array-demo/init)
-  (sprog.dev.stencil-demo/init))
+  #_(sprog.dev.stencil-demo/init)
+  (sprog.dev.nonconvex-polygon-demo/init))
 
 (defn pre-init []
   (js/window.addEventListener "load" init))

@@ -47,7 +47,7 @@
                        0.1 0
                        0 0.1])
       (set-stencil-func! :equal)
-      (set-stencil-op!)
+      (set-stencil-op! :keep)
       (draw-triangle! [0 1 0]
                       [0 0.9
                        -0.9 -0.9
