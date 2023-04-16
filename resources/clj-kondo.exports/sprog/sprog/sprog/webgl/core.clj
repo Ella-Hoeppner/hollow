@@ -12,6 +12,7 @@
                                 create-boj!
                                 clear!
                                 enable!
+                                disable!
                                 set-stencil-func!
                                 set-stencil-op!
                                 set-color-mask!
