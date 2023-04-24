@@ -3,15 +3,8 @@
             [expound.alpha :as expound]))
 
 (defn int-literal? [x]
-  (or (and (string? x)
-           (re-matches #"[0-9]+" x))
-      (and (or (symbol? x)
-               (string?  x))
-           (let [x-str (str x)
-                 first-letter (first x-str)
-                 remainder (subs x-str 1)]
-             (and (= first-letter \i)
-                  (re-matches #"[0-9]+" remainder))))))
+  (and (string? x)
+       (re-matches #"[0-9]+" x)))
 
 (s/def ::type (s/or
                :type-name symbol?

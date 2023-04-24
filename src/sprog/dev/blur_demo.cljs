@@ -28,7 +28,7 @@
                 blurFactor float}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= pos.y (- 1 pos.y))
-            (=vec2 texSize (vec2 (textureSize tex i0)))
+            (=vec2 texSize (vec2 (textureSize tex "0")))
             (=float sampleDistFactor blurFactor)
             (= fragColor
                (gaussianSample tex
@@ -52,7 +52,7 @@
                 blurFactor float}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= pos.y (- 1 pos.y))
-            (=vec2 texSize (vec2 (textureSize tex i0)))
+            (=vec2 texSize (vec2 (textureSize tex "0")))
             (= fragColor
                (:gaussian-expression
                 (texture tex

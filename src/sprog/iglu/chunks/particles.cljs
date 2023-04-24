@@ -9,10 +9,10 @@
     :outputs {particlePos vec2}
     :uniforms {particleTex usampler2D
                radius float} 
-    :main ((=int agentIndex (/ gl_VertexID i6))
-           (=int corner (% gl_VertexID i6))
+    :main ((=int agentIndex (/ gl_VertexID "6"))
+           (=int corner (% gl_VertexID "6"))
 
-           (=ivec2 texSize (textureSize particleTex i0))
+           (=ivec2 texSize (textureSize particleTex "0"))
 
            (=vec2 texPos
                   (/ (+ 0.5 (vec2 (% agentIndex texSize.x)
@@ -26,13 +26,13 @@
               (vec4 (- (* (+ particlePos
                              (* radius
                                 (- (* 2
-                                      (if (|| (== corner i0)
-                                              (== corner i3))
+                                      (if (|| (== corner "0")
+                                              (== corner "3"))
                                         (vec2 0 1)
-                                        (if (|| (== corner i1)
-                                                (== corner i4))
+                                        (if (|| (== corner "1")
+                                                (== corner "4"))
                                           (vec2 1 0)
-                                          (if (== corner i2)
+                                          (if (== corner "2")
                                             (vec2 0 0)
                                             (vec2 1 1)))))
                                    1)))
@@ -49,10 +49,10 @@
     :outputs {particlePos vec2}
     :uniforms {particleTex usampler2D
                radius float}
-    :main ((=int agentIndex (/ gl_VertexID i6))
-           (=int corner (% gl_VertexID i6))
+    :main ((=int agentIndex (/ gl_VertexID "6"))
+           (=int corner (% gl_VertexID "6"))
 
-           (=ivec2 texSize (textureSize particleTex i0))
+           (=ivec2 texSize (textureSize particleTex "0"))
 
            (=vec2 texPos
                   (/ (+ 0.5 (vec2 (% agentIndex texSize.x)
@@ -66,13 +66,13 @@
               (vec4 (- (* (+ particlePos
                              (* radius
                                 (- (* 2
-                                      (if (|| (== corner i0)
-                                              (== corner i3))
+                                      (if (|| (== corner "0")
+                                              (== corner "3"))
                                         (vec2 0 1)
-                                        (if (|| (== corner i1)
-                                                (== corner i4))
+                                        (if (|| (== corner "1")
+                                                (== corner "4"))
                                           (vec2 1 0)
-                                          (if (== corner i2)
+                                          (if (== corner "2")
                                             (vec2 0 0)
                                             (vec2 1 1)))))
                                    1)))
@@ -132,8 +132,8 @@
      :outputs {squarePos vec2
                vertexPos vec3}
      :main
-     ((=int particleIndex (/ gl_VertexID i6))
-      (=int corner (% gl_VertexID i6))
+     ((=int particleIndex (/ gl_VertexID "6"))
+      (=int corner (% gl_VertexID "6"))
 
       (= squarePos
          (vec2 (if (|| (== corner "0")
@@ -147,7 +147,7 @@
                  -1
                  1)))
 
-      (=ivec2 texSize (textureSize particleTex i0))
+      (=ivec2 texSize (textureSize particleTex "0"))
 
       (=uvec4 particleTexColor
               (texelFetch particleTex

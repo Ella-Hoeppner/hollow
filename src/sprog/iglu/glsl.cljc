@@ -175,10 +175,7 @@
   (num->glsl-str number))
 
 (defmethod ->subexpression :int-literal [[_ literal]]
-  (parse-int (let [literal-str (str literal)]
-               (if (= (first literal-str) \i)
-                 (subs literal-str 1)
-                 literal-str))))
+  (parse-int (str literal)))
 
 (defmethod ->subexpression :symbol [[_ symbol]]
   (clj-name->glsl-name symbol))

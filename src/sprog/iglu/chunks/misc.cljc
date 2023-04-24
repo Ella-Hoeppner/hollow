@@ -77,7 +77,7 @@
     {textureBilinear
      {([usampler2D vec2] vec4)
       ([tex pos]
-       (=vec2 texSize (vec2 (textureSize tex i0)))
+       (=vec2 texSize (vec2 (textureSize tex "0")))
        (=vec2 texCoords (- (* pos texSize) 0.5))
        (=vec2 gridCoords (+ (floor texCoords) 0.5))
        (=vec2 tweenCoords (fract texCoords))
