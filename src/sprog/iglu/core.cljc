@@ -7,7 +7,9 @@
             [sprog.iglu.macros :refer [default-macros]]))
 
 (defn combine-chunks [& chunks]
-  (reduce (partial merge-with merge) chunks))
+  (assoc (apply (partial merge-with merge) chunks)
+         :functions
+         (apply (partial merge-with merge) (map :functions chunks))))
 
 (defn apply-macros [macro-map shader]
   (let [chunks (atom nil)
