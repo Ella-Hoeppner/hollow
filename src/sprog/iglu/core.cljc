@@ -1,5 +1,6 @@
 (ns sprog.iglu.core
-  (:require [clojure.walk :refer [prewalk
+  (:require [sprog.util :as u]
+            [clojure.walk :refer [prewalk
                                   prewalk-replace]]
             [sprog.iglu.glsl :refer [clj-name->glsl-name
                                      parsed-iglu->glsl]]
@@ -7,9 +8,9 @@
             [sprog.iglu.macros :refer [default-macros]]))
 
 (defn combine-chunks [& chunks]
-  (assoc (apply (partial merge-with merge) chunks)
-         :functions
-         (apply (partial merge-with merge) (map :functions chunks))))
+  (let [merged-functions (apply (partial merge-with merge) (map :functions chunks))]
+    (cond-> (apply (partial merge-with merge) chunks)
+      merged-functions (assoc :functions merged-functions))))
 
 (defn apply-macros [macro-map shader]
   (let [chunks (atom nil)

@@ -75,7 +75,7 @@
                            min-x max-y]])))
     {}))
 
-(defn ^:dev/after-load init []
+(defn init []
   (start-sprog! render!
                 nil
                 {:stencil? true}))
