@@ -12,7 +12,7 @@
     (cond-> (apply (partial merge-with merge) chunks)
       merged-functions (assoc :functions merged-functions))))
 
-(defn apply-macros [macro-map shader]
+(defn apply-macros [{:keys [macros] :as shader} & [exclude-defaults?]]
   (let [chunks (atom nil)
         new-shader
         (apply combine-chunks
@@ -20,7 +20,11 @@
                 (list (prewalk
                        (fn [subexp]
                          (if (seq? subexp)
-                           (let [macro-fn (macro-map (first subexp))]
+                           (let [f (first subexp)
+                                 macro-fn (or (when macros
+                                                (macros f))
+                                              (when-not exclude-defaults?
+                                                (default-macros f)))]
                              (if macro-fn
                                (let [macro-result (apply macro-fn
                                                          (rest subexp))]
@@ -36,13 +40,13 @@
                 @chunks))]
     (if (= new-shader shader)
       new-shader
-      (apply-macros macro-map new-shader))))
+      (apply-macros new-shader exclude-defaults?))))
 
-(defn preprocess [{:keys [constants macros] :as shader}]
-  (apply-macros (merge macros default-macros)
-                (dissoc (cond->> shader
-                          constants (prewalk-replace constants))
-                        :macros)))
+(defn preprocess [{:keys [constants] :as shader}]
+  (-> shader
+      (cond->> constants (prewalk-replace constants))
+      #_(update :macros (partial merge default-macros))
+      apply-macros))
 
 (defn iglu->glsl
   ([shader] (->> shader
