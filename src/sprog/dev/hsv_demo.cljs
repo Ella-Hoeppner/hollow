@@ -5,7 +5,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.iglu.chunks.colors :refer [hsv-to-rgb-chunk
+            [sprog.iglu.chunks.color :refer [hsv-to-rgb-chunk
                                               rgb-to-hsv-chunk]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
