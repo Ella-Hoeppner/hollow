@@ -70,19 +70,12 @@
                         gl.TEXTURE_WRAP_R
                         gl-wrap-r)))))
 
-(defn create-tex [gl
-                  texture-type
-                  resolution
-                  & [{:keys [wrap-mode
-                             filter-mode
-                             channels
-                             data]
-                      :or {wrap-mode :repeat
-                           channels 4}}]]
+(defn set-tex-data! [gl tex texture-type resolution data
+                     & [{:keys [channels]
+                         :or {channels 4}}]]
   (let [three-d? (and (not (number? resolution))
                       (= (count resolution) 3))
-        texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)
-        tex (.createTexture gl texture-target)]
+        texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)]
     (.bindTexture gl texture-target tex)
     (let [internal-format (({:f8 [gl.R8 gl.RG8 gl.RGB8 gl.RGBA]
                              :u16 [gl.R16UI gl.RG16UI gl.RGB16UI gl.RGBA16UI]
@@ -130,6 +123,25 @@
                        format
                        webgl-type
                        data))))
+    (.bindTexture gl texture-target nil)
+    tex))
+
+(defn create-tex [gl
+                  texture-type
+                  resolution
+                  & [{:keys [wrap-mode
+                             filter-mode
+                             channels
+                             data]
+                      :or {wrap-mode :repeat
+                           channels 4}
+                      :as options}]]
+  (let [three-d? (and (not (number? resolution))
+                      (= (count resolution) 3))
+        texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)
+        tex (.createTexture gl texture-target)]
+    (set-tex-data! gl tex texture-type resolution data options)
+    (.bindTexture gl texture-target tex)
     (set-tex-parameters gl
                         tex
                         (or filter-mode
