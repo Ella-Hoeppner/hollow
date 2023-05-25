@@ -101,7 +101,7 @@
   (when (< (count args) 1)
     (throw (ex-info (str fn-name " requires 1 arg") {})))
   (conj (map ->statement (rest args))
-        (str fn-name " " (->subexpression (first args)))
+        (str fn-name " (" (->subexpression (first args)) ")")
         :block))
 
 (defmethod ->function-call ::block [fn-name args]
