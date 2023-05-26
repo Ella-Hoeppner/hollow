@@ -122,7 +122,14 @@
      " : " (->subexpression false-case))))
 
 (defmethod ->function-call ::operator [fn-name args]
-  (join (str " " fn-name " ") (mapv ->subexpression args)))
+  (cond 
+    (and (= 1 (count args)) (= fn-name '-))
+    (str "-" (->subexpression (first args)))
+    
+    (and (= 1 (count args)) (= fn-name '/))
+    (str "1./" (->subexpression (first args)))
+    
+    :else (join (str " " fn-name " ") (mapv ->subexpression args))))
 
 (defmethod ->function-call ::property [fn-name args]
   (when (not= (count args) 1)
