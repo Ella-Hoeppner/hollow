@@ -33,6 +33,7 @@
   (s/or
    :number number?
    :int-literal int-literal?
+   :bool boolean?
    :symbol symbol?
    :string string?
    :array-literal (s/and vector?

@@ -180,6 +180,9 @@
 (defmethod ->subexpression :symbol [[_ symbol]]
   (clj-name->glsl-name symbol))
 
+(defmethod ->subexpression :bool [[_ bool]]
+  (str bool))
+
 (defmethod ->subexpression :string [[_ string]]
   string)
 
