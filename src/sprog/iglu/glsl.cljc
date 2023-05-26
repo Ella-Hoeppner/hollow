@@ -249,6 +249,17 @@
                    (partition 2 (map ->subexpression fields))))
        "}"))
 
+(defn strip-outer-parentheses [s]
+  (if (= "(" (first s))
+    (apply str (rest (butlast s)))
+    s))
+
+(defn ->define [[signature body]]
+  (str "#define "
+       (strip-outer-parentheses (->subexpression signature))
+       " "
+       (strip-outer-parentheses (->subexpression body))))
+
 (defn ->function [[name signature-function-map]]
   (map (fn [[signature {:keys [args body]}]]
          (let [{:keys [in out]} signature]
@@ -370,6 +381,7 @@
                                  precision
                                  uniforms
                                  structs
+                                 defines
                                  attributes
                                  varyings
                                  inputs
@@ -391,7 +403,8 @@
                  varyings (into (mapv ->varying varyings))
                  inputs (into (mapv (partial ->in full-qualifiers) inputs))
                  outputs (into (mapv (partial ->out full-qualifiers) outputs))
-                 structs (into (mapv ->struct (sort-structs structs))))
+                 structs (into (mapv ->struct (sort-structs structs)))
+                 defines (into (mapv ->define defines)))
                (vec (mapcat ->function (sort-fns full-functions))))
          (reduce (partial stringify 0) [])
          (join \newline))))

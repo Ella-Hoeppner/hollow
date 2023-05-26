@@ -58,6 +58,9 @@
 (s/def ::structs (s/map-of symbol?
                           (s/and vector?
                                  (s/coll-of ::subexpression))))
+(s/def ::defines (s/map-of ::subexpression
+                           ::subexpression
+                           :conform-keys true))
 (s/def ::main ::body)
 
 (s/def ::shader (s/keys :opt-un [::version
@@ -71,7 +74,8 @@
                                  ::outputs
                                  ::main
                                  ::functions
-                                 ::structs]))
+                                 ::structs
+                                 ::defines]))
 
 (defn parse [content]
   (let [parsed-content (s/conform ::shader content)]
