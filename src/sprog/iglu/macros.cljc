@@ -29,4 +29,16 @@
 
 (def default-macros
   {'-> thread-first
-   '->> thread-last})
+   '->> thread-last
+   '=-> (fn [var-name & forms]
+          (list '=
+                var-name
+                (concat (list '->
+                              var-name)
+                        forms)))
+   '=->> (fn [var-name & forms]
+           (list '=
+                 var-name
+                 (concat (list '->>
+                               var-name)
+                         forms)))})

@@ -1,7 +1,8 @@
 (ns sprog.iglu.glsl
   (:require [sprog.util :as u]
             [clojure.string
-             :refer [join
+             :refer [escape
+                     join
                      starts-with?
                      ends-with?
                      replace]
@@ -27,11 +28,11 @@
 
 (defn clj-name->glsl-name [clj-name]
   (symbol
-   (string-replace
-    (cond-> (str clj-name)
-      (keyword? clj-name) (subs 1))
-    "-"
-    "_")))
+   (escape (cond-> (str clj-name)
+             (keyword? clj-name) (subs 1))
+           {"-" "_"
+            ">" "GREATER_THAN"
+            "<" "LESS_THAN"})))
 
 (defn- parse-type [[k v]]
   (case k

@@ -45,7 +45,6 @@
 (defn preprocess [{:keys [constants] :as shader}]
   (-> shader
       (cond->> constants (prewalk-replace constants))
-      #_(update :macros (partial merge default-macros))
       apply-macros))
 
 (defn iglu->glsl
@@ -55,16 +54,3 @@
                  parsed-iglu->glsl))
   ([first-chunk & other-chunks]
    (iglu->glsl (apply combine-chunks (cons first-chunk other-chunks)))))
-
-(defn inline-float-uniforms [numerical-param-names & chunks]
-  (let [param-uniform-names
-        (apply hash-map
-               (mapcat #(list % (clj-name->glsl-name %))
-                       numerical-param-names))]
-    (prewalk-replace param-uniform-names
-                     (apply combine-chunks
-                            (concat chunks
-                                    (list
-                                     {:uniforms
-                                      (zipmap (vals param-uniform-names)
-                                              (repeat 'float))}))))))
