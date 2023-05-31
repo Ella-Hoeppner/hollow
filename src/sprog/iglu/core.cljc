@@ -42,6 +42,14 @@
       new-shader
       (apply-macros new-shader exclude-defaults?))))
 
+(defn gensym-replace [replacements expression]
+  (prewalk-replace
+   (into {}
+         (map (fn [k]
+                [k (gensym (symbol k))])
+              replacements))
+   expression))
+
 (defn preprocess [{:keys [constants] :as shader}]
   (-> shader
       (cond->> constants (prewalk-replace constants))
