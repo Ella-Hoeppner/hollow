@@ -31,8 +31,8 @@
    (escape (cond-> (str clj-name)
              (keyword? clj-name) (subs 1))
            {"-" "_"
-            ">" "GREATER_THAN"
-            "<" "LESS_THAN"})))
+            "?" "QUESTION_MARK"
+            "->" "ARROW"})))
 
 (defn- parse-type [[k v]]
   (case k
