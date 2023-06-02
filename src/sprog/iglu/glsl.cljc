@@ -48,7 +48,7 @@
       (number? fn-name) ::number
       (int-literal? fn-name) ::int-literal
       ('#{? if} fn-name) ::inline-conditional
-      ('#{+ - * / % < > <= >= == != || && "^^"} fn-name) ::operator
+      ('#{+ - * / % < > <= >= == != || && "^^" "^"} fn-name) ::operator
       (= '= fn-name) ::assignment
       ('#{+= -= *= "/="} fn-name) ::augment
       (#{"if" "else if" "switch" "for" "while"} fn-name) ::block-with-expression
