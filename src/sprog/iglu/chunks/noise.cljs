@@ -38,6 +38,49 @@
                                     (* norm1.y norm1.y)
                                     (* norm2.x norm2.x))))))}}}))
 
+;pcg hash based on https://github.com/riccardoscalco/glsl-pcg-prng
+(def pcg-hash-chunk
+  (u/unquotable
+   '{:functions {pcg
+                 {([uint] uint)
+                  ([x]
+                   (=uint state (+ (* x "747796405u")
+                                   "2891336453u"))
+                   (=uint word "((state >> ((state >> uint(28)) + 
+                                uint(4))) ^ state) * uint(277803737)")
+                   "(word >> uint(22)) ^ word")
+
+                  ([uvec3] uvec3)
+                  ([x]
+                   (= x (+ (* x "1664525u")
+                           "1013904223u"))
+
+                   (+= x.x (* x.y x.z))
+                   (+= x.y (* x.z x.x))
+                   (+= x.z (* x.x x.y))
+
+                   "x ^= x >> 16u"
+
+                   (+= x.x (* x.y x.z))
+                   (+= x.y (* x.z x.x))
+                   (+= x.z (* x.x x.y))
+
+                   x)}
+                 prng
+                 {([float] float)
+                  ([p]
+                   (/ (float (pcg (uint p)))
+                      (float "0xffffffffu")))
+                  ([vec2] float)
+                  ([p]
+                   (/ (float (pcg (+ (pcg (uint p.x))
+                                     (uint p.y))))
+                      (float "0xffffffffu")))
+                  ([vec3] vec3)
+                  ([p]
+                   (/ (vec3 (pcg (uvec3 p)))
+                      (float "0xffffffffu")))}}}))
+
 ; based on https://thebookofshaders.com/edit.php#11/2d-snoise-clear.frag
 (def simplex-2d-chunk
   (postwalk-replace
