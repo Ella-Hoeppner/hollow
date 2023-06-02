@@ -46,9 +46,12 @@
                   ([x]
                    (=uint state (+ (* x "747796405u")
                                    "2891336453u"))
-                   (=uint word "((state >> ((state >> uint(28)) + 
-                                uint(4))) ^ state) * uint(277803737)")
-                   "(word >> uint(22)) ^ word")
+                   (=uint word (* ("^" (>> state
+                                           (+ (>> state "28u")
+                                              "4u"))
+                                       state)
+                                  "277803737u"))
+                   ("^" (>> word "22u") word))
 
                   ([uvec3] uvec3)
                   ([x]
@@ -58,27 +61,29 @@
                    (+= x.x (* x.y x.z))
                    (+= x.y (* x.z x.x))
                    (+= x.z (* x.x x.y))
-
-                   "x ^= x >> 16u"
+                   
+                   ("^=" x (>> x "16u"))
 
                    (+= x.x (* x.y x.z))
                    (+= x.y (* x.z x.x))
                    (+= x.z (* x.x x.y))
 
                    x)}
-                 prng
+                 rand-pcg
                  {([float] float)
                   ([p]
-                   (/ (float (pcg (uint p)))
+                   (/ (float (pcg (floatBitsToUint p)))
                       (float "0xffffffffu")))
                   ([vec2] float)
                   ([p]
-                   (/ (float (pcg (+ (pcg (uint p.x))
-                                     (uint p.y))))
+                   (/ (float (pcg (+ (pcg (floatBitsToUint p.x))
+                                     (floatBitsToUint p.y))))
                       (float "0xffffffffu")))
                   ([vec3] vec3)
                   ([p]
-                   (/ (vec3 (pcg (uvec3 p)))
+                   (/ (vec3 (pcg (uvec3 (floatBitsToUint p.x)
+                                        (floatBitsToUint p.y)
+                                        (floatBitsToUint p.z))))
                       (float "0xffffffffu")))}}}))
 
 ; based on https://thebookofshaders.com/edit.php#11/2d-snoise-clear.frag
