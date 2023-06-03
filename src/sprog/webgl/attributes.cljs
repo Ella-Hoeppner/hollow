@@ -1,4 +1,5 @@
-(ns sprog.webgl.attributes)
+(ns sprog.webgl.attributes
+  (:require [sprog.iglu.glsl :refer [clj-name->glsl-name]]))
 
 (defn set-boj-data! [gl {:keys [buffer usage] :as boj} data] 
   (.bindBuffer gl
@@ -52,7 +53,7 @@
                                     normalized
                                     stride
                                     offset]}]
-  (let [attrib-name-str (str attrib-name)]
+  (let [attrib-name-str (str (clj-name->glsl-name attrib-name))]
     (ensure-attribute-present! gl sprog attrib-name-str)
     (let [location (@attribute-locations-atom attrib-name)]
       (.bindBuffer gl gl.ARRAY_BUFFER buffer)
