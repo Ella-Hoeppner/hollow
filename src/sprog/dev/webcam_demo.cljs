@@ -21,6 +21,7 @@
                                        tex sampler2D}
                             :outputs {fragColor vec4}
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
+                                   (= pos.x (- 1 pos.x))
                                    (= fragColor
                                       (vec4 (.xyz
                                              (texture tex

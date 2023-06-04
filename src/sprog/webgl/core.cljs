@@ -14,7 +14,8 @@
 
 (defn start-sprog! [init-fn-or-value
                     update-fn
-                    & [{:keys [name
+                    & [{:keys [canvas 
+                               name
                                append-to-body?
                                preserve-drawing-buffer?
                                stencil?]
@@ -25,7 +26,8 @@
   (when (nil? @sprogs-atom) (update-sprogs!))
   (let [gl (create-gl-canvas
             name
-            {:append-to-body? append-to-body?
+            {:canvas canvas
+             :append-to-body? append-to-body?
              :preserve-drawing-buffer? preserve-drawing-buffer?
              :stencil? stencil?})]
     (swap! sprogs-atom

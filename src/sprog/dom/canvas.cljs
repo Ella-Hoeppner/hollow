@@ -1,10 +1,12 @@
 (ns sprog.dom.canvas
   (:require [sprog.util :as u]))
 
-(defn create-gl-canvas [id & {:keys [append-to-body?
+(defn create-gl-canvas [id & {:keys [canvas-element
+                                     append-to-body?
                                      preserve-drawing-buffer?
                                      stencil?]}]
-  (let [canvas (js/document.createElement "canvas")
+  (let [canvas (or canvas-element
+                   (js/document.createElement "canvas"))
         gl (.getContext
             canvas
             "webgl2"
