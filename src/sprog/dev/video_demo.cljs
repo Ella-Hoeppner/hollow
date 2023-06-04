@@ -2,8 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.webgl.textures :refer [create-tex
                                           copy-html-image-data!]]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core 

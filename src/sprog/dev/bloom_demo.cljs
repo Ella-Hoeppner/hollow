@@ -1,8 +1,7 @@
 (ns sprog.dev.bloom-demo
   (:require [sprog.util :as u]
             [sprog.webgl.textures :refer [html-image-tex]]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
@@ -45,5 +44,4 @@
   {:texture (html-image-tex gl "img")})
 
 (defn init []
-  (start-sprog! init-page!
-                update-page!))
+  (start-sprog! init-page! update-page!))

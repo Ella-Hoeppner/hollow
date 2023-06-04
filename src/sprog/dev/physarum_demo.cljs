@@ -1,7 +1,6 @@
 (ns sprog.dev.physarum-demo
   (:require [sprog.util :as u]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-shaders!
                                          run-purefrag-shader!]]

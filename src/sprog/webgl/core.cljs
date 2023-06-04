@@ -1,6 +1,7 @@
 (ns sprog.webgl.core
   (:require [sprog.util :as u]
-            [sprog.dom.canvas :refer [create-gl-canvas]]))
+            [sprog.dom.canvas :refer [create-context
+                                      get-context]]))
 
 (defonce sprogs-atom (atom nil))
 
@@ -24,12 +25,18 @@
   (when-let [old-canvas (js/document.getElementById (str name))]
     (.removeChild old-canvas.parentNode old-canvas))
   (when (nil? @sprogs-atom) (update-sprogs!))
-  (let [gl (create-gl-canvas
-            name
-            {:canvas canvas
-             :append-to-body? append-to-body?
-             :preserve-drawing-buffer? preserve-drawing-buffer?
-             :stencil? stencil?})]
+  (let [gl (if canvas
+             (get-context canvas 
+                          {"preserveDrawingBuffer"
+                           (boolean preserve-drawing-buffer?)
+                           "stencil"
+                           (boolean stencil?)})
+             (create-context
+              name
+              {:canvas-element canvas
+               :append-to-body? append-to-body?
+               :preserve-drawing-buffer? preserve-drawing-buffer?
+               :stencil? stencil?}))]
     (swap! sprogs-atom
            assoc
            name

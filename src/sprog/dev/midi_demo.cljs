@@ -3,8 +3,7 @@
    [sprog.util :as u]
    [sprog.input.midi :refer [add-midi-callback]]
    [sprog.iglu.core :refer [iglu->glsl]]
-   [sprog.dom.canvas :refer [create-gl-canvas
-                             maximize-gl-canvas
+   [sprog.dom.canvas :refer [maximize-gl-canvas
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]
    [sprog.iglu.chunks.misc :refer [pos-chunk
@@ -12,8 +11,7 @@
    [sprog.iglu.chunks.noise :refer [simplex-3d-chunk]]
    [sprog.webgl.core 
     :refer-macros [with-context]
-    :refer [start-sprog!
-            sprog-state]]))
+    :refer [start-sprog!]]))
 
 (def smooth-factor 0.2)
 

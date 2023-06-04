@@ -1,7 +1,6 @@
 (ns sprog.dev.fbm-demo
   (:require [sprog.util :as u]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                              fbm-chunk]]

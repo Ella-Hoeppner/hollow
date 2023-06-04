@@ -1,17 +1,21 @@
 (ns sprog.dom.canvas
   (:require [sprog.util :as u]))
 
-(defn create-gl-canvas [id & {:keys [canvas-element
-                                     append-to-body?
-                                     preserve-drawing-buffer?
-                                     stencil?]}]
-  (let [canvas (or canvas-element
-                   (js/document.createElement "canvas"))
-        gl (.getContext
-            canvas
-            "webgl2"
-            (clj->js {"preserveDrawingBuffer" (boolean preserve-drawing-buffer?)
-                      "stencil" (boolean stencil?)}))]
+(defn get-context [canvas & options]
+  (.getContext canvas
+               "webgl2"
+               (when options 
+                 (clj->js options))))
+
+(defn create-context [id & {:keys [append-to-body?
+                                   preserve-drawing-buffer?
+                                   stencil?]}]
+  (let [canvas (js/document.createElement "canvas")
+        gl (get-context canvas
+                        {"preserveDrawingBuffer" 
+                         (boolean preserve-drawing-buffer?)
+                         "stencil" 
+                         (boolean stencil?)})]
     (set! (.-id canvas) (str id))
     (when append-to-body?
       (set! (.-position canvas.style) "absolute")

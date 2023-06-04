@@ -1,7 +1,6 @@
 (ns sprog.dev.hsv-demo
   (:require [sprog.webgl.textures :refer [html-image-tex]]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])

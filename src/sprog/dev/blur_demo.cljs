@@ -7,8 +7,7 @@
               prescaled-gaussian-sample-expression
               square-neighborhood]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.dom.canvas :refer [create-gl-canvas
-                                      maximize-gl-canvas
+            [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [html-image-tex]]
