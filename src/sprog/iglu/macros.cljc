@@ -42,5 +42,5 @@
                  (concat (list '->>
                                var-name)
                          forms)))
-   'bi->uni #(list '+ 1 (list '* 0.5 %))
+   'bi->uni #(list '* 0.5 (list '+ 1 %))
    'uni->bi #(list '- (list '* 2 %) 1)})
