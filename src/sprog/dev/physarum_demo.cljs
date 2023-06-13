@@ -6,8 +6,8 @@
                                          run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
-            [sprog.iglu.chunks.particles :refer [particle-vert-source-u16
-                                                 particle-frag-source-u16]]
+            [sprog.iglu.chunks.particles :refer [particle-vert-source
+                                                 particle-frag-source]]
             [sprog.iglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
@@ -189,7 +189,7 @@
   (let [[front-tex back-tex] substrate-textures
         agent-tex (first agent-textures)]
     (with-context gl
-      (run-shaders! [particle-vert-source-u16 particle-frag-source-u16]
+      (run-shaders! [(particle-vert-source :u16) (particle-frag-source :u16)]
                     substrate-resolution
                     {"particleTex" agent-tex
                      "size" substrate-resolution
