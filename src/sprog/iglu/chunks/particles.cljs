@@ -7,6 +7,10 @@
                                   :f8)
                              'sampler2D
                              'usampler2D)
+         vec-type (if (= texture-type 
+                         :f8)
+                    '=vec4
+                    '=uvec4)
          texture-max (texture-type {:f8 1
                                     :u16 '(float "0x0000FFFFu")
                                     :u32 '(float "0xFFFFFFFFu")})]
@@ -27,7 +31,7 @@
                                      (/ agentIndex texSize.x)))
                         (vec2 texSize)))
 
-              (=uvec4 particleColor (texture particleTex texPos))
+              (~vec-type particleColor (texture particleTex texPos))
               (= particlePos (/ (vec2 particleColor.xy) ~texture-max))
 
               (= gl_Position
@@ -53,19 +57,23 @@
   (u/unquotable
    (let [texture-max (texture-type {:f8 1
                                     :u16 '(float "0x0000FFFFu")
-                                    :u32 '(float "0xFFFFFFFFu")})]
+                                    :u32 '(float "0xFFFFFFFFu")})
+         output-type (if (= texture-type
+                            :f8)
+                       'vec4
+                       'uvec4)]
      '{:version "300 es"
        :precision {float highp
                    int highp}
        :uniforms {radius float
                   size float}
        :inputs {particlePos vec2}
-       :outputs {fragColor uvec4}
+       :outputs {fragColor ~output-type}
        :main ((=vec2 pos (/ gl_FragCoord.xy size))
               (=float dist (distance pos particlePos))
               ("if" (> dist radius)
                     "discard")
-              (= fragColor (uvec4 ~texture-max 0 0 0)))})))
+              (= fragColor (~output-type ~texture-max 0 0 ~texture-max)))})))
 
  (def particle-vert-3d-source-u32
    '{:uniforms {time float
