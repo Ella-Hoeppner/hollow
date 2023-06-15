@@ -28,11 +28,11 @@
 
 (defn clj-name->glsl-name [clj-name]
   (symbol
-   (escape (cond-> (str clj-name)
-             (keyword? clj-name) (subs 1))
-           {"-" "_"
-            "?" "QUESTION_MARK"
-            "->" "ARROW"})))
+   (-> (cond-> (str clj-name)
+         (keyword? clj-name) (subs 1))
+       (escape {"->" "ARROW"})
+       (escape {"-" "_"
+                "?" "QUESTION_MARK"}))))
 
 (defn- parse-type [[k v]]
   (case k
