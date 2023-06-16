@@ -191,10 +191,7 @@
 (defmethod ->subexpression :accessor [[_ {:keys [array-name array-index]}]]
   (str array-name
        "["
-       (let [[array-index-type array-index-value] array-index]
-         (case array-index-type
-           :int-literal (->subexpression array-index)
-           :number (str array-index-value)))
+       (->subexpression array-index)
        "]"))
 
 (defmethod ->subexpression :number [[_ number]]

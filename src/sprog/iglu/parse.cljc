@@ -44,8 +44,7 @@
                                                (s/* ::subexpression))))
    :accessor (s/and vector?
                     (s/cat :array-name symbol?
-                           :array-index (s/or :int-literal int-literal?
-                                              :number number?)))
+                           :array-index ::subexpression))
    :expression ::expression))
 
 (s/def ::body (s/+ (s/spec ::subexpression)))
