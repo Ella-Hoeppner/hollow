@@ -34,7 +34,7 @@
       (if-let [[new-escaped-str new-remaining-str]
                (some (fn [[replace-str replacement-str]]
                        (when (and (>= (count remaining-str)
-                                      (count replacement-str))
+                                      (count replace-str))
                                   (= (subs remaining-str 0 (count replace-str))
                                      replace-str))
                          [(str escaped-str replacement-str)
