@@ -189,7 +189,7 @@
       ret)))
 
 (defmethod ->subexpression :accessor [[_ {:keys [array-name array-index]}]]
-  (str array-name
+  (str (clj-name->glsl-name array-name)
        "["
        (->subexpression array-index)
        "]"))
