@@ -26,8 +26,8 @@
       :main
       ((= [vec3 "2"]
           color-vectors
-          [vec3 2 [(vec3 1 1 1)
-                   (vec3 0 0 0)]])
+          [vec3 "2" [(vec3 1 1 1)
+                     (vec3 0 0 0)]])
        (= fragColor
           (vec4 (decide-colors color-vectors decisions)
                 1)))})))
