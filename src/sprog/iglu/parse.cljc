@@ -8,7 +8,7 @@
 
 (s/def ::type (s/or
                :type-name symbol?
-               :array (s/cat :type-name symbol? :size int?)))
+               :array (s/cat :type-name symbol? :size int-literal?)))
 (s/def ::declarations (s/map-of symbol? ::type))
 
 (s/def ::version string?)
