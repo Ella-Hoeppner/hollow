@@ -32,3 +32,22 @@
      (+ (* oc y z) (* x s))
      (+ (* oc z z) c)]))
 
+(defn magnitude [v]
+  (Math/sqrt (apply + (map #(* % %) v))))
+
+(defn dot [a b]
+  (apply + (map * a b)))
+
+(defn cross [a b]
+  (let [[x1 y1 z1] a
+        [x2 y2 z2] b]
+    [(- (* y1 z2)
+        (* z1 y2))
+     (- (* z1 x2)
+        (* x1 z2))
+     (- (* x1 y2)
+        (* y1 x2))]))
+
+(defn normalize [v]
+  (let [m (magnitude v)]
+    (mapv #(/ % m) v)))
