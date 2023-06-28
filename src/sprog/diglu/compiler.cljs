@@ -48,7 +48,7 @@
     (clj-name->glsl type-expression)))
 
 (def infix-ops
-  '#{+ - / * % < > <= => != || && "^^" "^" | << >>})
+  '#{+ - / * % < > <= => != += *= -= "/=" || && "^^" "^" | << >>})
 
 (defn expression->glsl [expression & [context-map]]
   (cond
