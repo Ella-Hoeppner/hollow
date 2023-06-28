@@ -4,7 +4,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.core :refer-macros [with-context]
              :refer [start-sprog!]]))
 
@@ -12,14 +12,14 @@
 
 (def render-frag-source
   (iglu->glsl
-   {:constants {:texture-resolution-f (.toFixed texture-resolution 1)}}
+   {:constants {:texture-resolution texture-resolution}}
    '{:version "300 es"
      :precision {float highp}
      :outputs {fragColor0 vec4
                fragColor1 vec4}
      :layout {fragColor0 0
               fragColor1 1}
-     :main ((=vec2 pos (/ gl_FragCoord.xy :texture-resolution-f))
+     :main ((=vec2 pos (/ gl_FragCoord.xy :texture-resolution))
             (= fragColor0 (vec4 pos
                                 0
                                 1))
@@ -28,19 +28,20 @@
                                 1)))}))
 
 (def draw-frag-source
-  '{:version "300 es"
-    :precision {float highp
-                sampler2D highp}
-    :uniforms {size vec2
-               tex1 sampler2D
-               tex2 sampler2D}
-    :outputs {fragColor vec4}
-    :main ((=vec2 pos (/ gl_FragCoord.xy size))
-           (= fragColor
-              (if (< pos.x 0.5)
-                (texture tex1 (* pos (vec2 2 1)))
-                (texture tex2 (* (- pos (vec2 0.5 0))
-                                 (vec2 2 1))))))})
+  (iglu->glsl
+   '{:version "300 es"
+     :precision {float highp
+                 sampler2D highp}
+     :uniforms {size vec2
+                tex1 sampler2D
+                tex2 sampler2D}
+     :outputs {fragColor vec4}
+     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+            (= fragColor
+               (if (< pos.x 0.5)
+                 (texture tex1 (* pos (vec2 2 1)))
+                 (texture tex2 (* (- pos (vec2 0.5 0))
+                                  (vec2 2 1))))))}))
 
 (defn update-page! [{:keys [gl tex1 tex2] :as state}]
   (with-context gl

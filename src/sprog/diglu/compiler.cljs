@@ -61,11 +61,27 @@
     (list? expression)
     (let [[f & args] expression]
       (cond
+        (and (= f '-) (= (count args) 1))
+        (str "-" (expression->glsl (first args)))
+
+        (and (= f '/) (= (count args) 1))
+        (str "(1./" (expression->glsl (first args)) ")")
+
         (infix-ops f)
         (str "("
              (join (str " " f " ")
                    (map expression->glsl args))
              ")")
+        
+        (= 'if f)
+        (let [[conditional true-expression false-expression] args]
+          (str "("
+               (expression->glsl conditional)
+               " ? "
+               (expression->glsl true-expression)
+               " : "
+               (expression->glsl false-expression)
+               ")"))
 
         (= '= f)
         (if (= (count args) 2)

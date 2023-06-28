@@ -12,12 +12,12 @@
 
 (defn preprocess [{:keys [constants main] :as shader}]
   (-> shader
+      (cond-> main (update :functions
+                           assoc
+                           'main
+                           (conj main [] 'void)))
       (cond->> constants (prewalk-replace constants))
-      (cond-> main (-> (dissoc :main)
-                       (update :functions
-                               assoc
-                               'main
-                               (conj main [] 'void))))
+      (dissoc :main :constants)
       apply-macros))
 
 (defn iglu->glsl
