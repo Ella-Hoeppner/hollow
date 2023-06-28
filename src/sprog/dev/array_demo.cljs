@@ -14,10 +14,10 @@
     '{:version "300 es"
       :precision {float highp}
       :uniforms {size vec2
-                 decisions [bool 3]}
+                 decisions [bool "3"]}
       :outputs {fragColor vec4}
       :functions
-      {decide-colors {([[vec3 2] [bool 3]] vec3)
+      {decide-colors {([[vec3 "2"] [bool "3"]] vec3)
                       ([c d]
                        (vec3
                         (.r (if [d "0"] [c "0"] [c "1"]))
