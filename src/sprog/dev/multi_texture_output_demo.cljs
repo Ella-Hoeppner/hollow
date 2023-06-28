@@ -29,8 +29,7 @@
 
 (def draw-frag-source
   (iglu->glsl
-   '{:version "300 es"
-     :precision {float highp
+   '{:precision {float highp
                  sampler2D highp}
      :uniforms {size vec2
                 tex1 sampler2D
