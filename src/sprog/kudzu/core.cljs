@@ -12,9 +12,11 @@
                           (vec (concat
                                 (if (vector? body-1) body-1 (list body-1))
                                 (if (vector? body-2) body-2 (list body-2))))))
-               (map :functions chunks))]
+               (map :functions chunks))
+        merged-global (apply concat (map :global chunks))]
     (cond-> (apply (partial merge-with merge) chunks)
-      merged-functions (assoc :functions merged-functions))))
+      merged-functions (assoc :functions merged-functions)
+      (seq merged-global) (assoc :global merged-global))))
 
 (defn apply-macros [{:keys [macros] :as shader} & [exclude-defaults?]]
   (let [chunks (atom nil)
@@ -63,23 +65,7 @@
            (map (fn [[fn-name fn-body]]
                   [fn-name
                    (if (vector? fn-body)
-                     (first
-                      (reduce
-                       (fn [[included-definitions
-                             encountered-signatures]
-                            fn-definition]
-                         (let [signature [(first fn-definition)
-                                          (partition 1
-                                                     2
-                                                     (rest
-                                                      (second fn-definition)))]]
-                           (if (encountered-signatures signature)
-                             [included-definitions
-                              encountered-signatures]
-                             [(conj included-definitions fn-definition)
-                              (conj encountered-signatures signature)])))
-                       [[] #{}]
-                       fn-body))
+                     (vec (distinct fn-body))
                      fn-body)])
                 functions)))))
 
