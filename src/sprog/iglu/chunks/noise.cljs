@@ -546,7 +546,7 @@
                           frequencies))
                    ~(/ (Math/sqrt (count frequencies)))))
                (float
-                [x float
+                [x ~position-type
                  bandwidth float]
                 (* ~(cons
                      '+

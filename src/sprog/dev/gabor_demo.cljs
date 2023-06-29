@@ -23,7 +23,7 @@
       :outputs {fragColor vec4}
       :main ((= fragColor
                 (-> (gaborNoise 4
-                                [3] #_~(u/gen 30 (Math/pow 200 (rand)))
+                                ~(u/gen 30 (Math/pow 200 (rand)))
                                 (-> (getPos)
                                     (* 2)
                                     (- 1)

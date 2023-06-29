@@ -1,6 +1,8 @@
 (ns sprog.diglu.compiler
   (:require [sprog.util :as u]
-            [clojure.string :refer [join]]))
+            [clojure.string :refer [join]]
+            [sprog.diglu.sorting :refer [sort-fns
+                                         sort-structs]]))
 
 (defn parse-int [s]
   (js/parseInt s))
@@ -234,4 +236,4 @@
            (map (partial in-out->glsl layout "out") outputs)
            (map struct->glsl structs)
            (map define->glsl defines)
-           (map function->glsl functions)])))
+           (map function->glsl (sort-fns functions))])))

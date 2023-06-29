@@ -14,7 +14,6 @@
                                 (if (vector? body-1) body-1 (list body-1))
                                 (if (vector? body-2) body-2 (list body-2))))))
                (map :functions chunks))]
-    (u/log "MERGED" merged-functions)
     (cond-> (apply (partial merge-with merge) chunks)
       merged-functions (assoc :functions merged-functions))))
 
