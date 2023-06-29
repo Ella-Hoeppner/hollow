@@ -38,7 +38,7 @@
 
 (def pos-chunk
   '{:functions {getPos
-                (vec3
+                (vec2
                  []
                  (=float minDim (min size.x size.y))
                  (/ (- gl_FragCoord.xy

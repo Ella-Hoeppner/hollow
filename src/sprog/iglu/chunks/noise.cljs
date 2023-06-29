@@ -431,8 +431,8 @@
                            (=vec2 f (fract p))
 
                            (=vec2 a (vec2 0))
-                           ("for(int y=-2; y<=2; y++)"
-                            ("for(int x=-2; x<=2; x++)"
+                           ("for" (=int y "-2") (<= y "2") (++ y)
+                            ("for" (=int x "-2") (<= x "2") (++ x)
                              (=vec2 g (vec2 x y))
                              (=vec3 o (* (hash3 (+ i g))
                                          (vec3 skew skew 1)))

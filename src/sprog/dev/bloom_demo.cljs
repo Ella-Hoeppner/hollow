@@ -7,28 +7,28 @@
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.iglu.chunks.postprocessing :refer [get-bloom-chunk
                                                       square-neighborhood]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-source
-  (iglu->glsl 
+  (iglu->glsl
    (get-bloom-chunk :f8 (square-neighborhood 4 1) 5)
    '{:version "300 es"
-    :precision {float highp}
-    :uniforms {size vec2
-               mouse vec2
-               tex sampler2D}
-    :outputs {fragColor vec4}
-    :main ((=vec2 pos (/ gl_FragCoord.xy size))
-           (= pos.y (- 1 pos.y))
-           (= fragColor (-> (bloom tex
-                                   pos
-                                   (* mouse.x 0.0025)
-                                   (- 1 mouse.y))
-                            .xyz
-                            (vec4 1))))}))
+     :precision {float highp}
+     :uniforms {size vec2
+                mouse vec2
+                tex sampler2D}
+     :outputs {fragColor vec4}
+     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+            (= pos.y (- 1 pos.y))
+            (= fragColor (-> (bloom tex
+                                    pos
+                                    (* mouse.x 0.0025)
+                                    (- 1 mouse.y))
+                             .xyz
+                             (vec4 1))))}))
 
 (defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl

@@ -5,7 +5,7 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

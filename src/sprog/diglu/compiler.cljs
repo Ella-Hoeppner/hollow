@@ -61,6 +61,9 @@
     (list? expression)
     (let [[f & args] expression]
       (cond
+        (= '++ f) (str (expression->glsl (first args)) "++")
+        (= '-- f) (str (expression->glsl (first args)) "--")
+
         (and (= f '-) (= (count args) 1))
         (str "-" (expression->glsl (first args)))
 
@@ -195,7 +198,7 @@
                                    (partial str "return ")))))))
 
 (defn function->glsl [[fn-name fn-definition]]
-  (if (list? fn-definition)
+  (if (seq? fn-definition)
     (let [[return-type signature & body] fn-definition]
       (str (type->glsl return-type)
            " "

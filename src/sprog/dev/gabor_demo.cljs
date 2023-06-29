@@ -3,13 +3,14 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
             [sprog.webgl.core 
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
+(js/console.clear)
 (def frag-glsl
   (iglu->glsl
    pos-chunk
@@ -22,7 +23,7 @@
       :outputs {fragColor vec4}
       :main ((= fragColor
                 (-> (gaborNoise 4
-                                ~(u/gen 30 (Math/pow 200 (rand)))
+                                [3] #_~(u/gen 30 (Math/pow 200 (rand)))
                                 (-> (getPos)
                                     (* 2)
                                     (- 1)

@@ -1,6 +1,6 @@
 (ns sprog.dev.blur-demo
   (:require [sprog.util :as u]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.postprocessing 
              :refer
              [create-gaussian-sample-chunk
@@ -42,8 +42,7 @@
                %
                (square-neighborhood 4 3)
                10)}}
-   '{:version "300 es"
-     :precision {float highp
+   '{:precision {float highp
                  sampler2D highp}
      :outputs {fragColor vec4}
      :uniforms {size vec2

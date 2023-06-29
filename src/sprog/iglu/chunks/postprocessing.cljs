@@ -112,12 +112,13 @@
                          neighborhood
                          sigma)}
    '{:functions
-     (vec4
-      [tex :sampler-type
-       pos vec2
-       step float
-       intensity float]
-      (=vec4 sum :gaussian-expresion)
-      (vec4 (/ (+ (* sum intensity)
-                  (vec4 (texture tex pos)))
-               :divisor)))}))
+     {bloom
+      (vec4
+       [tex :sampler-type
+        pos vec2
+        step float
+        intensity float]
+       (=vec4 sum :gaussian-expresion)
+       (vec4 (/ (+ (* sum intensity)
+                   (vec4 (texture tex pos)))
+                :divisor)))}}))
