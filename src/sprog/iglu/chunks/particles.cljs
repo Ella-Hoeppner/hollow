@@ -14,8 +14,7 @@
          texture-max (texture-type {:f8 1
                                     :u16 '(float "0x0000FFFFu")
                                     :u32 '(float "0xFFFFFFFFu")})]
-     '{:version "300 es"
-       :precision {float highp
+     '{:precision {float highp
                    int highp
                    ~glsl-texture-type highp}
        :outputs {particlePos vec2}
@@ -62,8 +61,7 @@
                             :f8)
                        'vec4
                        'uvec4)]
-     '{:version "300 es"
-       :precision {float highp
+     '{:precision {float highp
                    int highp}
        :uniforms {radius float
                   size float}

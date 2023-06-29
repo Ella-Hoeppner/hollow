@@ -7,9 +7,8 @@
     (if forms
       (let [form (first forms)
             threaded (if (seq? form)
-                       (concat (list (first form)
-                                     x)
-                               (next form))
+                       (seq (concat (list (first form) x)
+                                    (next form)))
                        (list form x))]
         (recur threaded (next forms)))
       x)))
@@ -20,9 +19,9 @@
     (if forms
       (let [form (first forms)
             threaded (if (seq? form)
-                       (concat (list (first form))
-                               (next form)
-                               (list x))
+                       (seq (concat (list (first form))
+                                    (next form)
+                                    (list x)))
                        (list form x))]
         (recur threaded (next forms)))
       x)))

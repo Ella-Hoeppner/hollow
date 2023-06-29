@@ -6,11 +6,11 @@
 
 (def rand-chunk
   '{:functions {rand
-                {([vec2] float)
-                 ([p]
-                  (=vec3 p3 (fract (* (vec3 p.xyx) 0.1031)))
-                  (+= p3 (dot p3 (+ p3.yzx 33.33)))
-                  (fract (* (+ p3.x p3.y) p3.z)))}}})
+                (float
+                 [p vec2]
+                 (=vec3 p3 (fract (* (vec3 p.xyx) 0.1031)))
+                 (+= p3 (dot p3 (+ p3.yzx 33.33)))
+                 (fract (* (+ p3.x p3.y) p3.z)))}})
 
 (def rand-normal-chunk
   (combine-chunks rand-chunk

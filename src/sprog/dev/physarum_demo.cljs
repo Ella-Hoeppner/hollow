@@ -8,7 +8,7 @@
             [sprog.iglu.chunks.noise :refer [rand-chunk]]
             [sprog.iglu.chunks.particles :refer [particle-vert-source
                                                  particle-frag-source]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -50,13 +50,13 @@
   '{:precision {usampler2D highp}
     :uniforms {substrate usampler2D}
     :functions {substrateSample
-                {([vec2] float)
-                 ([pos]
-                  (-> substrate
-                      (texture pos)
-                      .x
-                      float
-                      (/ :u16-max)))}}})
+                (float
+                 [pos vec2]
+                 (-> substrate
+                     (texture pos)
+                     .x
+                     float
+                     (/ :u16-max)))}})
 
 (def render-frag-source
   (iglu-wrapper
@@ -189,7 +189,8 @@
   (let [[front-tex back-tex] substrate-textures
         agent-tex (first agent-textures)]
     (with-context gl
-      (run-shaders! [(particle-vert-source :u16) (particle-frag-source :u16)]
+      (run-shaders! [(iglu->glsl (particle-vert-source :u16))
+                     (iglu->glsl (particle-frag-source :u16))]
                     substrate-resolution
                     {"particleTex" agent-tex
                      "size" substrate-resolution

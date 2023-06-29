@@ -48,7 +48,7 @@
     (clj-name->glsl type-expression)))
 
 (def infix-ops
-  '#{+ - / * % < > <= => != += *= -= "/=" || && "^^" "^" | << >>})
+  '#{+ - / * % < > == <= => != += *= -= "/=" || && "^^" "^" | << >>})
 
 (defn expression->glsl [expression & [context-map]]
   (cond
@@ -72,7 +72,7 @@
              (join (str " " f " ")
                    (map expression->glsl args))
              ")")
-        
+
         (= 'if f)
         (let [[conditional true-expression false-expression] args]
           (str "("
@@ -103,14 +103,42 @@
              " = "
              (expression->glsl (second args)))
 
+        (and (symbol? f) (= "." (first (str f))))
+        (str (expression->glsl (first args))
+             (clj-name->glsl f))
+
         :else (str (clj-name->glsl f)
                    "("
                    (join ", "
                          (map expression->glsl args))
                    ")")))))
 
-(defn statement->glsl [statement]
-  (str (expression->glsl statement) ";\n"))
+(defn is-statement-block? [statement]
+  (and (list? statement)
+       (#{"if" "else" "for"} (first statement))))
+
+(defn statement->lines [statement]
+  (if (is-statement-block? statement)
+    (let [[statement-type & statement-args] statement
+          [block-start consumed-statement-args]
+          (case statement-type
+            "if" [(str "if("
+                       (expression->glsl (first statement-args))
+                       ") {")
+                  1]
+            "else" ["else {" 0]
+            "for" [(str "for("
+                        (join "; "
+                              (map expression->glsl
+                                   (take 3 statement-args)))
+                        ") {")
+                   3])]
+      (concat (list (str block-start "\n"))
+              (map (partial str "  ")
+                   (mapcat statement->lines
+                           (drop consumed-statement-args statement-args)))
+              (list "}\n")))
+    (list (str (expression->glsl statement) ";\n"))))
 
 (defn int-literal? [x]
   (and (string? x)
@@ -159,7 +187,7 @@
        "\n"))
 
 (defn function-body->glsl [fn-body returns?]
-  (let [statement-strings (mapv statement->glsl fn-body)]
+  (let [statement-strings (vec (mapcat statement->lines fn-body))]
     (apply str
            (map (partial str "  ")
                 (cond-> statement-strings

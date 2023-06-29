@@ -28,8 +28,8 @@
 (defn init []
   #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
-  (sprog.dev.pixel-sort-demo/init)
-  #_(sprog.dev.physarum-demo/init)
+  #_(sprog.dev.pixel-sort-demo/init)
+  (sprog.dev.physarum-demo/init)
   #_(sprog.dev.simplex-demo/init)
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
