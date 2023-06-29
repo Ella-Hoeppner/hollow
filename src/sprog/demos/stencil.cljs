@@ -1,4 +1,4 @@
-(ns sprog.dev.stencil-demo
+(ns sprog.demos.stencil
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -55,6 +55,6 @@
     {}))
 
 (defn init []
-  (start-sprog! render!
-                nil
-                {:stencil? true}))
+  (js/window.addEventListener "load" #(start-sprog! render!
+                                                    nil
+                                                    {:stencil? true})))

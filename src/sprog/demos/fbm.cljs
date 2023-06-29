@@ -1,4 +1,4 @@
-(ns sprog.dev.fbm-demo
+(ns sprog.demos.fbm
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -39,4 +39,4 @@
      {"size" (canvas-resolution)})))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))

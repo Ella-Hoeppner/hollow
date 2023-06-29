@@ -1,4 +1,4 @@
-gaussianSamplegsupport for "do"
+support for "do"
 
 debuggability
   special logic for checking format of:

@@ -1,4 +1,4 @@
-(ns sprog.dev.video-demo
+(ns sprog.demos.video
   (:require [sprog.util :as u]
             [sprog.webgl.textures :refer [create-tex
                                           copy-html-image-data!]]
@@ -29,19 +29,22 @@
   state)
 
 (defn init []
-  (let [video (js/document.createElement "video")]
-    (set! video.src "./test_video.mp4")
-    (set! video.muted "muted")
-    (set! video.loop "true")
-    (.play video)
-    (.addEventListener
-     video
-     "timeupdate"
-     (let [started?-atom (atom false)]
-       #(or @started?-atom
-            (do (reset! started?-atom true)
-                (start-sprog!
-                 (fn [gl]
-                   {:texture (create-tex gl :f8 1)
-                    :video video})
-                 update-page!)))))))
+  (js/window.addEventListener
+   "load"
+   (fn []
+     (let [video (js/document.createElement "video")]
+       (set! video.src "./test_video.mp4")
+       (set! video.muted "muted")
+       (set! video.loop "true")
+       (.play video)
+       (.addEventListener
+        video
+        "timeupdate"
+        (let [started?-atom (atom false)]
+          #(or @started?-atom
+               (do (reset! started?-atom true)
+                   (start-sprog!
+                    (fn [gl]
+                      {:texture (create-tex gl :f8 1)
+                       :video video})
+                    update-page!)))))))))

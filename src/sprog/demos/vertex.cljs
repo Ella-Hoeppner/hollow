@@ -1,4 +1,4 @@
-(ns sprog.dev.vertex-demo
+(ns sprog.demos.vertex
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -58,5 +58,4 @@
                               (js/Float32Array. color-buffer-data)})}))
 
 (defn init []
-  (start-sprog! init-page!
-                update-page!))
+  (js/window.addEventListener "load" #(start-sprog! init-page! update-page!)))

@@ -1,4 +1,4 @@
-(ns sprog.dev.multi-texture-output-demo
+(ns sprog.demos.multi-texture-output
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -66,5 +66,6 @@
        :tex2 tex2})))
 
 (defn init []
-  (start-sprog! init-page!
-                update-page!))
+  (js/window.addEventListener "load"
+                              #(start-sprog! init-page!
+                                             update-page!)))

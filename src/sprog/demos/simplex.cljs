@@ -1,4 +1,4 @@
-(ns sprog.dev.simplex-demo
+(ns sprog.demos.simplex
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -53,4 +53,4 @@
                              "time" (u/seconds-since-startup)}))))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))

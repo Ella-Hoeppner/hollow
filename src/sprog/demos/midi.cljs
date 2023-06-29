@@ -1,4 +1,4 @@
-(ns sprog.dev.midi-demo
+(ns sprog.demos.midi
   (:require
    [sprog.util :as u]
    [sprog.input.midi :refer [add-midi-callback]]
@@ -86,8 +86,11 @@
   (update-states!))
 
 (defn init []
-  ; initialize midi and register midi event callback
-  (add-midi-callback midi-event-handler)
+  (js/window.addEventListener
+   "load"
+   (fn []
+     ; initialize midi and register midi event callback
+     (add-midi-callback midi-event-handler)
 
-  ;start update loop
-  (start-sprog! nil update-page!))
+     ; start update loop
+     (start-sprog! nil update-page!))))

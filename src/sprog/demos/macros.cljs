@@ -1,4 +1,4 @@
-(ns sprog.dev.macro-demo
+(ns sprog.demos.macros
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -36,4 +36,4 @@
                           {"size" (canvas-resolution)})))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))

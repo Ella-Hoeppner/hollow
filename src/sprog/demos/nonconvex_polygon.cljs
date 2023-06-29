@@ -1,4 +1,4 @@
-(ns sprog.dev.nonconvex-polygon-demo
+(ns sprog.demos.nonconvex-polygon
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -74,6 +74,6 @@
     {}))
 
 (defn init []
-  (start-sprog! render!
-                nil
-                {:stencil? true}))
+  (js/window.addEventListener "load" #(start-sprog! render! 
+                                                    nil
+                                                    {:stencil? true})))

@@ -1,4 +1,4 @@
-(ns sprog.dev.array-demo
+(ns sprog.demos.arrays
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -49,4 +49,4 @@
                         (u/prange 3 true))})))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))

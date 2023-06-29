@@ -1,4 +1,4 @@
-(ns sprog.dev.bilinear-demo
+(ns sprog.demos.bilinear
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -69,4 +69,4 @@
                            :data (js/Uint16Array. pixel-data)}))})
 
 (defn init []
-  (start-sprog! init-page! update-page!))
+  (js/window.addEventListener "load" #(start-sprog! init-page! update-page!)))

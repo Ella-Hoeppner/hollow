@@ -1,4 +1,4 @@
-(ns sprog.dev.hsv-demo
+(ns sprog.demos.hsv
   (:require [sprog.webgl.textures :refer [html-image-tex]]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -45,4 +45,4 @@
               (html-image-tex "img"))})
 
 (defn init []
-  (start-sprog! init-page! update-page!))
+  (js/window.addEventListener "load" #(start-sprog! init-page! update-page!)))

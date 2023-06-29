@@ -1,4 +1,4 @@
-(ns sprog.dev.webcam-demo
+(ns sprog.demos.webcam
   (:require [sprog.util :as u]
             [sprog.webgl.textures :refer [create-tex
                                           copy-html-image-data!
@@ -32,14 +32,17 @@
   state)
 
 (defn init []
-  (create-webcam-video-element
-   (fn [video]
-     (.addEventListener video
-                        "timeupdate"
-                        (let [started?-atom (atom false)]
-                          #(or @started?-atom
-                               (do (reset! started?-atom true)
-                                   (start-sprog!
-                                    (fn [gl] {:texture (create-tex gl :f8 1)
-                                              :video video})
-                                    update-page!))))))))
+  (js/window.addEventListener
+   "load"
+   (fn []
+     (create-webcam-video-element
+      (fn [video]
+        (.addEventListener video
+                           "timeupdate"
+                           (let [started?-atom (atom false)]
+                             #(or @started?-atom
+                                  (do (reset! started?-atom true)
+                                      (start-sprog!
+                                       (fn [gl] {:texture (create-tex gl :f8 1)
+                                                 :video video})
+                                       update-page!))))))))))

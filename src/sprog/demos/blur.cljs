@@ -1,4 +1,4 @@
-(ns sprog.dev.blur-demo
+(ns sprog.demos.blur
   (:require [sprog.util :as u]
             [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.kudzu.chunks.postprocessing 
@@ -80,4 +80,4 @@
               (html-image-tex "img"))})
 
 (defn init []
-  (start-sprog! init-page! update-page!))
+  (js/window.addEventListener "load" #(start-sprog! init-page! update-page!)))

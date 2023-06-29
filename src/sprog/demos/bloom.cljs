@@ -1,4 +1,4 @@
-(ns sprog.dev.bloom-demo
+(ns sprog.demos.bloom
   (:require [sprog.util :as u]
             [sprog.webgl.textures :refer [html-image-tex]]
             [sprog.dom.canvas :refer [maximize-gl-canvas
@@ -44,4 +44,4 @@
   {:texture (html-image-tex gl "img")})
 
 (defn init []
-  (start-sprog! init-page! update-page!))
+  (js/window.addEventListener "load" #(start-sprog! init-page! update-page!)))

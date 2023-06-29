@@ -1,4 +1,4 @@
-(ns sprog.dev.pixel-sort-demo
+(ns sprog.demos.pixel-sort
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -102,5 +102,6 @@
        :frame 0})))
 
 (defn init []
-  (start-sprog! init-page!
-                update-page!))
+  (js/window.addEventListener "load"
+                              #(start-sprog! init-page!
+                                             update-page!)))

@@ -1,4 +1,4 @@
-(ns sprog.dev.tilable-simplex-demo
+(ns sprog.demos.tilable-simplex
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -41,4 +41,4 @@
                            "mouse" (mouse-pos)})))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))

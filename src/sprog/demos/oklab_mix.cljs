@@ -1,4 +1,4 @@
-(ns sprog.dev.oklab-mix-demo
+(ns sprog.demos.oklab-mix
   (:require [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
@@ -38,4 +38,4 @@
                            "mouse" (mouse-pos)})))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))

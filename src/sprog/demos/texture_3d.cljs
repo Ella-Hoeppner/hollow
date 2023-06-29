@@ -1,4 +1,4 @@
-(ns sprog.dev.texture-3d-demo
+(ns sprog.demos.texture-3d
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -66,4 +66,4 @@
       {:texture tex})))
 
 (defn init []
-  (start-sprog! init-page! update-page!))
+  (js/window.addEventListener "load" #(start-sprog! init-page! update-page!)))

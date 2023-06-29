@@ -1,4 +1,4 @@
-(ns sprog.dev.gabor-demo
+(ns sprog.demos.gabor
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
@@ -44,4 +44,4 @@
       "time" (* 0.01 (u/seconds-since-startup))})))
 
 (defn init []
-  (start-sprog! nil update-page!))
+  (js/window.addEventListener "load" #(start-sprog! nil update-page!)))
