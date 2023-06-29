@@ -245,13 +245,13 @@
                 fn-definition))))
 
 (defn processed-kudzu->glsl [{:keys [precision
-                                    uniforms
-                                    layout
-                                    inputs
-                                    outputs
-                                    structs
-                                    defines
-                                    functions]}]
+                                     uniforms
+                                     layout
+                                     inputs
+                                     outputs
+                                     structs
+                                     defines
+                                     functions]}]
   (apply str
          (flatten
           ["#version 300 es\n"

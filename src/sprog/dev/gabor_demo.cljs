@@ -6,7 +6,7 @@
             [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.kudzu.chunks.noise :refer [gabor-noise-chunk]]
             [sprog.kudzu.chunks.misc :refer [pos-chunk]]
-            [sprog.webgl.core 
+            [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 

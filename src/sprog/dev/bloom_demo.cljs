@@ -6,7 +6,7 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.kudzu.chunks.postprocessing :refer [get-bloom-chunk
-                                                      square-neighborhood]]
+                                                       square-neighborhood]]
             [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]

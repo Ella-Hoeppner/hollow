@@ -7,7 +7,7 @@
             [sprog.webgl.textures :refer [create-tex]]
             [sprog.kudzu.chunks.noise :refer [rand-chunk]]
             [sprog.kudzu.chunks.particles :refer [particle-vert-source
-                                                 particle-frag-source]]
+                                                  particle-frag-source]]
             [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
@@ -174,14 +174,14 @@
                        :as state}]
   (let [[front-tex back-tex] agent-textures
         substrate-tex (first substrate-textures)]
-   (with-context gl
-     (run-purefrag-shader! agent-logic-frag-source
-                           agent-tex-resolution
-                           {"randomizeChance" randomize-chance
-                            "time" (u/seconds-since-startup)
-                            "substrate" substrate-tex
-                            "agentTex" front-tex}
-                           {:target back-tex})))
+    (with-context gl
+      (run-purefrag-shader! agent-logic-frag-source
+                            agent-tex-resolution
+                            {"randomizeChance" randomize-chance
+                             "time" (u/seconds-since-startup)
+                             "substrate" substrate-tex
+                             "agentTex" front-tex}
+                            {:target back-tex})))
   (update state :agent-textures reverse))
 
 (defn update-substrate! [{:keys [gl substrate-textures agent-textures]
@@ -200,7 +200,7 @@
                     (* 6 agent-tex-resolution agent-tex-resolution)
                     {:target front-tex})
 
-      (run-purefrag-shader! substrate-logic-frag-source 
+      (run-purefrag-shader! substrate-logic-frag-source
                             substrate-resolution
                             {"substrate" front-tex}
                             {:target back-tex})))

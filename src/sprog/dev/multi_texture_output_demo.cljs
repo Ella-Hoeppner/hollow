@@ -67,4 +67,4 @@
 
 (defn init []
   (start-sprog! init-page!
-               update-page!))
+                update-page!))

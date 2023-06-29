@@ -4,7 +4,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.kudzu.chunks.noise :refer [simplex-2d-chunk
-                                             simplex-3d-chunk]]
+                                              simplex-3d-chunk]]
             [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
@@ -33,7 +33,7 @@
                 time float}
      :outputs {fragColor vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
-            (=float noiseValue (* (+ (snoise3D (vec3 (* pos 10) time)) 
+            (=float noiseValue (* (+ (snoise3D (vec3 (* pos 10) time))
                                      1)
                                   0.5))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))

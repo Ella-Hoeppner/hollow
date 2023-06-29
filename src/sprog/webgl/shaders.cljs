@@ -25,7 +25,7 @@
                  digit-count (count (str (count lines)))]
              (join "\n"
                    (map #(str (apply str (take (inc digit-count)
-                                               (concat (str %2) 
+                                               (concat (str %2)
                                                        (list ":")
                                                        (repeat " "))))
                               " "
@@ -85,7 +85,7 @@
                                                   3 -1]))})))
   (@purefrag-vert-pos-bojs-atom gl))
 
-(defn create-purefrag-sprog [gl frag-source] 
+(defn create-purefrag-sprog [gl frag-source]
   (let [sprog (create-sprog gl purefrag-vert-glsl frag-source)]
     (set-sprog-attribute! gl
                           sprog
@@ -134,7 +134,7 @@
         autosprog))))
 
 (defn run-shaders! [gl sources size uniform-map attribute-map start length
-                      & [options]]
+                    & [options]]
   (run-sprog! gl
               (get-autosprog gl sources)
               size

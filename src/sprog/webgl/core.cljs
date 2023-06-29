@@ -15,7 +15,7 @@
 
 (defn start-sprog! [init-fn-or-value
                     update-fn
-                    & [{:keys [canvas 
+                    & [{:keys [canvas
                                name
                                append-to-body?
                                preserve-drawing-buffer?
@@ -26,7 +26,7 @@
     (.removeChild old-canvas.parentNode old-canvas))
   (when (nil? @sprogs-atom) (update-sprogs!))
   (let [gl (if canvas
-             (get-context canvas 
+             (get-context canvas
                           {"preserveDrawingBuffer"
                            (boolean preserve-drawing-buffer?)
                            "stencil"

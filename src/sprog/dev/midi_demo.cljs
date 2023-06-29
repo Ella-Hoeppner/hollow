@@ -7,9 +7,9 @@
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]
    [sprog.kudzu.chunks.misc :refer [pos-chunk
-                                   rescale-chunk]]
+                                    rescale-chunk]]
    [sprog.kudzu.chunks.noise :refer [simplex-3d-chunk]]
-   [sprog.webgl.core 
+   [sprog.webgl.core
     :refer-macros [with-context]
     :refer [start-sprog!]]))
 
@@ -39,7 +39,7 @@
                 noiseScale float}
      :outputs {fragColor vec4}
      :main ((=vec2 pos (getPos))
-            
+
             ; determine if current pixel is inside or outside noisey circle
             (=float circleValue
                     (->> pos
@@ -55,10 +55,10 @@
             ; define colors
             (=vec3 background (mix (vec3 0.529 0.807 0.921) (vec3 1) pos.y))
             (=vec3 circleInterior (vec3 0.760 0.698 0.501))
-            
+
             ; tween background and circle color
             (=vec3 col (mix background circleInterior circleValue))
-            
+
             ; output to pixel 
             (= fragColor (vec4 col 1)))}))
 
@@ -76,9 +76,9 @@
       "noiseScale" (u/scale 0 0.05 @noise-scale-atom)})))
 
 (defn update-states! []
-  (swap! circle-radius-atom 
+  (swap! circle-radius-atom
          #(u/scale % @circle-radius-target-atom smooth-factor))
-  (swap! noise-scale-atom 
+  (swap! noise-scale-atom
          #(u/scale % @noise-scale-target-atom smooth-factor)))
 
 (defn update-page! [{:keys [gl]}]
@@ -88,6 +88,6 @@
 (defn init []
   ; initialize midi and register midi event callback
   (add-midi-callback midi-event-handler)
-  
+
   ;start update loop
   (start-sprog! nil update-page!))

@@ -1,3 +1,17 @@
+gaussianSamplegsupport for "do"
+
+debuggability
+  special logic for checking format of:
+    uniforms
+    layout
+    structs
+    defines
+    ins/outs
+    precision
+  for functions
+    compile line by line, catch errors on individual lines, print failed line
+
+
 new features once parity is reached:
   prefix statements
   inouts
