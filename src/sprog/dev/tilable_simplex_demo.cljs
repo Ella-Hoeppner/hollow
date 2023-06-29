@@ -4,7 +4,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.core
              :refer-macros [with-context]

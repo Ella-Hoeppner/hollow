@@ -1,6 +1,6 @@
 (ns sprog.webgl.shaders
   (:require [sprog.util :as u]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.iglu.chunks.misc :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
             [sprog.webgl.textures :refer [target-textures!

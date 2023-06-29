@@ -3,17 +3,20 @@
             sprog.dev.multi-texture-output-demo
             sprog.dev.pixel-sort-demo
             sprog.dev.physarum-demo
-            sprog.dev.simplex-demo))
+            sprog.dev.simplex-demo
+            sprog.dev.tilable-simplex-demo
+            sprog.dev.macro-demo
+            sprog.dev.bilinear-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.physarum-demo/init)
-  (sprog.dev.simplex-demo/init)
+  #_(sprog.dev.simplex-demo/init)
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
-  #_(sprog.dev.bilinear-demo/init)
+  (sprog.dev.bilinear-demo/init)
   #_(sprog.dev.vertex-demo/init)
   #_(sprog.dev.voronoise-demo/init)
   #_(sprog.dev.video-demo/init)

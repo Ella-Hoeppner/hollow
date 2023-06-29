@@ -4,11 +4,12 @@
 
 (def gaussian-chunk
   '{:functions
-    {gaussian {([vec2 float] float)
-               ([offset sigma]
-                (=vec2 scaledOffset (/ offset sigma))
-                (/ (exp (* -0.5 (dot scaledOffset scaledOffset)))
-                   (* 6.28 (pow sigma 2))))}}})
+    {gaussian (float
+               [offset vec2
+                sigma float]
+               (=vec2 scaledOffset (/ offset sigma))
+               (/ (exp (* -0.5 (dot scaledOffset scaledOffset)))
+                  (* 6.28 (pow sigma 2))))}})
 
 (defn plus-neighborhood [radius & [skip-factor]]
   (conj (set
@@ -70,28 +71,31 @@
                      'usampler2D)}
     {:functions
      {'gaussianSample
-      {'([:sampler-type vec2 vec2 float] vec4)
-       (concat
-        '([tex pos offsetFactor sigma]
-          (=vec4 sampleSum (vec4 0))
-          (=float factorSum 0)
-          (=vec2 offset (vec2 0))
-          (=float factor 0))
-        (mapcat (fn [[x y]]
-                  (postwalk-replace
-                   {:x x
-                    :y y}
-                   '((= offset (vec2 :x :y))
-                     (= factor (gaussian offset sigma))
-                     (+= factorSum factor)
-                     (+= sampleSum
-                         (* factor
-                            (vec4
-                             (texture tex
-                                      (+ pos
-                                         (* offsetFactor offset)))))))))
-                neighborhood)
-        '((/ sampleSum factorSum)))}}})))
+      (concat
+       '(vec4
+         [tex :sampler-type
+          pos vec2
+          offsetFactor vec2
+          sigma float]
+         (=vec4 sampleSum (vec4 0))
+         (=float factorSum 0)
+         (=vec2 offset (vec2 0))
+         (=float factor 0))
+       (mapcat (fn [[x y]]
+                 (postwalk-replace
+                  {:x x
+                   :y y}
+                  '((= offset (vec2 :x :y))
+                    (= factor (gaussian offset sigma))
+                    (+= factorSum factor)
+                    (+= sampleSum
+                        (* factor
+                           (vec4
+                            (texture tex
+                                     (+ pos
+                                        (* offsetFactor offset)))))))))
+               neighborhood)
+       '((/ sampleSum factorSum)))}})))
 
 (defn get-bloom-chunk [texture-type neighborhood sigma]
   (postwalk-replace
@@ -108,10 +112,12 @@
                          neighborhood
                          sigma)}
    '{:functions
-     {bloom
-      {([:sampler-type vec2 float float]  vec4)
-       ([tex pos step intensity]
-        (=vec4 sum :gaussian-expresion)
-        (vec4 (/ (+ (* sum intensity)
-                    (vec4 (texture tex pos)))
-                 :divisor)))}}}))
+     (vec4
+      [tex :sampler-type
+       pos vec2
+       step float
+       intensity float]
+      (=vec4 sum :gaussian-expresion)
+      (vec4 (/ (+ (* sum intensity)
+                  (vec4 (texture tex pos)))
+               :divisor)))}))
