@@ -148,7 +148,7 @@
                    ")")))))
 
 (defn is-statement-block? [statement]
-  (and (list? statement)
+  (and (seq? statement)
        (#{"if" :if 
           "else" :else
           "else-if" "else if" "elseif" "elif" :else-if :elseif :elif
@@ -199,7 +199,11 @@
                    (mapcat statement->lines
                            (drop consumed-statement-args statement-args)))
               (list "}\n")))
-    (list (str (expression->glsl statement) ";\n"))))
+    (if (and (seq? statement)
+             (= (first statement) 'do))
+      (mapcat statement->lines
+              (rest statement))
+      (list (str (expression->glsl statement) ";\n")))))
 
 (defn int-literal? [x]
   (and (string? x)

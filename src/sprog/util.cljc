@@ -86,7 +86,7 @@
                       (doall
                        (prewalk
                         (fn [subform]
-                          (if (and (list? subform)
+                          (if (and (seq? subform)
                                    (= (first subform)
                                       'clojure.core/unquote))
                             (let [replacement-binding (keyword (gensym))]
@@ -103,7 +103,7 @@
                               (replace-quotes inlined-replacements-form)))))
                (replace-quotes
                 [form]
-                (if (and (list? form)
+                (if (and (seq? form)
                          (= (first form)
                             quote-replacement))
                   (let [subform (second form)]

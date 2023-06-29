@@ -19,3 +19,4 @@ new features once parity is reached:
 rather than always keeping the first implementation when fn signatures conflict,
   if the implementations are exactly the same then just only emit one
   if the implementations aren't exactly the same, throw an error
+  test this on gabor demo
