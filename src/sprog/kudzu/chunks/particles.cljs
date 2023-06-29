@@ -7,7 +7,7 @@
                                   :f8)
                              'sampler2D
                              'usampler2D)
-         vec-type (if (= texture-type 
+         vec-type (if (= texture-type
                          :f8)
                     '=vec4
                     '=uvec4)
@@ -69,59 +69,59 @@
        :outputs {fragColor ~output-type}
        :main ((=vec2 pos (/ gl_FragCoord.xy size))
               (=float dist (distance pos particlePos))
-              ("if" (> dist radius)
-                    "discard")
+              (:if (> dist radius)
+                   "discard")
               (= fragColor (~output-type ~texture-max 0 0 ~texture-max)))})))
 
- (def particle-vert-3d-source-u32
-   '{:uniforms {time float
-                radius float
-                perspective mat4
-                particleTex usampler2D
-                cubeDistance float}
-     :outputs {squarePos vec2
-               vertexPos vec3}
-     :main
-     ((=int particleIndex (/ gl_VertexID "6"))
-      (=int corner (% gl_VertexID "6"))
+(def particle-vert-3d-source-u32
+  '{:uniforms {time float
+               radius float
+               perspective mat4
+               particleTex usampler2D
+               cubeDistance float}
+    :outputs {squarePos vec2
+              vertexPos vec3}
+    :main
+    ((=int particleIndex (/ gl_VertexID "6"))
+     (=int corner (% gl_VertexID "6"))
 
-      (= squarePos
-         (vec2 (if (|| (== corner "0")
-                       (== corner "3")
-                       (== corner "2"))
-                 -1
-                 1)
-               (if (|| (== corner "1")
-                       (== corner "4")
-                       (== corner "2"))
-                 -1
-                 1)))
+     (= squarePos
+        (vec2 (if (|| (== corner "0")
+                      (== corner "3")
+                      (== corner "2"))
+                -1
+                1)
+              (if (|| (== corner "1")
+                      (== corner "4")
+                      (== corner "2"))
+                -1
+                1)))
 
-      (=ivec2 texSize (textureSize particleTex "0"))
+     (=ivec2 texSize (textureSize particleTex "0"))
 
-      (=uvec4 particleTexColor
-              (texelFetch particleTex
-                          (ivec2 (% particleIndex texSize.x)
-                                 (/ particleIndex texSize.x))
-                          "0"))
-      (=vec3 particlePos
-             (-> particleTexColor
-                 .xyz
-                 vec3
-                 (/ ~(dec (Math/pow 2 32)))
-                 (* 2)
-                 (- 1)))
+     (=uvec4 particleTexColor
+             (texelFetch particleTex
+                         (ivec2 (% particleIndex texSize.x)
+                                (/ particleIndex texSize.x))
+                         "0"))
+     (=vec3 particlePos
+            (-> particleTexColor
+                .xyz
+                vec3
+                (/ ~(dec (Math/pow 2 32)))
+                (* 2)
+                (- 1)))
 
-      (= vertexPos
-         (vec3 (+ particlePos.xy
-                  (* radius
-                     squarePos))
-               (- particlePos.z
-                  (+ 1 cubeDistance))))
+     (= vertexPos
+        (vec3 (+ particlePos.xy
+                 (* radius
+                    squarePos))
+              (- particlePos.z
+                 (+ 1 cubeDistance))))
 
-      (= gl_Position (* (vec4 vertexPos 1)
-                        perspective))
-      (= gl_Position (/ gl_Position gl_Position.w)))})
+     (= gl_Position (* (vec4 vertexPos 1)
+                       perspective))
+     (= gl_Position (/ gl_Position gl_Position.w)))})
 
 (def particle-frag-3d-source-u32
   '{:uniforms {size vec2
@@ -133,7 +133,7 @@
     :outputs {fragColor vec4}
     :main
     ((=float horizontalDist (length squarePos))
-     ("if" (> horizontalDist 1) "discard")
+     (:if (> horizontalDist 1) "discard")
      (=float depthDist (sqrt (- 1 (* horizontalDist horizontalDist))))
      (=vec3 surfacePos
             (- vertexPos

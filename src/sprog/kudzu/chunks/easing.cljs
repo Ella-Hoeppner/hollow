@@ -4,15 +4,15 @@
 ; From Inigo Quilez's "Remapping Functions" article
 ; https://iquilezles.org/articles/functions/
 
-(def cubic-identity 
-  '{:functions 
+(def cubic-identity
+  '{:functions
     {cubic-identity
      (float
       [x float
        m float
        n float]
-      ("if" (> x m)
-            (return x))
+      (:if (> x m)
+           (return x))
       (=float a (- (* 2 n)
                    m))
       (=float b (- (* 2 m)
@@ -24,7 +24,7 @@
             t)
          n))}})
 
-(def sqrt-identity-chunk 
+(def sqrt-identity-chunk
   '{:functions
     {square-identity
      (float
@@ -33,21 +33,21 @@
       (sqrt (+ (* x x)
                n)))}})
 
-(def smooth-unit-identity-chunk 
-  '{:functions 
+(def smooth-unit-identity-chunk
+  '{:functions
     {smooth-identity
      (float
       [x float]
       (* x x (- 2 x)))}})
 
 (def smoothstep-integral-chunk
-  '{:functions 
+  '{:functions
     {integral-smoothstep
      (float
       [x float
        t float]
-      ("if" (> x t)
-            (return (- x (/ t 2))))
+      (:if (> x t)
+           (return (- x (/ t 2))))
       (* x
          x
          x
@@ -57,7 +57,7 @@
             t)))}})
 
 (def exponential-impulse-chunk
-  '{:functions 
+  '{:functions
     {expo-impulse
      (float
       [x float
@@ -87,8 +87,8 @@
              (* k
                 (pow x n)))))]}})
 
-(def sustained-impulse-chunk 
-  '{:functions 
+(def sustained-impulse-chunk
+  '{:functions
     {sustain-impulse
      (float
       [x float
@@ -103,16 +103,16 @@
                  (exp (* "-k"
                          s))))))}})
 
-(def cubic-pulse-chunk 
-  '{:functions 
+(def cubic-pulse-chunk
+  '{:functions
     {cubic-pulse
      (float
       [c float
        w float
        x float]
       (= x (abs (- x c)))
-      ("if" (> x w)
-            (return 0))
+      (:if (> x w)
+           (return 0))
       (= x (/ x w))
       (- 1
          (* x
@@ -148,8 +148,8 @@
         a
         (- 1 a)))}})
 
-(def parabola-chunk 
-  '{:functions 
+(def parabola-chunk
+  '{:functions
     {parabola
      (float
       [x float
@@ -158,7 +158,7 @@
            k))}})
 
 (def power-curve-chunk
-  '{:functions 
+  '{:functions
     {power-curve
      (float
       [x float
@@ -173,7 +173,7 @@
             (pow (- 1 x)
                  b))))}})
 
-(def sinc-chunk 
+(def sinc-chunk
   (u/unquotable
    '{:functions
      {sinc
@@ -186,8 +186,8 @@
        (/ (sin a)
           abs))}}))
 
-(def quadratic-falloff-chunk 
-  '{:functions 
+(def quadratic-falloff-chunk
+  '{:functions
     {falloff
      (float
       [x float

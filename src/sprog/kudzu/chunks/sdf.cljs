@@ -179,27 +179,28 @@
 
 
 ;TODO fix this, cannot figure out what's wrong w it -Fay
-#_(def octahedron-sdf-chunk '{:functions {sdOctahedron
-                                        {([vec3 vec3 float] float)
-                                         ([pos octaPos s]
-                                          (= pos (abs (- pos octaPos)))
+#_(def octahedron-sdf-chunk
+    '{:functions {sdOctahedron
+                  {([vec3 vec3 float] float)
+                   ([pos octaPos s]
+                    (= pos (abs (- pos octaPos)))
 
-                                          (=float m (- (+ pos.x pos.y pos.z) s))
-                                          (=vec3 q (vec3 0))
-                                          ("if" (< (* pos.x 3) m)
-                                                (= q pos))
-                                          ("else if" (< (* pos.y 3) m)
-                                                     (= q pos.yzx))
-                                          ("else if" (< (* pos.z 3) m)
-                                                     (= q pos.zxy))
-                                          ("else" (return (* m 0.57735027)))
+                    (=float m (- (+ pos.x pos.y pos.z) s))
+                    (=vec3 q (vec3 0))
+                    ("if" (< (* pos.x 3) m)
+                          (= q pos))
+                    ("else if" (< (* pos.y 3) m)
+                               (= q pos.yzx))
+                    ("else if" (< (* pos.z 3) m)
+                               (= q pos.zxy))
+                    ("else" (return (* m 0.57735027)))
 
-                                          (=float k (clamp (* 0.5 (- q.z (+ q.y s)))
-                                                           0
-                                                           s))
-                                          (length (vec3 q.x
-                                                        (- q.y (+ s k))
-                                                        (- q.z k))))}}})
+                    (=float k (clamp (* 0.5 (- q.z (+ q.y s)))
+                                     0
+                                     s))
+                    (length (vec3 q.x
+                                  (- q.y (+ s k))
+                                  (- q.z k))))}}})
 
 (def pyramid-sdf-chunk '{:functions
                          {sdPyramid

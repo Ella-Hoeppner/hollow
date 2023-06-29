@@ -14,29 +14,29 @@
 
 (def rand-normal-chunk
   (combine-chunks rand-chunk
-                '{:functions
-                  {randNorm
-                   {([vec2] vec2)
-                    ([x]
-                     (=float angle (* 6.283185307179586 (rand x)))
-                     (=float radius
-                             (sqrt (* -2 (log (rand (+ x (vec2 100 -50)))))))
-                     (* radius (vec2 (cos angle) (sin angle))))}}}))
+                  '{:functions
+                    {randNorm
+                     {([vec2] vec2)
+                      ([x]
+                       (=float angle (* 6.283185307179586 (rand x)))
+                       (=float radius
+                               (sqrt (* -2 (log (rand (+ x (vec2 100 -50)))))))
+                       (* radius (vec2 (cos angle) (sin angle))))}}}))
 
 (def rand-sphere-chunk
   (combine-chunks rand-normal-chunk
-                '{:functions
-                  {randSphere
-                   (vec3
-                    [x vec3]
-                    (=vec2 norm1 (randNorm x.xy))
-                    (=vec2 norm2 (randNorm (+ x.yz (vec2 -153 0))))
+                  '{:functions
+                    {randSphere
+                     (vec3
+                      [x vec3]
+                      (=vec2 norm1 (randNorm x.xy))
+                      (=vec2 norm2 (randNorm (+ x.yz (vec2 -153 0))))
 
-                    (* (vec3 norm1 norm2.x)
-                       (/ (pow (rand (+ x.zx (vec2 -101 60))) (/ 1 3))
-                          (sqrt (+ (* norm1.x norm1.x)
-                                   (* norm1.y norm1.y)
-                                   (* norm2.x norm2.x))))))}}))
+                      (* (vec3 norm1 norm2.x)
+                         (/ (pow (rand (+ x.zx (vec2 -101 60))) (/ 1 3))
+                            (sqrt (+ (* norm1.x norm1.x)
+                                     (* norm1.y norm1.y)
+                                     (* norm2.x norm2.x))))))}}))
 
 ;pcg hash based on https://github.com/riccardoscalco/glsl-pcg-prng
 (def pcg-hash-chunk
@@ -379,7 +379,7 @@
 (def fbm-chunk
   (u/unquotable
    {:macros
-    {'fbm (fn [noise-fn 
+    {'fbm (fn [noise-fn
                noise-dimensions
                x
                octaves
@@ -404,13 +404,13 @@
                    (=float f 1)
                    (=float a 1)
                    (=float t 0)
-                   ("for" (=int i "0") (< i octaves) (++ i)
-                          (+= t (* a
-                                   ~(concat (list noise-fn
-                                                  '(* f x))
-                                            noise-suffix-args)))
-                          (*= f 2)
-                          (*= a g))
+                   (:for (=int i "0") (< i octaves) (++ i)
+                         (+= t (* a
+                                  ~(concat (list noise-fn
+                                                 '(* f x))
+                                           noise-suffix-args)))
+                         (*= f 2)
+                         (*= a g))
                    t)}}
                :expression (list fbm-symbol x octaves hurst-exponent)}))}}))
 
@@ -432,18 +432,18 @@
                            (=vec2 f (fract p))
 
                            (=vec2 a (vec2 0))
-                           ("for" (=int y "-2") (<= y "2") (++ y)
-                            ("for" (=int x "-2") (<= x "2") (++ x)
-                             (=vec2 g (vec2 x y))
-                             (=vec3 o (* (hash3 (+ i g))
-                                         (vec3 skew skew 1)))
-                             (=vec2 d (- g (+ f o.xy)))
-                             (=float w (pow (- 1
-                                               (smoothstep 0
-                                                           1.414
-                                                           (length d)))
-                                            k))
-                             (+= a (vec2 (* o.z w) w))))
+                           (:for (=int y "-2") (<= y "2") (++ y)
+                                 (:for (=int x "-2") (<= x "2") (++ x)
+                                       (=vec2 g (vec2 x y))
+                                       (=vec3 o (* (hash3 (+ i g))
+                                                   (vec3 skew skew 1)))
+                                       (=vec2 d (- g (+ f o.xy)))
+                                       (=float w (pow (- 1
+                                                         (smoothstep 0
+                                                                     1.414
+                                                                     (length d)))
+                                                      k))
+                                       (+= a (vec2 (* o.z w) w))))
                            (/ a.x a.y))}})
 
 ; based on https://www.shadertoy.com/view/ldl3Dl by Inigo Quilez
@@ -462,20 +462,20 @@
 
                   (=float id 0)
                   (=vec2 res (vec2 100))
-                  ("for (int k = -1; k <= 1; k++)"
-                   ("for (int j = -1; j <= 1; j++)"
-                    ("for (int i = -1; i <= 1; i++)"
-                     (=vec3 b (vec3 (float i)
-                                    (float j)
-                                    (float k)))
-                     (=vec3 r (- b (- f (hash (+ p b)))))
-                     (=float d (dot r r))
+                  (:for (=int k "-1") (<= k "1") (++ k)
+                        (:for (=int j "-1") (<= j "1") (++ i)
+                              (:for (=int i "-1") (<= i "1") (++ i)
+                                    (=vec3 b (vec3 (float i)
+                                                   (float j)
+                                                   (float k)))
+                                    (=vec3 r (- b (- f (hash (+ p b)))))
+                                    (=float d (dot r r))
 
-                     ("if" (< d res.x)
-                           (= id (dot (+ p b) (vec3 1 57 113)))
-                           (= res (vec2 d res.x)))
-                     ("else if" (< d res.y)
-                                (= res.y d)))))
+                                    (:if (< d res.x)
+                                         (= id (dot (+ p b) (vec3 1 57 113)))
+                                         (= res (vec2 d res.x)))
+                                    ("else if" (< d res.y)
+                                               (= res.y d)))))
                   (vec3 (sqrt res) (abs id)))}})
 
 ; based on "Gabor Noise by Example" section 3.3
