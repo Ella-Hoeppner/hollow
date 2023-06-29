@@ -25,6 +25,5 @@
      {"size" (canvas-resolution)})))
 
 (defn init []
-  (u/log "GEY")
   (js/window.addEventListener "load"
                               #(start-sprog! nil update-page!)))

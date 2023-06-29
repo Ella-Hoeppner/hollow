@@ -55,13 +55,15 @@
 (def modifying-assigners
   '#{+= *= -= "/="})
 
-(defn expression->glsl [expression & [context-map]]
+(defn expression->glsl [expression]
   (cond
     (symbol? expression) (clj-name->glsl expression)
 
     (number? expression) (num->glsl expression)
 
     (string? expression) expression
+
+    (boolean? expression) (str expression)
 
     (vector? expression)
     (if (= (count expression) 2)
@@ -145,24 +147,30 @@
 
 (defn is-statement-block? [statement]
   (and (list? statement)
-       (#{"if" "else" "for"} (first statement))))
+       (#{"if" :if "else" :else "while" :while "for" :for "block" :block}
+        (first statement))))
 
 (defn statement->lines [statement]
   (if (is-statement-block? statement)
     (let [[statement-type & statement-args] statement
           [block-start consumed-statement-args]
-          (case statement-type
-            "if" [(str "if("
-                       (expression->glsl (first statement-args))
+          (case (keyword statement-type)
+            :if [(str "if ("
+                      (expression->glsl (first statement-args))
+                      ") {")
+                 1]
+            :while [(str "while ("
+                         (expression->glsl (first statement-args))
+                         ") {")
+                    1]
+            :else ["else {" 0]
+            :for [(str "for ("
+                       (join "; "
+                             (map expression->glsl
+                                  (take 3 statement-args)))
                        ") {")
-                  1]
-            "else" ["else {" 0]
-            "for" [(str "for("
-                        (join "; "
-                              (map expression->glsl
-                                   (take 3 statement-args)))
-                        ") {")
-                   3])]
+                  3]
+            :block ["{" 0])]
       (concat (list (str block-start "\n"))
               (map (partial str "  ")
                    (mapcat statement->lines
