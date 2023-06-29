@@ -1,10 +1,9 @@
-(ns sprog.diglu.core
+(ns sprog.kudzu.core
   (:require [sprog.util :as u]
-            [sprog.iglu.core :as old-iglu-core]
-            [sprog.diglu.compiler :refer [processed-iglu->glsl]]
+            [sprog.kudzu.compiler :refer [processed-kudzu->glsl]]
             [clojure.walk :refer [prewalk-replace
                                   prewalk]]
-            [sprog.iglu.macros :refer [default-macros]]))
+            [sprog.kudzu.macros :refer [default-macros]]))
 
 (defn combine-chunks [& chunks]
   (let [merged-functions
@@ -95,9 +94,9 @@
       apply-macros
       strip-redefines))
 
-(defn iglu->glsl
+(defn kudzu->glsl
   ([shader] (->> shader
                  preprocess
-                 processed-iglu->glsl))
+                 processed-kudzu->glsl))
   ([first-chunk & other-chunks]
-   (iglu->glsl (apply combine-chunks (cons first-chunk other-chunks)))))
+   (kudzu->glsl (apply combine-chunks (cons first-chunk other-chunks)))))

@@ -3,15 +3,15 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.diglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
-            [sprog.iglu.chunks.misc :refer [pos-chunk]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [sprog.kudzu.chunks.noise :refer [gabor-noise-chunk]]
+            [sprog.kudzu.chunks.misc :refer [pos-chunk]]
             [sprog.webgl.core 
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-glsl
-  (iglu->glsl
+  (kudzu->glsl
    pos-chunk
    gabor-noise-chunk
    (u/unquotable

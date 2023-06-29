@@ -1,4 +1,4 @@
-(ns sprog.iglu.chunks.particles
+(ns sprog.kudzu.chunks.particles
   (:require [sprog.util :as u]))
 
 (defn particle-vert-source [texture-type]

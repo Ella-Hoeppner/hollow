@@ -26,7 +26,7 @@
             sprog.dev.nonconvex-polygon-demo))
 
 (defn init []
-  #_(sprog.dev.basic-demo/init)
+  (sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
   #_(sprog.dev.physarum-demo/init)
@@ -47,7 +47,7 @@
   #_(sprog.dev.fbm-demo/init)
   #_(sprog.dev.midi-demo/init)
   #_(sprog.dev.raymarch-demo/init)
-  (sprog.dev.array-demo/init)
+  #_(sprog.dev.array-demo/init)
   #_(sprog.dev.stencil-demo/init)
   #_(sprog.dev.pcg-demo/init)
   #_(sprog.dev.nonconvex-polygon-demo/init))

@@ -1,6 +1,3 @@
-array initialization?
-
 new features once parity is reached:
-  better array initialization syntax
   prefix statements
   inouts

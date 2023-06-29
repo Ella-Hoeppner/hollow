@@ -3,15 +3,15 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.iglu.chunks.noise :refer [tileable-simplex-2d-chunk]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.chunks.noise :refer [tileable-simplex-2d-chunk]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-source
-  (iglu->glsl
+  (kudzu->glsl
    tileable-simplex-2d-chunk
    '{:version "300 es"
      :precision {float highp}

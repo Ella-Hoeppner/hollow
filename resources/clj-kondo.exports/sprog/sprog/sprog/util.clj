@@ -3,7 +3,7 @@
                                   prewalk-replace]]))
 
 (defmacro unquotable [expression]
-  (let [quote-replacement (gensym 'IGLU_REPLACED_QUOTE)]
+  (let [quote-replacement (gensym 'kudzu_REPLACED_QUOTE)]
     (letfn [(inline-unquotes
               [form]
               (let [replacement-map-atom (atom {})

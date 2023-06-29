@@ -5,10 +5,10 @@
             [sprog.webgl.shaders :refer [run-shaders!
                                          run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.iglu.chunks.noise :refer [rand-chunk]]
-            [sprog.iglu.chunks.particles :refer [particle-vert-source
+            [sprog.kudzu.chunks.noise :refer [rand-chunk]]
+            [sprog.kudzu.chunks.particles :refer [particle-vert-source
                                                  particle-frag-source]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -29,8 +29,8 @@
 
 (def ambient-randomize-chance 0)
 
-(def iglu-wrapper
-  (partial iglu->glsl
+(def kudzu-wrapper
+  (partial kudzu->glsl
            {:macros
             {:rand (fn [minimum maximum]
                      (+ minimum (rand (- maximum minimum))))}
@@ -59,7 +59,7 @@
                      (/ :u16-max)))}})
 
 (def render-frag-source
-  (iglu-wrapper
+  (kudzu-wrapper
    substrate-sample-chunk
    '{:version "300 es"
      :precision {float highp}
@@ -73,7 +73,7 @@
                                1)))}))
 
 (def substrate-logic-frag-source
-  (iglu-wrapper
+  (kudzu-wrapper
    substrate-sample-chunk
    '{:version "300 es"
      :precision {float highp}
@@ -111,7 +111,7 @@
                 0)))}))
 
 (def agent-logic-frag-source
-  (iglu-wrapper
+  (kudzu-wrapper
    rand-chunk
    substrate-sample-chunk
    '{:version "300 es"
@@ -189,8 +189,8 @@
   (let [[front-tex back-tex] substrate-textures
         agent-tex (first agent-textures)]
     (with-context gl
-      (run-shaders! [(iglu->glsl (particle-vert-source :u16))
-                     (iglu->glsl (particle-frag-source :u16))]
+      (run-shaders! [(kudzu->glsl (particle-vert-source :u16))
+                     (kudzu->glsl (particle-frag-source :u16))]
                     substrate-resolution
                     {"particleTex" agent-tex
                      "size" substrate-resolution

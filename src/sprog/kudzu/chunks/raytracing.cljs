@@ -1,7 +1,7 @@
-(ns sprog.iglu.chunks.raytracing
+(ns sprog.kudzu.chunks.raytracing
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [combine-chunks]]))
+            [sprog.kudzu.core :refer [combine-chunks]]))
 
 (def ray-chunk
   '{:structs {Ray [pos vec3

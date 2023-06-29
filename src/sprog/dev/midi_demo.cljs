@@ -2,13 +2,13 @@
   (:require
    [sprog.util :as u]
    [sprog.input.midi :refer [add-midi-callback]]
-   [sprog.diglu.core :refer [iglu->glsl]]
+   [sprog.kudzu.core :refer [kudzu->glsl]]
    [sprog.dom.canvas :refer [maximize-gl-canvas
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-   [sprog.iglu.chunks.misc :refer [pos-chunk
+   [sprog.kudzu.chunks.misc :refer [pos-chunk
                                    rescale-chunk]]
-   [sprog.iglu.chunks.noise :refer [simplex-3d-chunk]]
+   [sprog.kudzu.chunks.noise :refer [simplex-3d-chunk]]
    [sprog.webgl.core 
     :refer-macros [with-context]
     :refer [start-sprog!]]))
@@ -27,7 +27,7 @@
 
 ; shader source
 (def frag-glsl
-  (iglu->glsl
+  (kudzu->glsl
    pos-chunk
    rescale-chunk
    simplex-3d-chunk

@@ -1,4 +1,4 @@
-(ns sprog.iglu.chunks.color 
+(ns sprog.kudzu.chunks.color 
   (:require [sprog.util :as u]))
 
 (def hsl-to-rgb-chunk

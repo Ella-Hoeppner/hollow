@@ -1,7 +1,7 @@
-(ns sprog.diglu.compiler
+(ns sprog.kudzu.compiler
   (:require [sprog.util :as u]
             [clojure.string :refer [join]]
-            [sprog.diglu.sorting :refer [sort-fns
+            [sprog.kudzu.sorting :refer [sort-fns
                                          sort-structs]]))
 
 (defn parse-int [s]
@@ -244,7 +244,7 @@
            (map #(function->glsl [fn-name %])
                 fn-definition))))
 
-(defn processed-iglu->glsl [{:keys [precision
+(defn processed-kudzu->glsl [{:keys [precision
                                     uniforms
                                     layout
                                     inputs

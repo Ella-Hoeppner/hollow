@@ -1,6 +1,6 @@
-(ns sprog.iglu.chunks.postprocessing
+(ns sprog.kudzu.chunks.postprocessing
   (:require [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [combine-chunks]]))
+            [sprog.kudzu.core :refer [combine-chunks]]))
 
 (def gaussian-chunk
   '{:functions

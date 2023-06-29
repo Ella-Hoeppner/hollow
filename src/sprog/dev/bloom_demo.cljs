@@ -5,15 +5,15 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.iglu.chunks.postprocessing :refer [get-bloom-chunk
+            [sprog.kudzu.chunks.postprocessing :refer [get-bloom-chunk
                                                       square-neighborhood]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-source
-  (iglu->glsl
+  (kudzu->glsl
    (get-bloom-chunk :f8 (square-neighborhood 4 1) 5)
    '{:version "300 es"
      :precision {float highp}

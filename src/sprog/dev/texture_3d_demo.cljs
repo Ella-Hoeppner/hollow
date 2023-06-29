@@ -4,7 +4,7 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core 
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -37,7 +37,7 @@
                           [tex-size tex-size 4]
                           {:wrap-mode [:clamp :clamp :repeat]})]
       (run-purefrag-shader!
-       (iglu->glsl
+       (kudzu->glsl
         {:constants {:tex-size-f (.toFixed tex-size 1)}}
         '{:version "300 es"
           :precision {float highp

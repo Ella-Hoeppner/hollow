@@ -5,7 +5,7 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex
                                           html-image-tex]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.core
              :refer-macros [with-context]
@@ -15,7 +15,7 @@
 
 ; adapted from https://www.shadertoy.com/view/wsSczw
 (def logic-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    '{:precision {float highp}
      :uniforms {size vec2
                 tex sampler2D
@@ -67,7 +67,7 @@
                            "frame" frame}
                           {:target (second textures)})
     (maximize-gl-canvas {:square? true})
-    (run-purefrag-shader! (iglu->glsl
+    (run-purefrag-shader! (kudzu->glsl
                            '{:version "300 es"
                              :precision {float highp}
                              :uniforms {size vec2
@@ -85,7 +85,7 @@
 (defn init-page! [gl]
   (with-context gl
     (let [textures (u/gen 2 (create-tex :f8 sort-resolution))]
-      (run-purefrag-shader! (iglu->glsl
+      (run-purefrag-shader! (kudzu->glsl
                              '{:version "300 es"
                                :precision {float highp}
                                :uniforms {size vec2

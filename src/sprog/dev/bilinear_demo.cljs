@@ -4,8 +4,8 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.iglu.chunks.misc :refer [bilinear-usampler-chunk]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.chunks.misc :refer [bilinear-usampler-chunk]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -19,7 +19,7 @@
    0 0 0 u16-max])
 
 (def nearest-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    {:constants {:u16-max-f (.toFixed u16-max 1)}}
    '{:version "300 es"
      :precision {float highp
@@ -31,7 +31,7 @@
             (= fragColor (/ (vec4 (texture tex pos)) :u16-max-f)))}))
 
 (def bilinear-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    {:constants {:u16-max-f (.toFixed u16-max 1)}}
    bilinear-usampler-chunk
    '{:version "300 es"

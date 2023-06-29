@@ -1,6 +1,6 @@
 (ns sprog.webgl.uniforms
   (:require [sprog.util :as u]
-            [sprog.iglu.glsl :refer [clj-name->glsl-name]]))
+            [sprog.kudzu.compiler :refer [clj-name->glsl]]))
 
 (defn ensure-uniform-present! [gl
                                {:keys [program uniform-locations-atom]}
@@ -93,7 +93,7 @@
                            uniforms]
   (reduce
    (fn [texture-index [uniform-name value]]
-     (let [uniform-glsl-name (str (clj-name->glsl-name uniform-name))]
+     (let [uniform-glsl-name (clj-name->glsl uniform-name)]
        (if-let [uniform-type (uniform-type-map uniform-glsl-name)]
          (do (ensure-uniform-present! gl
                                       sprog

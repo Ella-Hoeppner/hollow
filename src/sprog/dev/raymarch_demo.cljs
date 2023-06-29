@@ -3,15 +3,15 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.iglu.chunks.raytracing :refer [ray-chunk
+            [sprog.kudzu.chunks.raytracing :refer [ray-chunk
                                                   sphere-intersection-chunk
                                                   raymarch-chunk]]
-            [sprog.iglu.chunks.sdf :refer [sphere-sdf-chunk]]
-            [sprog.iglu.chunks.misc :refer [pos-chunk
+            [sprog.kudzu.chunks.sdf :refer [sphere-sdf-chunk]]
+            [sprog.kudzu.chunks.misc :refer [pos-chunk
                                             sigmoid-chunk
                                             gradient-chunk]]
-            [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.chunks.noise :refer [gabor-noise-chunk]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -21,7 +21,7 @@
 
 (def frag-glsl
   (u/unquotable
-   (iglu->glsl
+   (kudzu->glsl
     pos-chunk
     sphere-intersection-chunk
     sphere-sdf-chunk

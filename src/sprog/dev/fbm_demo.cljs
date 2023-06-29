@@ -2,17 +2,17 @@
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
-            [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
+            [sprog.kudzu.chunks.noise :refer [simplex-2d-chunk
                                              fbm-chunk]]
-            [sprog.iglu.chunks.misc :refer [pos-chunk]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.chunks.misc :refer [pos-chunk]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core 
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-source
-  (iglu->glsl
+  (kudzu->glsl
    pos-chunk
    simplex-2d-chunk
    fbm-chunk

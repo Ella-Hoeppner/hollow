@@ -1,4 +1,4 @@
-(ns sprog.iglu.chunks.transformations)
+(ns sprog.kudzu.chunks.transformations)
 
 (def x-rotation-matrix-chunk
   '{:functions

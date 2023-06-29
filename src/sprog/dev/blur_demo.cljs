@@ -1,7 +1,7 @@
 (ns sprog.dev.blur-demo
   (:require [sprog.util :as u]
-            [sprog.diglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.postprocessing 
+            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [sprog.kudzu.chunks.postprocessing 
              :refer
              [create-gaussian-sample-chunk
               prescaled-gaussian-sample-expression
@@ -16,7 +16,7 @@
              :refer-macros [with-context]]))
 
 (def top-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    (create-gaussian-sample-chunk :f8 (square-neighborhood 4 3))
    '{:version "300 es"
      :precision {float highp
@@ -36,7 +36,7 @@
                                (* 10 (clamp blurFactor 0.001 1)))))}))
 
 (def bottom-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    {:macros {:gaussian-expression
              #(prescaled-gaussian-sample-expression
                %

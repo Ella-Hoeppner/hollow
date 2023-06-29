@@ -1,7 +1,7 @@
-(ns sprog.iglu.chunks.noise
+(ns sprog.kudzu.chunks.noise
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk-replace]]
-            [sprog.iglu.core :refer [combine-chunks]]
+            [sprog.kudzu.core :refer [combine-chunks]]
             [sprog.tools.math :refer [rand-n-sphere-point]]))
 
 (def rand-chunk

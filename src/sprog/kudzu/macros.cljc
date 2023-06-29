@@ -1,4 +1,4 @@
-(ns sprog.iglu.macros
+(ns sprog.kudzu.macros
   (:require [clojure.walk :refer [prewalk]]))
 
 (defn thread-first [x & forms]

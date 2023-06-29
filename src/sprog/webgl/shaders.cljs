@@ -1,7 +1,7 @@
 (ns sprog.webgl.shaders
   (:require [sprog.util :as u]
-            [sprog.diglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.misc :refer [trivial-vert-source]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [sprog.kudzu.chunks.misc :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
             [sprog.webgl.textures :refer [target-textures!
                                           target-screen!]]
@@ -46,10 +46,10 @@
 (defn create-sprog [gl vert-source frag-source]
   (let [vert-glsl (if (string? vert-source)
                     vert-source
-                    (iglu->glsl vert-source))
+                    (kudzu->glsl vert-source))
         frag-glsl (if (string? frag-source)
                     frag-source
-                    (iglu->glsl frag-source))
+                    (kudzu->glsl frag-source))
         program (create-program gl
                                 (create-shader gl :vert vert-glsl)
                                 (create-shader gl :frag frag-glsl))]
@@ -68,7 +68,7 @@
                              "\n"
                              frag-glsl))))}))
 
-(def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
+(def purefrag-vert-glsl (kudzu->glsl trivial-vert-source))
 
 (defonce purefrag-vert-pos-bojs-atom (atom {}))
 

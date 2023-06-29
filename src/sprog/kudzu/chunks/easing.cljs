@@ -1,6 +1,5 @@
-(ns sprog.iglu.chunks.easing
-  (:require [sprog.util :as u]
-            [sprog.iglu.core :refer [iglu->glsl]]))
+(ns sprog.kudzu.chunks.easing
+  (:require [sprog.util :as u]))
 
 ; From Inigo Quilez's "Remapping Functions" article
 ; https://iquilezles.org/articles/functions/

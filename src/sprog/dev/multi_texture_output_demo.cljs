@@ -4,14 +4,14 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def texture-resolution 8)
 
 (def render-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    {:constants {:texture-resolution texture-resolution}}
    '{:version "300 es"
      :precision {float highp}
@@ -28,7 +28,7 @@
                                 1)))}))
 
 (def draw-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    '{:precision {float highp
                  sampler2D highp}
      :uniforms {size vec2

@@ -1,4 +1,4 @@
-(ns sprog.diglu.sorting
+(ns sprog.kudzu.sorting
   (:require [clojure.walk :refer [walk]]
             [clojure.set :refer [union intersection]]))
 

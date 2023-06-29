@@ -1,4 +1,4 @@
-(ns sprog.iglu.chunks.misc
+(ns sprog.kudzu.chunks.misc
   (:require [sprog.util :as u]
             [clojure.walk :refer [postwalk
                                   postwalk-replace]]))

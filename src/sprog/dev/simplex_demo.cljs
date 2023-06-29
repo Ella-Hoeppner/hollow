@@ -3,15 +3,15 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
+            [sprog.kudzu.chunks.noise :refer [simplex-2d-chunk
                                              simplex-3d-chunk]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def noise-2d-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    simplex-2d-chunk
    '{:version "300 es"
      :precision {float highp}
@@ -25,7 +25,7 @@
                                1)))}))
 
 (def noise-3d-frag-source
-  (iglu->glsl
+  (kudzu->glsl
    simplex-3d-chunk
    '{:version "300 es"
      :precision {float highp}

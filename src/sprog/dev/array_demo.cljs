@@ -3,14 +3,14 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-glsl
   (u/unquotable
-   (iglu->glsl
+   (kudzu->glsl
     '{:version "300 es"
       :precision {float highp}
       :uniforms {size vec2

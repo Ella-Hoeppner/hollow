@@ -3,13 +3,13 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.diglu.core :refer [iglu->glsl]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
 (def frag-source
-  (iglu->glsl
+  (kudzu->glsl
    {:macros {:rand (fn ([] (rand))
                      ([minimum maximum]
                       (+ minimum
