@@ -147,30 +147,51 @@
 
 (defn is-statement-block? [statement]
   (and (list? statement)
-       (#{"if" :if "else" :else "while" :while "for" :for "block" :block}
+       (#{"if" :if 
+          "else" :else
+          "else-if" "else if" "elseif" "elif" :else-if :elseif :elif
+          "while" :while
+          "for" :for
+          "block" :block}
         (first statement))))
 
 (defn statement->lines [statement]
   (if (is-statement-block? statement)
     (let [[statement-type & statement-args] statement
           [block-start consumed-statement-args]
-          (case (keyword statement-type)
-            :if [(str "if ("
-                      (expression->glsl (first statement-args))
-                      ") {")
-                 1]
-            :while [(str "while ("
-                         (expression->glsl (first statement-args))
-                         ") {")
-                    1]
-            :else ["else {" 0]
-            :for [(str "for ("
-                       (join "; "
-                             (map expression->glsl
-                                  (take 3 statement-args)))
-                       ") {")
-                  3]
-            :block ["{" 0])]
+          (cond
+            (#{:if "if"} statement-type)
+            [(str "if ("
+                  (expression->glsl (first statement-args))
+                  ") {")
+             1]
+
+            (#{:while "while"} statement-type)
+            [(str "while ("
+                  (expression->glsl (first statement-args))
+                  ") {")
+             1]
+
+            (#{:else "else"} statement-type)
+            ["else {" 0]
+
+            (#{:else-if :elseif :elif "else if" "else-if" "elseif" "elif"}
+             statement-type)
+            [(str "else if ("
+                  (expression->glsl (first statement-args))
+                  ") {")
+             1]
+
+            (#{:for "for"} statement-type)
+            [(str "for ("
+                  (join "; "
+                        (map expression->glsl
+                             (take 3 statement-args)))
+                  ") {")
+             3]
+
+            (#{:block "block"} statement-type)
+            ["{" 0])]
       (concat (list (str block-start "\n"))
               (map (partial str "  ")
                    (mapcat statement->lines
