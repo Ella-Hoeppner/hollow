@@ -286,7 +286,8 @@
                                      outputs
                                      structs
                                      defines
-                                     functions]}]
+                                     functions
+                                     global]}]
   (apply str
          (flatten
           ["#version 300 es\n"
@@ -296,4 +297,5 @@
            (map (partial in-out->glsl layout "out") outputs)
            (map struct->glsl structs)
            (map define->glsl defines)
+           (mapcat statement->lines global)
            (map function->glsl (sort-fns functions))])))
