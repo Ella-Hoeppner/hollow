@@ -1,5 +1,5 @@
 (ns sprog.webgl.attributes
-  (:require [sprog.kudzu.compiler :refer [clj-name->glsl]]))
+  (:require [sprog.kudzu.tools :refer [clj-name->glsl]]))
 
 (defn set-boj-data! [gl {:keys [buffer usage] :as boj} data] 
   (.bindBuffer gl

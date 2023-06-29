@@ -29,7 +29,7 @@
                  (conj sorted-expressions
                        [next-expression-name
                         (expressions next-expression-name)]))
-          (throw (ex-info "Cyclic dependency detected"
+          (throw (ex-info "KUDZU: Cyclic dependency detected"
                           {:functions (str remaining-names)})))))))
 
 (defn sort-fns [functions]

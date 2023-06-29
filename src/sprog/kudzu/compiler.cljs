@@ -1,6 +1,13 @@
 (ns sprog.kudzu.compiler
   (:require [sprog.util :as u]
             [clojure.string :refer [join]]
+            [sprog.kudzu.tools :refer [multichar-escape
+                                       clj-name->glsl]]
+            [sprog.kudzu.validation :refer [validate-uniforms
+                                            validate-structs
+                                            validate-defines
+                                            validate-in-outs
+                                            validate-precision]]
             [sprog.kudzu.sorting :refer [sort-fns
                                          sort-structs]]))
 
@@ -15,31 +22,6 @@
                 (iterate rest
                          (reverse
                           (.toFixed num 20)))))))
-
-(defn multichar-escape [s escape-pairs]
-  (loop [escaped-str ""
-         remaining-str s]
-    (if (empty? remaining-str)
-      escaped-str
-      (if-let [[new-escaped-str new-remaining-str]
-               (some (fn [[replace-str replacement-str]]
-                       (when (and (>= (count remaining-str)
-                                      (count replace-str))
-                                  (= (subs remaining-str 0 (count replace-str))
-                                     replace-str))
-                         [(str escaped-str replacement-str)
-                          (subs remaining-str (count replace-str))]))
-                     escape-pairs)]
-        (recur new-escaped-str new-remaining-str)
-        (recur (str escaped-str (first remaining-str))
-               (subs remaining-str 1))))))
-
-(defn clj-name->glsl [clj-name]
-  (multichar-escape (cond-> (str clj-name)
-                      (keyword? clj-name) (subs 1))
-                    [["->" "ARROW"]
-                     ["-" "_"]
-                     ["?" "QUESTION_MARK"]]))
 
 (defn type->glsl [type-expression]
   (if (vector? type-expression)
@@ -288,6 +270,11 @@
                                      defines
                                      functions
                                      global]}]
+  (validate-uniforms uniforms)
+  (validate-structs structs)
+  (validate-precision precision)
+  (validate-in-outs inputs outputs layout)
+  (validate-defines defines)
   (apply str
          (flatten
           ["#version 300 es\n"

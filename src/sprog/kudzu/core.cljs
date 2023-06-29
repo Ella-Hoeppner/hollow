@@ -3,7 +3,8 @@
             [sprog.kudzu.compiler :refer [processed-kudzu->glsl]]
             [clojure.walk :refer [prewalk-replace
                                   prewalk]]
-            [sprog.kudzu.macros :refer [default-macros]]))
+            [sprog.kudzu.macros :refer [default-macros]]
+            [sprog.kudzu.validation :refer [validate-kudzu-keys]]))
 
 (defn combine-chunks [& chunks]
   (let [merged-functions
@@ -81,8 +82,10 @@
       strip-redefines))
 
 (defn kudzu->glsl
-  ([shader] (->> shader
-                 preprocess
-                 processed-kudzu->glsl))
+  ([shader]
+   (validate-kudzu-keys shader)
+   (->> shader
+        preprocess
+        processed-kudzu->glsl))
   ([first-chunk & other-chunks]
    (kudzu->glsl (apply combine-chunks (cons first-chunk other-chunks)))))

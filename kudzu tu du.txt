@@ -1,17 +1,7 @@
-rather than always keeping the first implementation when fn signatures conflict,
-  if the implementations are exactly the same then just only emit one
-  if the implementations aren't exactly the same, throw an error
-  test this on gabor demo
-  
 debuggability
-  special logic for checking format of:
-    uniforms
-    layout
-    structs
-    defines
-    ins/outs
-    precision
-  for functions
+  expression validation
+  defines validation
+  function validation?
     compile line by line, catch errors on individual lines, print failed line
 
 new features once parity is reached:
