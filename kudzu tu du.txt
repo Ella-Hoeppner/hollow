@@ -12,7 +12,6 @@ debuggability
     compile line by line, catch errors on individual lines, print failed line
 
 new features once parity is reached:
-  assign to nil for declaration without assignment
   prefix statements
   inouts
   vector destructuring

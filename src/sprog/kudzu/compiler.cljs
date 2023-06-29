@@ -122,18 +122,20 @@
                " = "
                (expression->glsl (second args)))
           ; 3 args, initialization with detached type
-          (str (type->glsl (first args))
-               " "
-               (expression->glsl (second args))
-               " = "
-               (expression->glsl (nth args 2))))
+          (let [[variable-type variable-name variable-value] args]
+            (str (type->glsl variable-type)
+                 " "
+                 (expression->glsl variable-name)
+                 (when (some? variable-value)
+                   (str " = " (expression->glsl variable-value))))))
 
         (and (symbol? f) (= "=" (first (str f))))
-        (str (expression->glsl (symbol (subs (str f) 1)))
-             " "
-             (expression->glsl (first args))
-             " = "
-             (expression->glsl (second args)))
+        (let [[variable-name variable-value] args]
+          (str (expression->glsl (symbol (subs (str f) 1)))
+               " "
+               (expression->glsl variable-name)
+              (when (some? variable-value)
+                (str " = " (expression->glsl variable-value)))))
 
         (and (symbol? f) (= "." (first (str f))))
         (str (expression->glsl (first args))

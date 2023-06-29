@@ -15,12 +15,8 @@
       '{:precision {float highp}
         :uniforms {size vec2}
         :outputs {fragColor vec4}
-        :functions {pos->color
-                    (vec4
-                     [pos vec2]
-                     (vec4 pos 0 1))}
         :main ((=vec2 pos (/ gl_FragCoord.xy size))
-               (= fragColor (pos->color pos)))})
+               (= fragColor (vec4 pos b 1)))})
      (canvas-resolution)
      {"size" (canvas-resolution)})))
 
