@@ -1,36 +1,16 @@
 (ns sprog.dev.startup
-  (:require sprog.dev.pcg-demo
-            sprog.dev.basic-demo
+  (:require sprog.dev.basic-demo
             sprog.dev.multi-texture-output-demo
             sprog.dev.pixel-sort-demo
             sprog.dev.physarum-demo
-            sprog.dev.simplex-demo
-            sprog.dev.tilable-simplex-demo
-            sprog.dev.macro-demo
-            sprog.dev.bilinear-demo
-            sprog.dev.vertex-demo
-            sprog.dev.voronoise-demo
-            sprog.dev.video-demo
-            sprog.dev.webcam-demo
-            sprog.dev.bloom-demo
-            sprog.dev.texture-3d-demo
-            sprog.dev.blur-demo
-            sprog.dev.hsv-demo
-            sprog.dev.gabor-demo
-            sprog.dev.oklab-mix-demo
-            sprog.dev.fbm-demo
-            sprog.dev.midi-demo
-            sprog.dev.raymarch-demo
-            sprog.dev.array-demo
-            sprog.dev.stencil-demo
-            sprog.dev.nonconvex-polygon-demo))
+            sprog.dev.simplex-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
   #_(sprog.dev.multi-texture-output-demo/init)
   #_(sprog.dev.pixel-sort-demo/init)
-  (sprog.dev.physarum-demo/init)
-  #_(sprog.dev.simplex-demo/init)
+  #_(sprog.dev.physarum-demo/init)
+  (sprog.dev.simplex-demo/init)
   #_(sprog.dev.tilable-simplex-demo/init)
   #_(sprog.dev.macro-demo/init)
   #_(sprog.dev.bilinear-demo/init)
