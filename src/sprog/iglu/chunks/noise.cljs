@@ -404,12 +404,13 @@
                    (=float f 1)
                    (=float a 1)
                    (=float t 0)
-                   ("for(int i=0;i<octaves;i++)"
-                    (+= t (* a ~(concat (list noise-fn
-                                              '(* f x))
-                                        noise-suffix-args)))
-                    (*= f 2)
-                    (*= a g))
+                   ("for" (=int i "0") (< i octaves) (++ i)
+                          (+= t (* a
+                                   ~(concat (list noise-fn
+                                                  '(* f x))
+                                            noise-suffix-args)))
+                          (*= f 2)
+                          (*= a g))
                    t)}}
                :expression (list fbm-symbol x octaves hurst-exponent)}))}}))
 

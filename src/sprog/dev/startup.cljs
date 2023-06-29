@@ -15,7 +15,15 @@
             sprog.dev.texture-3d-demo
             sprog.dev.blur-demo
             sprog.dev.hsv-demo
-            sprog.dev.gabor-demo))
+            sprog.dev.gabor-demo
+            sprog.dev.oklab-mix-demo
+            sprog.dev.fbm-demo
+            sprog.dev.midi-demo
+            sprog.dev.raymarch-demo
+            sprog.dev.array-demo
+            sprog.dev.stencil-demo
+            sprog.dev.pcg-demo
+            sprog.dev.nonconvex-polygon-demo))
 
 (defn init []
   #_(sprog.dev.basic-demo/init)
@@ -34,12 +42,12 @@
   #_(sprog.dev.texture-3d-demo/init)
   #_(sprog.dev.blur-demo/init)
   #_(sprog.dev.hsv-demo/init)
-  (sprog.dev.gabor-demo/init)
+  #_(sprog.dev.gabor-demo/init)
   #_(sprog.dev.oklab-mix-demo/init)
   #_(sprog.dev.fbm-demo/init)
   #_(sprog.dev.midi-demo/init)
   #_(sprog.dev.raymarch-demo/init)
-  #_(sprog.dev.array-demo/init)
+  (sprog.dev.array-demo/init)
   #_(sprog.dev.stencil-demo/init)
   #_(sprog.dev.pcg-demo/init)
   #_(sprog.dev.nonconvex-polygon-demo/init))

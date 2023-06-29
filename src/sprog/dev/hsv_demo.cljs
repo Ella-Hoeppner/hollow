@@ -6,7 +6,7 @@
             (sprog.input.mouse :refer [mouse-pos])
             [sprog.iglu.chunks.color :refer [hsv-to-rgb-chunk
                                               rgb-to-hsv-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

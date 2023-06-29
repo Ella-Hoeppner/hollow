@@ -11,7 +11,7 @@
                                             sigmoid-chunk
                                             gradient-chunk]]
             [sprog.iglu.chunks.noise :refer [gabor-noise-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))
@@ -36,18 +36,18 @@
                  time float}
       :outputs {fragColor vec4}
       :functions
-      {sdf {([vec3] float)
-            ([x]
-             (=vec3 sphereCenter (vec3 0 0 1))
-             (+ (sdSphere x sphereCenter ~sphere-radius)
-                (* ~max-distortion
-                   (-> (gaborNoise 4
-                                   [3 4 5 6]
-                                   (vec4 (- x sphereCenter)
-                                         (* 0.25 time)))
-                       sigmoid
-                       (* 2)
-                       (- 1)))))}}
+      {sdf (float
+            [x vec3]
+            (=vec3 sphereCenter (vec3 0 0 1))
+            (+ (sdSphere x sphereCenter ~sphere-radius)
+               (* ~max-distortion
+                  (-> (gaborNoise 4
+                                  [3 4 5 6]
+                                  (vec4 (- x sphereCenter)
+                                        (* 0.25 time)))
+                      sigmoid
+                      (* 2)
+                      (- 1)))))}
       :main ((=vec2 pos (getPos))
              (=Ray ray (Ray (vec3 0)
                             (-> pos

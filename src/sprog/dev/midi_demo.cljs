@@ -2,7 +2,7 @@
   (:require
    [sprog.util :as u]
    [sprog.input.midi :refer [add-midi-callback]]
-   [sprog.iglu.core :refer [iglu->glsl]]
+   [sprog.diglu.core :refer [iglu->glsl]]
    [sprog.dom.canvas :refer [maximize-gl-canvas
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]

@@ -102,14 +102,14 @@
                [ray Ray
                 maxDistance float]
                (=float t 0)
-               (~(str "for(int i=0;i<" max-steps ";i++)")
-                (=float distanceEstimate
-                        (~sdf-name (+ ray.pos (* t ray.dir))))
-                ("if" (< (abs distanceEstimate)
-                         ~termination-threshold)
-                      (return t))
-                (+= t (* distanceEstimate ~step-factor))
-                ("if" (> t maxDistance) "break"))
+               ("for" (=int i "0") (< i ~(str max-steps)) (++ i)
+                      (=float distanceEstimate
+                              (~sdf-name (+ ray.pos (* t ray.dir))))
+                      ("if" (< (abs distanceEstimate)
+                               ~termination-threshold)
+                            (return t))
+                      (+= t (* distanceEstimate ~step-factor))
+                      ("if" (> t maxDistance) "break"))
                -1)}}
             :expression ~(list fn-name ray maxDistance)})))}}))
 

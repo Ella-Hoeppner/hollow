@@ -5,7 +5,7 @@
             [sprog.iglu.chunks.noise :refer [simplex-2d-chunk
                                              fbm-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core 
              :refer-macros [with-context]

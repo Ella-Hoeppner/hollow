@@ -50,7 +50,10 @@
     (clj-name->glsl type-expression)))
 
 (def infix-ops
-  '#{+ - / * % < > == <= => != += *= -= "/=" || && "^^" "^" | << >>})
+  '#{+ - / * % < > == <= => || && "^^" "^" "^=" | << >>})
+
+(def modifying-assigners
+  '#{+= *= -= "/="})
 
 (defn expression->glsl [expression & [context-map]]
   (cond
@@ -60,7 +63,22 @@
 
     (string? expression) expression
 
-    (list? expression)
+    (vector? expression)
+    (if (= (count expression) 2)
+      ; array accessor
+      (let [[array-name array-index] expression]
+        (str (expression->glsl array-name)
+             "["
+             (expression->glsl array-index)
+             "]"))
+      ; array literal
+      (let [[array-type & init-values] expression]
+        (str (type->glsl array-type)
+             "[]("
+             (join "," (map expression->glsl init-values))
+             ")")))
+
+    (seq? expression)
     (let [[f & args] expression]
       (cond
         (= '++ f) (str (expression->glsl (first args)) "++")
@@ -71,6 +89,13 @@
 
         (and (= f '/) (= (count args) 1))
         (str "(1./" (expression->glsl (first args)) ")")
+
+        (modifying-assigners f)
+        (str (clj-name->glsl (first args))
+             " "
+             f
+             " "
+             (expression->glsl (second args)))
 
         (infix-ops f)
         (str "("
@@ -206,7 +231,7 @@
            " "
            (clj-name->glsl fn-name)
            "("
-           (join ","
+           (join ", "
                  (map (fn [[arg-name arg-type]]
                         (str (type->glsl arg-type)
                              " "

@@ -10,7 +10,6 @@
              :refer-macros [with-context]
              :refer [start-sprog!]]))
 
-(js/console.clear)
 (def frag-glsl
   (iglu->glsl
    pos-chunk

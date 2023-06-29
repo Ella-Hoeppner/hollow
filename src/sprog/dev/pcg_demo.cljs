@@ -4,7 +4,7 @@
                                       canvas-resolution]]
             [sprog.iglu.chunks.noise :refer [pcg-hash-chunk]]
             [sprog.iglu.chunks.misc :refer [pos-chunk]]
-            [sprog.iglu.core :refer [iglu->glsl]]
+            [sprog.diglu.core :refer [iglu->glsl]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core
              :refer-macros [with-context]
@@ -16,7 +16,8 @@
    pcg-hash-chunk
    '{:version "300 es"
      :precision {float highp}
-     :uniforms {size vec2}
+     :uniforms {size vec2
+                now float}
      :outputs {fragColor vec4}
      :main ((= fragColor
                (vec4 (vec3 (rand-pcg (floor
@@ -39,7 +40,8 @@
     (run-purefrag-shader!
      frag-source
      (canvas-resolution)
-     {"size" (canvas-resolution)})))
+     {"size" (canvas-resolution)
+      "now" (u/seconds-since-startup)})))
 
 (defn init []
   (start-sprog! nil update-page!))

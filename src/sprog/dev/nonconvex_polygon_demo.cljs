@@ -27,16 +27,14 @@
     (letfn [(draw-triangles!
               [color triangles]
               (run-shaders!
-               ['{:version "300 es"
-                  :precision {float highp}
+               ['{:precision {float highp}
                   :inputs {position vec2}
                   :main
                   ((= gl_Position
                       (vec4 position
                             0
                             1)))}
-                '{:version "300 es"
-                  :precision {float highp}
+                '{:precision {float highp}
                   :uniforms {color vec3}
                   :outputs {fragColor vec4}
                   :main
