@@ -13,8 +13,7 @@
 (def noise-2d-frag-source
   (kudzu->glsl
    voronoise-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 mouse vec2
                 time float}

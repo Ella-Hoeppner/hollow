@@ -15,8 +15,7 @@
   (kudzu->glsl
    hsv-to-rgb-chunk
    rgb-to-hsv-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 mouse vec2
                 tex sampler2D}

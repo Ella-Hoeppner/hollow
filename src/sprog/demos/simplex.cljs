@@ -13,8 +13,7 @@
 (def noise-2d-frag-source
   (kudzu->glsl
    simplex-2d-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2}
      :outputs {fragColor vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
@@ -27,8 +26,7 @@
 (def noise-3d-frag-source
   (kudzu->glsl
    simplex-3d-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 time float}
      :outputs {fragColor vec4}

@@ -14,8 +14,7 @@
 (defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
     (maximize-gl-canvas {:square? true})
-    (run-purefrag-shader! '{:version "300 es"
-                            :precision {float highp
+    (run-purefrag-shader! '{:precision {float highp
                                         sampler3D highp}
                             :uniforms {size vec2
                                        time float
@@ -39,8 +38,7 @@
       (run-purefrag-shader!
        (kudzu->glsl
         {:constants {:tex-size-f (.toFixed tex-size 1)}}
-        '{:version "300 es"
-          :precision {float highp
+        '{:precision {float highp
                       sampler3D highp}
           :outputs {layer1Color vec4
                     layer2Color vec4

@@ -15,8 +15,7 @@
 (def frag-source
   (kudzu->glsl
    (get-bloom-chunk :f8 (square-neighborhood 4 1) 5)
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 mouse vec2
                 tex sampler2D}

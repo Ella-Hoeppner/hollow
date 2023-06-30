@@ -14,8 +14,7 @@
   (kudzu->glsl
    pos-chunk
    pcg-hash-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 now float}
      :outputs {fragColor vec4}

@@ -17,8 +17,7 @@
                         0 0 1])
 
 (def vert-source
-  '{:version "300 es"
-    :precision {float highp}
+  '{:precision {float highp}
     :inputs {vertexPos vec2
              vertexColor vec3}
     :outputs {color vec3}
@@ -27,8 +26,7 @@
            (= gl_Position (vec4 (* vertexPos rotation) 0 1)))})
 
 (def frag-source
-  '{:version "300 es"
-    :precision {float highp}
+  '{:precision {float highp}
     :inputs {color vec3}
     :outputs {fragColor vec4}
     :main ((= fragColor (vec4 color 1)))})

@@ -31,8 +31,7 @@
    pos-chunk
    rescale-chunk
    simplex-3d-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 time float
                 circleRadius float

@@ -18,8 +18,7 @@
 (def top-frag-source
   (kudzu->glsl
    (create-gaussian-sample-chunk :f8 (square-neighborhood 4 3))
-   '{:version "300 es"
-     :precision {float highp
+   '{:precision {float highp
                  sampler2D highp}
      :outputs {fragColor vec4}
      :uniforms {size vec2

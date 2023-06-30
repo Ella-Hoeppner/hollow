@@ -61,8 +61,7 @@
 (def render-frag-source
   (kudzu-wrapper
    substrate-sample-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2}
      :outputs {fragColor vec4}
      :main ((=float sampleValue
@@ -75,8 +74,7 @@
 (def substrate-logic-frag-source
   (kudzu-wrapper
    substrate-sample-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :outputs {fragColor uvec4}
      :main
      ((=float centerSample (substrateSample (/ gl_FragCoord.xy
@@ -114,8 +112,7 @@
   (kudzu-wrapper
    rand-chunk
    substrate-sample-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {agentTex usampler2D
                 randomizeChance float
                 time float}

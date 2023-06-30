@@ -68,8 +68,7 @@
                           {:target (second textures)})
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! (kudzu->glsl
-                           '{:version "300 es"
-                             :precision {float highp}
+                           '{:precision {float highp}
                              :uniforms {size vec2
                                         tex sampler2D}
                              :outputs {fragColor vec4}
@@ -86,8 +85,7 @@
   (with-context gl
     (let [textures (u/gen 2 (create-tex :f8 sort-resolution))]
       (run-purefrag-shader! (kudzu->glsl
-                             '{:version "300 es"
-                               :precision {float highp}
+                             '{:precision {float highp}
                                :uniforms {size vec2
                                           tex sampler2D}
                                :outputs {fragColor vec4}

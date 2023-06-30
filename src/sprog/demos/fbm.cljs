@@ -16,8 +16,7 @@
    pos-chunk
    simplex-2d-chunk
    fbm-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2}
      :outputs {fragColor vec4}
      :main ((= fragColor

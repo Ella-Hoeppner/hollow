@@ -12,8 +12,7 @@
 (def frag-source
   (kudzu->glsl
    mix-oklab-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 mouse vec2
                 tex sampler2D}

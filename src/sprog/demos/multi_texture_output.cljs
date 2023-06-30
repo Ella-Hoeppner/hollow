@@ -13,8 +13,7 @@
 (def render-frag-source
   (kudzu->glsl
    {:constants {:texture-resolution texture-resolution}}
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :outputs {fragColor0 vec4
                fragColor1 vec4}
      :layout {fragColor0 0

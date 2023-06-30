@@ -13,8 +13,7 @@
 (def frag-source
   (kudzu->glsl
    tileable-simplex-2d-chunk
-   '{:version "300 es"
-     :precision {float highp}
+   '{:precision {float highp}
      :uniforms {size vec2
                 time float
                 mouse vec2}

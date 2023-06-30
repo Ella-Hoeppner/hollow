@@ -77,15 +77,14 @@
                            'main
                            (conj main [] 'void)))
       (cond->> constants (prewalk-replace constants))
-      (dissoc :main :constants)
       apply-macros
+      (dissoc :main :macros :constants)
       strip-redefines))
 
 (defn kudzu->glsl
   ([shader]
-   (validate-kudzu-keys shader)
-   (->> shader
-        preprocess
-        processed-kudzu->glsl))
+   (let [processed-shader (preprocess shader)]
+     (validate-kudzu-keys processed-shader)
+     (processed-kudzu->glsl processed-shader)))
   ([first-chunk & other-chunks]
    (kudzu->glsl (apply combine-chunks (cons first-chunk other-chunks)))))

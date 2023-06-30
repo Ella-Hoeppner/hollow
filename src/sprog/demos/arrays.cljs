@@ -11,8 +11,7 @@
 (def frag-glsl
   (u/unquotable
    (kudzu->glsl
-    '{:version "300 es"
-      :precision {float highp}
+    '{:precision {float highp}
       :uniforms {size vec2
                  decisions [bool "3"]}
       :outputs {fragColor vec4}

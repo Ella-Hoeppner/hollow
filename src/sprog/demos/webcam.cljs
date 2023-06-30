@@ -14,8 +14,7 @@
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (copy-html-image-data! texture video)
-    (run-purefrag-shader! '{:version "300 es"
-                            :precision {float highp}
+    (run-purefrag-shader! '{:precision {float highp}
                             :uniforms {size vec2
                                        tex sampler2D}
                             :outputs {fragColor vec4}

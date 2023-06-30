@@ -30,8 +30,7 @@
     gradient-chunk
     raymarch-chunk
     ray-chunk
-    '{:version "300 es"
-      :precision {float highp}
+    '{:precision {float highp}
       :uniforms {size vec2
                  time float}
       :outputs {fragColor vec4}

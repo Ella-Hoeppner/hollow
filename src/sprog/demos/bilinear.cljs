@@ -21,8 +21,7 @@
 (def nearest-frag-source
   (kudzu->glsl
    {:constants {:u16-max-f (.toFixed u16-max 1)}}
-   '{:version "300 es"
-     :precision {float highp
+   '{:precision {float highp
                  usampler2D highp}
      :uniforms {size vec2
                 tex usampler2D}
@@ -34,8 +33,7 @@
   (kudzu->glsl
    {:constants {:u16-max-f (.toFixed u16-max 1)}}
    bilinear-usampler-chunk
-   '{:version "300 es"
-     :precision {float highp
+   '{:precision {float highp
                  usampler2D highp}
      :uniforms {size vec2
                 offset vec2
