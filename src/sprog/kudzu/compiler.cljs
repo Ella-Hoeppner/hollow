@@ -187,7 +187,11 @@
              (= (first statement) 'do))
       (mapcat statement->lines
               (rest statement))
-      (list (str (expression->glsl statement) ";\n")))))
+      (try (list (str (expression->glsl statement) ";\n"))
+           (catch :default e
+             (throw (ex-info (str "KUDZU: Error while compiling statement "
+                                  statement)
+                             e)))))))
 
 (defn int-literal? [x]
   (and (string? x)
