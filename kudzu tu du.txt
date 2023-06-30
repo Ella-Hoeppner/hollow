@@ -1,3 +1,0 @@
-new features once parity is reached:
-  inouts
-  vector destructuring
