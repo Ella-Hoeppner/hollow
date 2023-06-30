@@ -1,7 +1,7 @@
 (ns sprog.webgl.shaders
   (:require [sprog.util :as u]
-            [sprog.iglu.core :refer [iglu->glsl]]
-            [sprog.iglu.chunks.misc :refer [trivial-vert-source]]
+            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [sprog.kudzu.chunks.misc :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
             [sprog.webgl.textures :refer [target-textures!
                                           target-screen!]]
@@ -25,7 +25,7 @@
                  digit-count (count (str (count lines)))]
              (join "\n"
                    (map #(str (apply str (take (inc digit-count)
-                                               (concat (str %2) 
+                                               (concat (str %2)
                                                        (list ":")
                                                        (repeat " "))))
                               " "
@@ -46,10 +46,10 @@
 (defn create-sprog [gl vert-source frag-source]
   (let [vert-glsl (if (string? vert-source)
                     vert-source
-                    (iglu->glsl vert-source))
+                    (kudzu->glsl vert-source))
         frag-glsl (if (string? frag-source)
                     frag-source
-                    (iglu->glsl frag-source))
+                    (kudzu->glsl frag-source))
         program (create-program gl
                                 (create-shader gl :vert vert-glsl)
                                 (create-shader gl :frag frag-glsl))]
@@ -68,7 +68,7 @@
                              "\n"
                              frag-glsl))))}))
 
-(def purefrag-vert-glsl (iglu->glsl trivial-vert-source))
+(def purefrag-vert-glsl (kudzu->glsl trivial-vert-source))
 
 (defonce purefrag-vert-pos-bojs-atom (atom {}))
 
@@ -85,7 +85,7 @@
                                                   3 -1]))})))
   (@purefrag-vert-pos-bojs-atom gl))
 
-(defn create-purefrag-sprog [gl frag-source] 
+(defn create-purefrag-sprog [gl frag-source]
   (let [sprog (create-sprog gl purefrag-vert-glsl frag-source)]
     (set-sprog-attribute! gl
                           sprog
@@ -134,7 +134,7 @@
         autosprog))))
 
 (defn run-shaders! [gl sources size uniform-map attribute-map start length
-                      & [options]]
+                    & [options]]
   (run-sprog! gl
               (get-autosprog gl sources)
               size

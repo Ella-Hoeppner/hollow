@@ -3,4 +3,6 @@
  :dev-http {8702 "out/"}
  :builds {:browser {:target :browser
                     :output-dir "out/js"
-                    :modules {:base {:init-fn sprog.dev.startup/pre-init}}}}}
+                    :modules {:base
+                              {}
+                              #_{:init-fn sprog.demos.basic/init}}}}}

@@ -78,7 +78,7 @@
 
 #?(:clj
    (defmacro unquotable [& expressions]
-     (let [quote-replacement (gensym 'IGLU_REPLACED_QUOTE)]
+     (let [quote-replacement (gensym 'kudzu_REPLACED_QUOTE)]
        (letfn [(inline-unquotes
                 [form]
                 (let [replacement-map-atom (atom {})
@@ -86,7 +86,7 @@
                       (doall
                        (prewalk
                         (fn [subform]
-                          (if (and (list? subform)
+                          (if (and (seq? subform)
                                    (= (first subform)
                                       'clojure.core/unquote))
                             (let [replacement-binding (keyword (gensym))]
@@ -103,7 +103,7 @@
                               (replace-quotes inlined-replacements-form)))))
                (replace-quotes
                 [form]
-                (if (and (list? form)
+                (if (and (seq? form)
                          (= (first form)
                             quote-replacement))
                   (let [subform (second form)]
