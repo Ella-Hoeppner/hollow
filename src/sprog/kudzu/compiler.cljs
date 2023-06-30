@@ -7,7 +7,8 @@
                                             validate-structs
                                             validate-defines
                                             validate-in-outs
-                                            validate-precision]]
+                                            validate-precision
+                                            validate-functions]]
             [sprog.kudzu.sorting :refer [sort-fns
                                          sort-structs]]))
 
@@ -281,6 +282,7 @@
   (validate-precision precision)
   (validate-in-outs inputs outputs layout)
   (validate-defines defines)
+  (validate-functions functions)
   (apply str
          (flatten
           ["#version 300 es\n"
