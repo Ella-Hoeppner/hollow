@@ -33,7 +33,7 @@
     (clj-name->glsl type-expression)))
 
 (def infix-ops
-  '#{+ - / * % < > == <= => || && "^^" "^" "^=" | << >>})
+  '#{+ - / * % < > != == <= => || && "^^" "^" "^=" | << >>})
 
 (def modifying-assigners
   '#{+= *= -= "/="})
@@ -208,10 +208,13 @@
        (clj-name->glsl uniform-name)
        ";\n"))
 
-(defn in-out->glsl [layout in-or-out [in-out-name in-out-type]]
+(defn in-out->glsl [layout qualifiers in-or-out [in-out-name in-out-type]]
   (str (when layout
          (when-let [layout-pos (layout in-out-name)]
            (str "layout(location = " layout-pos ") ")))
+       (when qualifiers
+         (when-let [qualifier (qualifiers in-out-name)]
+           (str qualifier " ")))
        in-or-out
        " "
        (type->glsl in-out-type)
@@ -271,6 +274,7 @@
 (defn processed-kudzu->glsl [{:keys [precision
                                      uniforms
                                      layout
+                                     qualifiers
                                      inputs
                                      outputs
                                      structs
@@ -280,7 +284,7 @@
   (validate-uniforms uniforms)
   (validate-structs structs)
   (validate-precision precision)
-  (validate-in-outs inputs outputs layout)
+  (validate-in-outs inputs outputs layout qualifiers)
   (validate-defines defines)
   (validate-functions functions)
   (apply str
@@ -288,8 +292,8 @@
           ["#version 300 es\n"
            (map precision->glsl precision)
            (map uniform->glsl uniforms)
-           (map (partial in-out->glsl layout "in") inputs)
-           (map (partial in-out->glsl layout "out") outputs)
+           (map (partial in-out->glsl layout qualifiers "in") inputs)
+           (map (partial in-out->glsl layout qualifiers "out") outputs)
            (map struct->glsl structs)
            (map define->glsl defines)
            (mapcat statement->lines global)
