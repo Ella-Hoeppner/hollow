@@ -1,6 +1,4 @@
 debuggability
-  expression validation
-  defines validation
   function validation?
     compile line by line, catch errors on individual lines, print failed line
 

@@ -116,8 +116,8 @@
           (str (expression->glsl (symbol (subs (str f) 1)))
                " "
                (expression->glsl variable-name)
-              (when (some? variable-value)
-                (str " = " (expression->glsl variable-value)))))
+               (when (some? variable-value)
+                 (str " = " (expression->glsl variable-value)))))
 
         (and (symbol? f) (= "." (first (str f))))
         (str (expression->glsl (first args))
@@ -127,7 +127,9 @@
                    "("
                    (join ", "
                          (map expression->glsl args))
-                   ")")))))
+                   ")")))
+
+    :else (throw (str "KUDZU: Can't parse expression: " expression) )))
 
 (defn is-statement-block? [statement]
   (and (seq? statement)

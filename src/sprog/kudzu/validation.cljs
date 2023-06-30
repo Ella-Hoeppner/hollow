@@ -85,4 +85,20 @@
                       (union (set (keys inputs))
                              (set (keys outputs)))))))))
 
-(defn validate-defines [defines])
+(defn expression-valid? [expression]
+  (or (string? expression)
+      (symbol? expression)
+      (number? expression)
+      (keyword? expression)
+      (and (or (seq? expression)
+               (and (vector? expression)
+                    (#{2 3} (count expression))))
+           (reduce #(and %1 %2)
+                   (map expression-valid? expression)))))
+
+(defn validate-defines [defines]
+  (doseq [[pattern replacement] defines]
+    (when-not (expression-valid? pattern)
+      (throw (str "KUDZU: Invalid pattern in define: " pattern)))
+    (when-not (expression-valid? replacement)
+      (throw (str "KUDZU: Invalid replacement in define: " replacement)))))
