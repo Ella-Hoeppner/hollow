@@ -9,6 +9,7 @@
                               #{:precision
                                 :uniforms
                                 :layout
+                                :qualifiers
                                 :inputs
                                 :outputs
                                 :structs
@@ -72,18 +73,27 @@
                   ": "
                   specifier)))))
 
-(defn validate-in-outs [inputs outputs layout]
+(defn validate-in-outs [inputs outputs layout qualifiers]
   (validate-name-type-pairs inputs " in inputs")
   (validate-name-type-pairs inputs " in outputs")
-  (when (seq (difference
-              (set (map clj-name->glsl (keys layout)))
-              (union (set (map clj-name->glsl (keys inputs)))
-                     (set (map clj-name->glsl (keys outputs))))))
-    (throw (str "KUDZU: Unrecognized keys in layout "
-                (seq (difference
-                      (set (keys layout))
-                      (union (set (keys inputs))
-                             (set (keys outputs)))))))))
+  (doseq [[modifier-map modifier-name]
+          [[qualifiers "qualifiers"]
+           [layout "layout"]]]
+    (when (seq (difference
+                (set (map clj-name->glsl (keys modifier-map)))
+                (union (set (map clj-name->glsl (keys inputs)))
+                       (set (map clj-name->glsl (keys outputs))))))
+      (throw (str "KUDZU: Unrecognized keys in " modifier-name " "
+                  (seq (difference
+                        (set (keys modifier-map))
+                        (union (set (keys inputs))
+                               (set (keys outputs)))))))))
+  (doseq [[qualifier-name qualifier] qualifiers]
+    (when-not (name-valid? qualifier)
+      (throw (str "KUDZU: Invalid qualifier for "
+                  qualifier-name
+                  ": "
+                  qualifier)))))
 
 (defn expression-valid? [expression]
   (or (string? expression)
