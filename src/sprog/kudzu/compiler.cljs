@@ -33,7 +33,7 @@
     (clj-name->glsl type-expression)))
 
 (def infix-ops
-  '#{+ - / * % < > == <= => || && "^^" "^" "^=" | << >>})
+  '#{+ - / * % < > != == <= => || && "^^" "^" "^=" | << >>})
 
 (def modifying-assigners
   '#{+= *= -= "/="})
