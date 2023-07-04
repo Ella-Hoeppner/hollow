@@ -96,15 +96,14 @@
                   qualifier)))))
 
 (defn find-invalid-subexpression [expression]
-  (if (seq? expression)
+  (if (or (vector? expression)
+          (seq? expression))
     (some identity (map find-invalid-subexpression expression))
-    (when (and (not (or (string? expression)
-                        (symbol? expression)
-                        (number? expression)
-                        (keyword? expression)
-                        (boolean? expression)))
-               (not (and (vector? expression)
-                         (#{2 3} (count expression)))))
+    (when-not (or (string? expression)
+                  (symbol? expression)
+                  (number? expression)
+                  (keyword? expression)
+                  (boolean? expression))
       expression)))
 
 (defn validate-defines [defines]
