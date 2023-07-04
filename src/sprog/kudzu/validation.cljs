@@ -95,22 +95,22 @@
                   ": "
                   qualifier)))))
 
-(defn expression-valid? [expression]
-  (or (string? expression)
-      (symbol? expression)
-      (number? expression)
-      (keyword? expression)
-      (and (or (seq? expression)
-               (and (vector? expression)
-                    (#{2 3} (count expression))))
-           (reduce #(and %1 %2)
-                   (map expression-valid? expression)))))
+(defn find-invalid-subexpression [expression]
+  (if (seq? expression)
+    (some identity (map find-invalid-subexpression expression))
+    (when (and (not (or (string? expression)
+                        (symbol? expression)
+                        (number? expression)
+                        (keyword? expression)))
+               (not (and (vector? expression)
+                         (#{2 3} (count expression)))))
+      expression)))
 
 (defn validate-defines [defines]
   (doseq [[pattern replacement] defines]
-    (when-not (expression-valid? pattern)
+    (when (find-invalid-subexpression pattern)
       (throw (str "KUDZU: Invalid pattern in define: " pattern)))
-    (when-not (expression-valid? replacement)
+    (when (find-invalid-subexpression replacement)
       (throw (str "KUDZU: Invalid replacement in define: " replacement)))))
 
 (defn validate-function-body [[return-type args-and-types & statements]
@@ -123,16 +123,16 @@
                 return-type)))
   (validate-name-type-pairs (partition 2 args-and-types)
                             (str " in function " fn-name))
-  (when-not (expression-valid? statements)
-    (throw (str "KUDZU: Invalid function body for function"
+  (when-let [invalid-subexpression (find-invalid-subexpression statements)]
+    (throw (str "KUDZU: Invalid function body for "
                 fn-name
                 (when multi-body (str "(signature: "
                                       return-type
                                       " "
                                       args-and-types
                                       ")"))
-                "\n"
-                statements))))
+                "\n Invalid expression: "
+                invalid-subexpression))))
 
 (defn validate-functions [functions]
   (doseq [[fn-name fn-body] functions]
