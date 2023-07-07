@@ -4,6 +4,7 @@
             [sprog.kudzu.tools :refer [multichar-escape
                                        clj-name->glsl]]
             [sprog.kudzu.validation :refer [validate-uniforms
+                                            validate-name
                                             validate-structs
                                             validate-defines
                                             validate-in-outs
@@ -170,12 +171,39 @@
              1]
 
             (#{:for "for"} statement-type)
-            [(str "for ("
-                  (join "; "
-                        (map expression->glsl
-                             (take 3 statement-args)))
-                  ") {")
-             3]
+            (if (vector? (first statement-args))
+              (let [loop-definition (first statement-args)
+                    [binding-name & loop-args] loop-definition]
+                (validate-name binding-name
+                               (str " for loop " loop-definition))
+                (let [[initial-value max-value increment-value]
+                      (case (count loop-args)
+                        1 [0 (first loop-args)]
+                        2 loop-args
+                        3 loop-args
+                        (throw (str "KUDZU: Invalid for loop definition "
+                                    loop-definition)))]
+                  [(str "for (int "
+                        (clj-name->glsl binding-name)
+                        " = "
+                        (clj-name->glsl initial-value)
+                        "; "
+                        (clj-name->glsl binding-name)
+                        " < "
+                        (clj-name->glsl max-value)
+                        "; "
+                        (clj-name->glsl binding-name)
+                        (if increment-value
+                          (str " += " increment-value)
+                          "++")
+                        ") {")
+                   1]))
+              [(str "for ("
+                    (join "; "
+                          (map expression->glsl
+                               (take 3 statement-args)))
+                    ") {")
+               3])
 
             (#{:block "block"} statement-type)
             ["{" 0])]
