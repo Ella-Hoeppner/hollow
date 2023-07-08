@@ -34,10 +34,10 @@
     (clj-name->glsl type-expression)))
 
 (def infix-ops
-  '#{+ - / * % < > != == <= >= || && "^^" "^" "^=" | << >>})
+  '#{+ - / * % < > != == <= >= || && & "^^" "^" | << >>})
 
 (def modifying-assigners
-  '#{+= *= -= "/="})
+  '#{+= *= -= "/=" "^=" |= &= <<= >>=})
 
 (defn expression->glsl [expression]
   (cond
