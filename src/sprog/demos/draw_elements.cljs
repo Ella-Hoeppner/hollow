@@ -6,7 +6,8 @@
             [sprog.webgl.attributes :refer [create-boj!]]
             [sprog.webgl.core
              :refer-macros [with-context]
-             :refer [start-sprog!]]))
+             :refer [start-sprog!
+                     sprog-context]]))
 
 (def pos-buffer-data [0 0
                       0.5 0
@@ -63,7 +64,7 @@
      :index-boj
      (create-boj! 1
                   {:initial-data (js/Uint16Array. index-buffer-data)
-                   :type gl.UNSIGNED_SHORT
+                   :type :u16
                    :elements? true})}))
 
 (defn init []

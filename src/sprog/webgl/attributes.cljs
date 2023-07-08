@@ -27,7 +27,15 @@
                                               usage gl.STATIC_DRAW}}]]
   (let [boj {:buffer (.createBuffer gl)
              :num-components num-components
-             :type type
+             :type (or ({:f32 gl.FLOAT
+                         :u32 gl.UNSIGNED_INT
+                         :u16 gl.UNSIGNED_SHORT
+                         :u8 gl.UNSIGNED_BYTE
+                         :i32 gl.INT
+                         :i16 gl.SHORT
+                         :i8 gl.BYTE}
+                        type)
+                       type)
              :normalized normalized
              :elements? elements?
              :stride stride
