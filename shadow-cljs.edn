@@ -5,4 +5,4 @@
                     :output-dir "out/js"
                     :modules {:base
                               {}
-                              #_{:init-fn sprog.demos.basic/init}}}}}
+                              #_{:init-fn sprog.demos.draw-elements/init}}}}}

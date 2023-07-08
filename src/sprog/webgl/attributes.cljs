@@ -1,24 +1,27 @@
 (ns sprog.webgl.attributes
   (:require [sprog.kudzu.tools :refer [clj-name->glsl]]))
 
-(defn set-boj-data! [gl {:keys [buffer usage] :as boj} data] 
-  (.bindBuffer gl
-               gl.ARRAY_BUFFER
-               buffer)
-  (.bufferData gl
-               gl.ARRAY_BUFFER
-               data
-               usage)
+(defn set-boj-data! [gl {:keys [buffer usage elements?] :as boj} data] 
+  (let [binding-point (if elements? gl.ELEMENT_ARRAY_BUFFER gl.ARRAY_BUFFER)]
+    (.bindBuffer gl
+                 binding-point
+                 buffer)
+    (.bufferData gl
+                 binding-point
+                 data
+                 usage))
   boj)
 
 (defn create-boj! [gl num-components & [{:keys [type
                                                 normalized
+                                                elements?
                                                 stride
                                                 offset
                                                 usage
                                                 initial-data]
                                          :or {type gl.FLOAT
                                               normalized false
+                                              elements? false
                                               stride 0
                                               offset 0
                                               usage gl.STATIC_DRAW}}]]
@@ -26,6 +29,7 @@
              :num-components num-components
              :type type
              :normalized normalized
+             :elements? elements?
              :stride stride
              :offset offset
              :usage usage}]

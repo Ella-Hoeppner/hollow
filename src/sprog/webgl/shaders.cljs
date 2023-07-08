@@ -99,7 +99,7 @@
   (set-sprog-attributes! gl sprog attribute-map))
 
 (defn run-sprog! [gl sprog size uniform-map attribute-map start length
-                  & [{:keys [target]}]]
+                  & [{:keys [target indices]}]]
   (if target
     (if (coll? target)
       (apply (partial target-textures! gl) target)
@@ -111,7 +111,9 @@
               (= (count size) 4) (vec size))]
     (.viewport gl offset-x offset-y width height)
     (use-sprog! gl sprog uniform-map attribute-map)
-    (.drawArrays gl gl.TRIANGLES start length)))
+    (if indices
+      (.drawElements gl gl.TRIANGLES length (:type indices) start)
+      (.drawArrays gl gl.TRIANGLES start length))))
 
 (defn run-purefrag-sprog! [gl sprog size uniform-map & [options]]
   (run-sprog! gl
