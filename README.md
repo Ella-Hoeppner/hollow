@@ -1,5 +1,5 @@
 # hollow
 
-WIP low-level graphics library for clojurescript built on top of webgl2. Contains an edn DSL called kudzu (inspired by [iglu](https://github.com/oakes/iglu)) for writing glsl.
+WIP low-level graphics library for clojurescript built on top of webgl2. Makes heavy use of [kudzu](https://github.com/Ella-Hoeppner/kudzu), a DSL for writing shaders.
 
 Early development, frequent breaking changes.
