@@ -3,9 +3,9 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.kudzu.chunks.noise :refer [voronoise-chunk]]
+            [kudzu.chunks.noise :refer [voronoise-chunk]]
             [sprog.input.mouse :refer [mouse-pos]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

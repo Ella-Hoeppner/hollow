@@ -5,10 +5,10 @@
             [sprog.webgl.shaders :refer [run-shaders!
                                          run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.kudzu.chunks.noise :refer [rand-chunk]]
-            [sprog.kudzu.chunks.particles :refer [particle-vert-source
+            [kudzu.chunks.noise :refer [rand-chunk]]
+            [kudzu.chunks.particles :refer [particle-vert-source
                                                   particle-frag-source]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

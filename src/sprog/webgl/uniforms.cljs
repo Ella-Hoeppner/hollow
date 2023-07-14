@@ -1,6 +1,6 @@
 (ns sprog.webgl.uniforms
   (:require [sprog.util :as u]
-            [sprog.kudzu.tools :refer [clj-name->glsl]]))
+            [kudzu.tools :refer [clj-name->glsl]]))
 
 (defn ensure-uniform-present! [gl
                                {:keys [program uniform-locations-atom]}

@@ -5,9 +5,9 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.kudzu.chunks.postprocessing :refer [get-bloom-chunk
+            [kudzu.chunks.postprocessing :refer [get-bloom-chunk
                                                        square-neighborhood]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

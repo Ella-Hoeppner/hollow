@@ -1,5 +1,5 @@
 (ns sprog.webgl.attributes
-  (:require [sprog.kudzu.tools :refer [clj-name->glsl]]))
+  (:require [kudzu.tools :refer [clj-name->glsl]]))
 
 (defn set-boj-data! [gl {:keys [buffer usage elements?] :as boj} data] 
   (let [binding-point (if elements? gl.ELEMENT_ARRAY_BUFFER gl.ARRAY_BUFFER)]

@@ -2,13 +2,13 @@
   (:require
    [sprog.util :as u]
    [sprog.input.midi :refer [add-midi-callback]]
-   [sprog.kudzu.core :refer [kudzu->glsl]]
+   [kudzu.core :refer [kudzu->glsl]]
    [sprog.dom.canvas :refer [maximize-gl-canvas
                              canvas-resolution]]
    [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-   [sprog.kudzu.chunks.misc :refer [pos-chunk
+   [kudzu.chunks.misc :refer [pos-chunk
                                     rescale-chunk]]
-   [sprog.kudzu.chunks.noise :refer [simplex-3d-chunk]]
+   [kudzu.chunks.noise :refer [simplex-3d-chunk]]
    [sprog.webgl.core
     :refer-macros [with-context]
     :refer [start-sprog!]]))

@@ -3,8 +3,8 @@
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
-            [sprog.kudzu.chunks.noise :refer [tileable-simplex-2d-chunk]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.chunks.noise :refer [tileable-simplex-2d-chunk]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.core
              :refer-macros [with-context]

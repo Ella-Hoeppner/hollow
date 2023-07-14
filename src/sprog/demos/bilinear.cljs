@@ -4,8 +4,8 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex]]
-            [sprog.kudzu.chunks.misc :refer [bilinear-usampler-chunk]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.chunks.misc :refer [bilinear-usampler-chunk]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

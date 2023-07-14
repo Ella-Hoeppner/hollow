@@ -1,7 +1,7 @@
 (ns sprog.demos.blur
   (:require [sprog.util :as u]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
-            [sprog.kudzu.chunks.postprocessing 
+            [kudzu.core :refer [kudzu->glsl]]
+            [kudzu.chunks.postprocessing 
              :refer
              [create-gaussian-sample-chunk
               prescaled-gaussian-sample-expression

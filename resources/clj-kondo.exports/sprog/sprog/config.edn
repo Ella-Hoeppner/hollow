@@ -1,3 +1,2 @@
 {:hooks {:macroexpand
-         {sprog.webgl.core/with-context sprog.webgl.core/with-context
-          sprog.util/unquotable sprog.util/unquotable}}}
+         {sprog.webgl.core/with-context sprog.webgl.core/with-context}}}

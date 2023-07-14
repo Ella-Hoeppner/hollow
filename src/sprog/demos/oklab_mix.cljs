@@ -3,8 +3,8 @@
                                       canvas-resolution]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             (sprog.input.mouse :refer [mouse-pos])
-            [sprog.kudzu.chunks.color :refer [mix-oklab-chunk]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.chunks.color :refer [mix-oklab-chunk]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.core
              :refer-macros [with-context]
              :refer [start-sprog!]]))

@@ -2,9 +2,9 @@
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
-            [sprog.kudzu.chunks.noise :refer [pcg-hash-chunk]]
-            [sprog.kudzu.chunks.misc :refer [pos-chunk]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.chunks.noise :refer [pcg-hash-chunk]]
+            [kudzu.chunks.misc :refer [pos-chunk]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core
              :refer-macros [with-context]

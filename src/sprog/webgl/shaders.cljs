@@ -1,7 +1,7 @@
 (ns sprog.webgl.shaders
   (:require [sprog.util :as u]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
-            [sprog.kudzu.chunks.misc :refer [trivial-vert-source]]
+            [kudzu.core :refer [kudzu->glsl]]
+            [kudzu.chunks.misc :refer [trivial-vert-source]]
             [sprog.webgl.uniforms :refer [set-sprog-uniforms!]]
             [sprog.webgl.textures :refer [target-textures!
                                           target-screen!]]

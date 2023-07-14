@@ -2,7 +2,7 @@
   (:require [sprog.util :as u]
             [sprog.dom.canvas :refer [maximize-gl-canvas
                                       canvas-resolution]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.core :refer-macros [with-context]
              :refer [start-sprog!]]))

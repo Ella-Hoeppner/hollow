@@ -5,7 +5,7 @@
             [sprog.webgl.shaders :refer [run-purefrag-shader!]]
             [sprog.webgl.textures :refer [create-tex
                                           html-image-tex]]
-            [sprog.kudzu.core :refer [kudzu->glsl]]
+            [kudzu.core :refer [kudzu->glsl]]
             [sprog.input.mouse :refer [mouse-pos]]
             [sprog.webgl.core
              :refer-macros [with-context]
