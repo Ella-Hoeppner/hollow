@@ -82,7 +82,8 @@
 
 (defn update-page! [{:keys [gl]}]
   (render gl)
-  (update-states!))
+  (update-states!)
+  {})
 
 (defn init []
   (js/window.addEventListener

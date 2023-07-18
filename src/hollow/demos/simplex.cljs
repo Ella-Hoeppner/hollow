@@ -36,19 +36,20 @@
                                   0.5))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
-(defn update-page! [{:keys [gl]}]
+(defn init-page! [gl]
   (with-context gl
+    (maximize-gl-canvas)
     (let [[width height] (canvas-resolution)
           resolution [width height]
           half-width (* width 0.5)]
-      (maximize-gl-canvas)
       (run-purefrag-shader! noise-2d-frag-source
                             [half-width height]
                             {"size" resolution})
       (run-purefrag-shader! noise-3d-frag-source
                             [half-width 0 half-width height]
                             {"size" resolution
-                             "time" (u/seconds-since-startup)}))))
+                             "time" (u/seconds-since-startup)}))
+    {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
+  (js/window.addEventListener "load" #(start-hollow! init-page! nil)))

@@ -28,13 +28,14 @@
                    (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
                          1)))))}))
 
-(defn update-page! [{:keys [gl]}]
+(defn init-page! [gl]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
                           {"size" (canvas-resolution)
-                           "mouse" (mouse-pos)})))
+                           "mouse" (mouse-pos)})
+    {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
+  (js/window.addEventListener "load" #(start-hollow! init-page! nil)))

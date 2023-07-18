@@ -46,7 +46,8 @@
                                 0)
                            true
                            false)
-                        (u/prange 3 true))})))
+                        (u/prange 3 true))})
+    {}))
 
 (defn init []
   (js/window.addEventListener "load" #(start-hollow! nil update-page!)))

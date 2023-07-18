@@ -9,7 +9,11 @@
   (doseq [hollow (vals @hollows-atom)]
     (when-let [{:keys [state gl update-fn]} hollow]
       (swap! state assoc :gl gl)
-      (when update-fn (swap! state update-fn))
+      (when update-fn (reset! state
+                              (let [new-state (update-fn @state)]
+                                (if (map? new-state)
+                                  new-state
+                                  (throw "update-fn must return a hash-map")))))
       (swap! state assoc :gl gl)))
   (js/requestAnimationFrame update-hollows!))
 
@@ -42,7 +46,10 @@
            name
            {:state (atom
                     (if (fn? init-fn-or-value)
-                      (init-fn-or-value gl)
+                      (let [init-state (init-fn-or-value gl)]
+                        (if (map? init-state)
+                          init-state
+                          (throw "init-fn must return a hash-map")))
                       init-fn-or-value))
             :gl gl
             :update-fn update-fn})))

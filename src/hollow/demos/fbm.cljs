@@ -22,20 +22,21 @@
      :main ((= fragColor
                (vec4 (vec3 (-> (fbm snoise2D
                                     2
-                                    (* (getPos) 10)
-                                    "5"
-                                    0.9)
+                                    (* (getPos) 3)
+                                    "10"
+                                    0.75)
                                (+ 1)
                                (* 0.5)))
                      1)))}))
 
-(defn update-page! [{:keys [gl]}]
+(defn init-page! [gl]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
      frag-source
      (canvas-resolution)
-     {"size" (canvas-resolution)})))
+     {"size" (canvas-resolution)})
+    {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
+  (js/window.addEventListener "load" #(start-hollow! init-page! nil)))

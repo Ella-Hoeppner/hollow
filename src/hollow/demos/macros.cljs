@@ -27,12 +27,13 @@
                  (vec4 1)
                  (vec4 0 0 0 1))))}))
 
-(defn update-page! [{:keys [gl]}]
+(defn init-page! [gl]
   (with-context gl
     (maximize-gl-canvas {:square? true})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
-                          {"size" (canvas-resolution)})))
+                          {"size" (canvas-resolution)})
+    {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
+  (js/window.addEventListener "load" #(start-hollow! init-page! nil)))

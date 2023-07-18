@@ -7,7 +7,7 @@
             [hollow.webgl.core :refer-macros [with-context]
              :refer [start-hollow!]]))
 
-(defn update-page! [{:keys [gl]}]
+(defn init-page! [gl]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
@@ -18,8 +18,9 @@
         :main ((=vec2 pos (/ gl_FragCoord.xy size))
                (= fragColor (vec4 pos 0 1)))})
      (canvas-resolution)
-     {"size" (canvas-resolution)})))
+     {"size" (canvas-resolution)})
+    {}))
 
 (defn init []
   (js/window.addEventListener "load"
-                              #(start-hollow! nil update-page!)))
+                              #(start-hollow! init-page! nil)))

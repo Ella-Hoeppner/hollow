@@ -41,7 +41,8 @@
      frag-glsl
      (canvas-resolution)
      {"size" (canvas-resolution)
-      "time" (* 0.01 (u/seconds-since-startup))})))
+      "time" (* 0.01 (u/seconds-since-startup))})
+    {}))
 
 (defn init []
   (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
