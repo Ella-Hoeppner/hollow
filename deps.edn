@@ -1,4 +1,4 @@
 {:deps {thheller/shadow-cljs {:mvn/version "2.24.0"}
         io.github.Ella-Hoeppner/kudzu
-        {:git/sha "d4960cc9419ad782ef34f1e1a9cdcf389377512d"}}
+        {:git/sha "5e68136cc6eb8e24c519abd785fcca4c7d285d67"}}
  :paths ["src" "resources"]}
