@@ -22,7 +22,7 @@
       (.appendChild js/document.body canvas))
     gl))
 
-(defn maximize-canvas [canvas & {:keys [max-pixel-ratio square? aspect-ratio]}]
+(defn maximize-canvas [canvas & {:keys [max-pixel-ratio aspect-ratio]}]
   (let [raw-width js/window.innerWidth
         raw-height js/window.innerHeight
         pixel-ratio (if max-pixel-ratio
