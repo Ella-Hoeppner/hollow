@@ -112,7 +112,10 @@
     (.viewport gl offset-x offset-y width height)
     (use-hollow! gl hollow uniform-map attribute-map)
     (if indices
-      (.drawElements gl gl.TRIANGLES length (:type indices) start)
+      (do (.bindBuffer gl
+                       gl.ELEMENT_ARRAY_BUFFER
+                       (:buffer indices))
+          (.drawElements gl gl.TRIANGLES length (:type indices) start))
       (.drawArrays gl gl.TRIANGLES start length))))
 
 (defn run-purefrag-hollow! [gl hollow size uniform-map & [options]]
