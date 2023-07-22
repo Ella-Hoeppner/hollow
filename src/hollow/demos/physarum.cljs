@@ -205,7 +205,7 @@
 
 (defn update-page! [{:keys [gl substrate-textures] :as state}]
   (with-context gl
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader! render-frag-source
                           (canvas-resolution)
                           {"size" (canvas-resolution)

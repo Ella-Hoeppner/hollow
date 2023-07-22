@@ -39,7 +39,7 @@
 
 (defn update-page! [{:keys [gl pos-boj color-boj index-boj] :as state}]
   (with-context gl
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (run-shaders! [vert-source frag-source]
                   (canvas-resolution)
                   {"rotation"

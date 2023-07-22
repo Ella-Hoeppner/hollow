@@ -12,7 +12,7 @@
 
 (defn update-page! [{:keys [gl texture video] :as state}]
   (with-context gl
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (copy-html-image-data! texture video)
     (run-purefrag-shader! '{:precision {float highp}
                             :uniforms {size vec2

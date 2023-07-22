@@ -23,7 +23,7 @@
 
 (defn render! [gl]
   (with-context gl
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (letfn [(draw-triangles!
               [color triangles]
               (run-shaders!

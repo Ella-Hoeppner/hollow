@@ -14,7 +14,7 @@
 
 (defn render! [gl]
   (with-context gl
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (let [draw-triangle! (fn [color coords]
                            (run-shaders!
                             ['{:precision {float highp}

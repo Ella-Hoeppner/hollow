@@ -9,7 +9,7 @@
 
 (defn init-page! [gl]
   (with-context gl
-    (maximize-gl-canvas)
+    (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader!
      (kudzu->glsl
       '{:precision {float highp}

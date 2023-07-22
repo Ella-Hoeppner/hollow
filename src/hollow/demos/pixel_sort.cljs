@@ -66,7 +66,7 @@
                            "tex" (first textures)
                            "frame" frame}
                           {:target (second textures)})
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader! (kudzu->glsl
                            '{:precision {float highp}
                              :uniforms {size vec2

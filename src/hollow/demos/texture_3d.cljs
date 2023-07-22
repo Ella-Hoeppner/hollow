@@ -13,7 +13,7 @@
 
 (defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
-    (maximize-gl-canvas {:square? true})
+    (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader! '{:precision {float highp
                                         sampler3D highp}
                             :uniforms {size vec2
