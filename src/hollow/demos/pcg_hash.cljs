@@ -33,7 +33,7 @@
                                          now))))
                      1)))}))
 
-(defn init-page! [gl]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (run-purefrag-shader!
@@ -44,4 +44,4 @@
     {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! init-page! nil)))
+  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))

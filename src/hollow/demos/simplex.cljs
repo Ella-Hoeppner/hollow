@@ -36,7 +36,7 @@
                                   0.5))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
-(defn init-page! [gl]
+(defn update-page! [{:keys [gl]}]
   (with-context gl
     (maximize-gl-canvas)
     (let [[width height] (canvas-resolution)
@@ -52,4 +52,4 @@
     {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! init-page! nil)))
+  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
