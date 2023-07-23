@@ -1,6 +1,7 @@
 (ns hollow.input.mouse)
 
 (defonce mouse-atom (atom {:pos [0.5 0.5]
+                           :pixel-pos [-1 -1]
                            :down? false
                            :present? false}))
 
@@ -21,6 +22,14 @@
 (defn mouse-pos []
   (:pos @mouse-atom))
 
+(defn mouse-element-pixel-pos [element]
+  (let [rect (.getBoundingClientRect element)
+        [x y] (:pixel-pos @mouse-atom)]
+    (when (and (<= rect.left x rect.right)
+               (<= rect.top y rect.bottom))
+      [(- x rect.left)
+       (- y rect.top)])))
+
 (defn mouse-down? []
   (:down? @mouse-atom))
 
@@ -38,6 +47,7 @@
                  assoc
                  :pos [(/ (- x (/ (- w s) 2)) s)
                        (/ (- y (/ (- h s) 2)) s)]
+                 :pixel-pos [x y]
                  :present? true))))
 
 (set! js/document.onmousedown
@@ -74,7 +84,8 @@
 (set! js/document.onmouseleave
       (fn [_]
         (swap! mouse-atom
-               #(-> %
-                    (assoc :pos [0.5 0.5])
-                    (assoc :down? false)
-                    (assoc :present? false)))))
+               #(assoc %
+                       :pos [0.5 0.5]
+                       :pixel-pos [-1 -1]
+                       :down? false
+                       :present? false))))
