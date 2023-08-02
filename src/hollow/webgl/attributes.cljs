@@ -67,7 +67,7 @@
                                      offset]}]
   (let [attrib-name-str (clj-name->glsl attrib-name)]
     (ensure-attribute-present! gl hollow attrib-name-str)
-    (let [location (@attribute-locations-atom attrib-name)]
+    (let [location (@attribute-locations-atom attrib-name-str)]
       (.bindBuffer gl gl.ARRAY_BUFFER buffer)
       (.enableVertexAttribArray gl location)
       (.vertexAttribPointer gl
