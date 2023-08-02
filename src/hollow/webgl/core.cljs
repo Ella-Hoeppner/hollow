@@ -48,7 +48,7 @@
                     (if (fn? init-fn-or-value)
                       (let [init-state (init-fn-or-value gl)]
                         (if (map? init-state)
-                          init-state
+                          (assoc init-state :gl gl)
                           (throw "init-fn must return a hash-map")))
                       init-fn-or-value))
             :gl gl
@@ -69,7 +69,10 @@
           update
           :state
           (fn [state]
-            (reset! state new-state)
+            (reset! state
+                    (assoc new-state
+                           :gl
+                           (:gl (@hollows-atom hollow-name))))
             state))
    new-state)
   ([new-state]
@@ -78,7 +81,8 @@
 (defn update-hollow-state!
   ([hollow-name update-fn]
    (swap! (get-in @hollows-atom [hollow-name :state])
-          update-fn)
+          (comp #(assoc % :gl (:gl (@hollows-atom hollow-name)))
+                update-fn))
    @(get-in @hollows-atom [hollow-name :state]))
   ([update-fn]
    (update-hollow-state! :default update-fn)))
