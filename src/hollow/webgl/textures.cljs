@@ -126,6 +126,64 @@
     (.bindTexture gl texture-target nil)
     tex))
 
+(defn set-tex-sub-data! [gl tex texture-type offset size data
+                         & [{:keys [channels]
+                             :or {channels 4}}]]
+  (let [three-d? (and (not (number? size))
+                      (= (count size) 3))
+        texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)]
+    (.bindTexture gl texture-target tex)
+    (let [format (({:f8 [gl.RED gl.RG gl.RGB gl.RGBA]
+                    :u16 [gl.RED_INTEGER
+                          gl.RG_INTEGER
+                          gl.RGB_INTEGER
+                          gl.RGBA_INTEGER]
+                    :u32 [gl.RED_INTEGER
+                          gl.RG_INTEGER
+                          gl.RGB_INTEGER
+                          gl.RGBA_INTEGER]}
+                   texture-type)
+                  (dec channels))
+          webgl-type ({:f8 gl.UNSIGNED_BYTE
+                       :u16 gl.UNSIGNED_SHORT
+                       :u32 gl.UNSIGNED_INT}
+                      texture-type)]
+      (if three-d?
+        (let [[width height depth] size
+              [x-off y-off z-off] (if offset offset [0 0 0])]
+          (.texSubImage3D gl
+                          gl.TEXTURE_3D
+                          0
+                          x-off
+                          y-off
+                          z-off
+                          width
+                          height
+                          depth
+                          format
+                          webgl-type
+                          data))
+        (let [[width height] (if (number? size)
+                               [size size]
+                               size)
+              [x-off y-off] (if offset
+                              (if (number? offset)
+                                [offset offset]
+                                offset)
+                              [0 0])]
+          (.texSubImage2D gl
+                          gl.TEXTURE_2D
+                          0
+                          x-off
+                          y-off
+                          width
+                          height
+                          format
+                          webgl-type
+                          data))))
+    (.bindTexture gl texture-target nil)
+    tex))
+
 (defn create-tex [gl
                   texture-type
                   resolution
