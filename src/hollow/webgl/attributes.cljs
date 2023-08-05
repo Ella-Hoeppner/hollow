@@ -70,13 +70,20 @@
     (let [location (@attribute-locations-atom attrib-name-str)]
       (.bindBuffer gl gl.ARRAY_BUFFER buffer)
       (.enableVertexAttribArray gl location)
-      (.vertexAttribPointer gl
-                            location
-                            num-components
-                            type
-                            normalized
-                            stride
-                            offset))))
+      (if (= type gl.FLOAT)
+        (.vertexAttribPointer gl
+                              location
+                              num-components
+                              type
+                              normalized
+                              stride
+                              offset)
+        (.vertexAttribIPointer gl
+                               location
+                               num-components
+                               type
+                               stride
+                               offset)))))
 
 (defn set-hollow-attributes! [gl
                               hollow

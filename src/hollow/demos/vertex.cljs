@@ -19,10 +19,10 @@
 (def vert-source
   '{:precision {float highp}
     :inputs {vertexPos vec2
-             vertexColor vec3}
+             vertexColor uvec3}
     :outputs {color vec3}
     :uniforms {rotation mat2}
-    :main ((= color vertexColor)
+    :main ((= color (vec3 vertexColor))
            (= gl_Position (vec4 (* vertexPos rotation) 0 1)))})
 
 (def frag-source
@@ -52,8 +52,9 @@
                            {:initial-data
                             (js/Float32Array. pos-buffer-data)})
      :color-boj (create-boj! 3
-                             {:initial-data
-                              (js/Float32Array. color-buffer-data)})}))
+                             {:type :u32
+                              :initial-data
+                              (js/Uint32Array. color-buffer-data)})}))
 
 (defn init []
   (js/window.addEventListener "load" #(start-hollow! init-page! update-page!)))
