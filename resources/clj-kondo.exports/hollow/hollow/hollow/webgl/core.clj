@@ -21,7 +21,8 @@
                                 max-tex-size
                                 set-boj-data!
                                 tex-data-array
-                                set-tex-data!}]
+                                set-tex-data!
+                                set-tex-sub-data!}]
     (conj (postwalk (fn [form]
                       (if (and (seq? form)
                                (contextful-functions (first form)))
