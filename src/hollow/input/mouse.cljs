@@ -56,7 +56,7 @@
                  :pixel-pos [x y]
                  :present? true)
           (doseq [callback (:move @mouse-callbacks-atom)]
-            (callback old-pos new-pos)))))
+            (callback old-pos)))))
 
 (set! js/document.onmousedown
       (fn [_]
