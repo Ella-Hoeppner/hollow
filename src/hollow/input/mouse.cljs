@@ -47,8 +47,9 @@
               h js/window.innerHeight
               s (min w h)
               old-pos (:pos @mouse-atom)
-              new-pos [(/ (- x (/ (- w s) 2)) s)
-                       (/ (- y (/ (- h s) 2)) s)]]
+              new-pos (mapv #(- (* 2 %) 1)
+                            [(/ (- x (/ (- w s) 2)) s)
+                             (- 1 (/ (- y (/ (- h s) 2)) s))])]
           (swap! mouse-atom
                  assoc
                  :pos new-pos

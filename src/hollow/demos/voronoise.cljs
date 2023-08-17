@@ -20,10 +20,11 @@
      :outputs {fragColor vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue
-                    (voronoise mouse.x
-                               mouse.y (+ (* pos 23)
-                                          (vec2 (cos time)
-                                                (sin time)))))
+                    (voronoise (bi->uni mouse.x)
+                               (bi->uni mouse.y)
+                               (+ (* pos 23)
+                                  (vec2 (cos time)
+                                        (sin time)))))
             (= fragColor (vec4 (vec3 noiseValue) 1)))}))
 
 (defn update-page! [{:keys [gl]}]

@@ -62,7 +62,7 @@
     (run-purefrag-shader! logic-frag-source
                           sort-resolution
                           {"size" [sort-resolution sort-resolution]
-                           "threshold" (first (mouse-pos))
+                           "threshold" (* 0.5 (inc (first (mouse-pos))))
                            "tex" (first textures)
                            "frame" frame}
                           {:target (second textures)})

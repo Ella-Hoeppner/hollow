@@ -65,12 +65,13 @@
       (run-purefrag-shader! top-frag-source
                             [0 half-height width half-height]
                             {"size" [width height]
-                             "blurFactor" (first (mouse-pos))
+                             "blurFactor" (* 0.5 (inc (first (mouse-pos))))
                              "tex" texture})
       (run-purefrag-shader! bottom-frag-source
                             [width half-height]
                             {"size" [width height]
-                             "blurFactor" (- 1 (first (mouse-pos)))
+                             "blurFactor" (- 1 
+                                             (* 0.5 (inc (first (mouse-pos)))))
                              "tex" texture})))
   state)
 

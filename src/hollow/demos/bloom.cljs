@@ -24,8 +24,8 @@
             (= pos.y (- 1 pos.y))
             (= fragColor (-> (bloom tex
                                     pos
-                                    (* mouse.x 0.0025)
-                                    (- 1 mouse.y))
+                                    (* (bi->uni mouse.x) 0.0025)
+                                    (bi->uni mouse.y))
                              .xyz
                              (vec4 1))))}))
 

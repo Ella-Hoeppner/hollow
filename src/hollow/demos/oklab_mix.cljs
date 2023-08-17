@@ -2,7 +2,6 @@
   (:require [hollow.dom.canvas :refer [maximize-gl-canvas
                                        canvas-resolution]]
             [hollow.webgl.shaders :refer [run-purefrag-shader!]]
-            (hollow.input.mouse :refer [mouse-pos])
             [kudzu.chunks.color :refer [mix-oklab-chunk]]
             [kudzu.core :refer [kudzu->glsl]]
             [hollow.webgl.core
@@ -14,7 +13,6 @@
    mix-oklab-chunk
    '{:precision {float highp}
      :uniforms {size vec2
-                mouse vec2
                 tex sampler2D}
      :outputs {fragColor vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
@@ -33,8 +31,7 @@
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
-                          {"size" (canvas-resolution)
-                           "mouse" (mouse-pos)})
+                          {"size" (canvas-resolution)})
     {}))
 
 (defn init []

@@ -21,7 +21,7 @@
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue
                     (* (+ (snoiseTileable2D (vec2 0)
-                                            (pow (vec2 25) mouse)
+                                            (pow (vec2 25) (bi->uni mouse))
                                             (+ (* pos 3)
                                                (vec2 100 -20)))
                           1)

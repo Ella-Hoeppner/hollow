@@ -24,7 +24,7 @@
             (= pos.y (- 1 pos.y))
             (=vec3 texRGB (.xyz (texture tex pos)))
             (=vec3 hsv (rgb2hsv texRGB))
-            (= hsv.x (+ hsv.x (- mouse.x 0.5)))
+            (= hsv.x (+ hsv.x (- (bi->uni mouse.x) 0.5)))
             (=vec3 outRGB (hsv2rgb hsv))
             (= fragColor (vec4 outRGB
                                1)))}))
