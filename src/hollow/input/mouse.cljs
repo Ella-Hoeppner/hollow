@@ -13,6 +13,9 @@
 (defn add-mouse-up-callback [callback]
   (swap! mouse-callbacks-atom update :up conj callback))
 
+(defn add-mouse-move-callback [callback]
+  (swap! mouse-callbacks-atom update :move conj callback))
+
 (defn add-scroll-x-callback [callback]
   (swap! mouse-callbacks-atom update :scroll-x conj callback))
 
@@ -42,13 +45,17 @@
               y event.clientY
               w js/window.innerWidth
               h js/window.innerHeight
-              s (min w h)]
+              s (min w h)
+              old-pos (:pos @mouse-atom)
+              new-pos [(/ (- x (/ (- w s) 2)) s)
+                       (/ (- y (/ (- h s) 2)) s)]]
           (swap! mouse-atom
                  assoc
-                 :pos [(/ (- x (/ (- w s) 2)) s)
-                       (/ (- y (/ (- h s) 2)) s)]
+                 :pos new-pos
                  :pixel-pos [x y]
-                 :present? true))))
+                 :present? true)
+          (doseq [callback (:move @mouse-callbacks-atom)]
+            (callback old-pos new-pos)))))
 
 (set! js/document.onmousedown
       (fn [_]
