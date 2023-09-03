@@ -92,87 +92,109 @@
                              :as hollow}
                             uniforms]
   (reduce
-   (fn [texture-index [uniform-name value]]
+   (fn [tex-count [uniform-name value]]
      (let [uniform-glsl-name (clj-name->glsl uniform-name)]
        (if-let [uniform-type (uniform-type-map uniform-glsl-name)]
          (do (ensure-uniform-present! gl
                                       hollow
                                       uniform-glsl-name)
-             (if (#{"sampler2D" "usampler2D" "sampler3D" "usampler3D"}
-                  uniform-type)
-               (do (.activeTexture gl (+ gl.TEXTURE0 texture-index))
+             (cond
+               (re-matches #"u?sampler[23]D" uniform-type)
+               (do (.activeTexture gl (+ gl.TEXTURE0 tex-count))
                    (.bindTexture gl
-                                 (if (#{"sampler3D" "usampler3D"}
-                                      uniform-type)
+                                 (if (re-matches #"u?sampler3D" uniform-type)
                                    gl.TEXTURE_3D
                                    gl.TEXTURE_2D)
                                  value)
                    (set-uniform-int! gl
-                                     (@uniform-locations-atom uniform-glsl-name)
-                                     texture-index)
-                   (inc texture-index))
+                                     (@uniform-locations-atom
+                                      uniform-glsl-name)
+                                     tex-count)
+                   (inc tex-count))
+
+               (re-matches #"u?sampler[23]D\[[0-9]+\]" uniform-type)
+               (let [two-d? (re-matches #"u?sampler2D\[[0-9]+\]" uniform-type)
+                     array-size (->> uniform-type
+                                     (re-find #"\[[0-9]+\]")
+                                     rest
+                                     butlast
+                                     (apply str)
+                                     js/parseInt)]
+                 (doseq [[tex index] (map list value (range array-size))]
+                   (.activeTexture gl (+ gl.TEXTURE0 (+ tex-count index)))
+                   (.bindTexture gl
+                                 (if two-d? gl.TEXTURE_2D gl.TEXTURE_3D)
+                                 tex))
+                 (set-uniform-int-array! gl
+                                         (@uniform-locations-atom
+                                          uniform-glsl-name)
+                                         (vec (range tex-count
+                                                     (+ tex-count array-size))))
+                 (+ tex-count array-size))
+
+               :else
                (do ((cond
                       (= "float" uniform-type)
                       set-uniform-float!
-                      (re-find #"float\[[0-9]+\]" uniform-type)
+                      (re-matches #"float\[[0-9]+\]" uniform-type)
                       set-uniform-float-array!
                       (or (= "vec2" uniform-type)
-                          (re-find #"vec2\[[0-9]+\]" uniform-type))
+                          (re-matches #"vec2\[[0-9]+\]" uniform-type))
                       set-uniform-vec2!
                       (or (= "vec3" uniform-type)
-                          (re-find #"vec3\[[0-9]+\]" uniform-type))
+                          (re-matches #"vec3\[[0-9]+\]" uniform-type))
                       set-uniform-vec3!
                       (or (= "vec4" uniform-type)
-                          (re-find #"vec4\[[0-9]+\]" uniform-type))
+                          (re-matches #"vec4\[[0-9]+\]" uniform-type))
                       set-uniform-vec4!
 
                       (= "int" uniform-type) set-uniform-int!
-                      (re-find #"int\[[0-9]+\]" uniform-type)
+                      (re-matches #"int\[[0-9]+\]" uniform-type)
                       set-uniform-int-array!
                       (or (= "ivec2" uniform-type)
-                          (re-find #"ivec2\[[0-9]+\]" uniform-type))
+                          (re-matches #"ivec2\[[0-9]+\]" uniform-type))
                       set-uniform-ivec2!
                       (or (= "ivec3" uniform-type)
-                          (re-find #"ivec3\[[0-9]+\]" uniform-type))
+                          (re-matches #"ivec3\[[0-9]+\]" uniform-type))
                       set-uniform-ivec3!
                       (or (= "ivec4" uniform-type)
-                          (re-find #"ivec4\[[0-9]+\]" uniform-type))
+                          (re-matches #"ivec4\[[0-9]+\]" uniform-type))
                       set-uniform-ivec4!
 
                       (= "uint" uniform-type) set-uniform-uint!
-                      (re-find #"uint\[[0-9]+\]" uniform-type)
+                      (re-matches #"uint\[[0-9]+\]" uniform-type)
                       set-uniform-uint-array!
                       (or (= "uvec2" uniform-type)
-                          (re-find #"uvec2\[[0-9]+\]" uniform-type))
+                          (re-matches #"uvec2\[[0-9]+\]" uniform-type))
                       set-uniform-uvec2!
                       (or (= "uvec3" uniform-type)
-                          (re-find #"uvec3\[[0-9]+\]" uniform-type))
+                          (re-matches #"uvec3\[[0-9]+\]" uniform-type))
                       set-uniform-uvec3!
                       (or (= "uvec4" uniform-type)
-                          (re-find #"uvec4\[[0-9]+\]" uniform-type))
+                          (re-matches #"uvec4\[[0-9]+\]" uniform-type))
                       set-uniform-uvec4!
 
                       (= "bool" uniform-type) set-uniform-bool!
-                      (re-find #"bool\[[0-9]+\]" uniform-type)
+                      (re-matches #"bool\[[0-9]+\]" uniform-type)
                       set-uniform-bool-array!
                       (or (= "bvec2" uniform-type)
-                          (re-find #"bvec2\[[0-9]+\]" uniform-type))
+                          (re-matches #"bvec2\[[0-9]+\]" uniform-type))
                       set-uniform-bvec2!
                       (or (= "bvec3" uniform-type)
-                          (re-find #"bvec3\[[0-9]+\]" uniform-type))
+                          (re-matches #"bvec3\[[0-9]+\]" uniform-type))
                       set-uniform-bvec3!
                       (or (= "bvec4" uniform-type)
-                          (re-find #"bvec4\[[0-9]+\]" uniform-type))
+                          (re-matches #"bvec4\[[0-9]+\]" uniform-type))
                       set-uniform-bvec4!
 
                       (or (= "mat2" uniform-type)
-                          (re-find #"mat2\[[0-9]+\]" uniform-type))
+                          (re-matches #"mat2\[[0-9]+\]" uniform-type))
                       set-uniform-mat2!
                       (or (= "mat3" uniform-type)
-                          (re-find #"mat3\[[0-9]+\]" uniform-type))
+                          (re-matches #"mat3\[[0-9]+\]" uniform-type))
                       set-uniform-mat3!
                       (or (= "mat4" uniform-type)
-                          (re-find #"mat4\[[0-9]+\]" uniform-type))
+                          (re-matches #"mat4\[[0-9]+\]" uniform-type))
                       set-uniform-mat4!
 
                       :else (throw (str "hollow: Unrecognized uniform type \""
@@ -183,7 +205,7 @@
                     gl
                     (@uniform-locations-atom uniform-glsl-name)
                     value)
-                   texture-index)))
+                   tex-count)))
          (throw
           (str "hollow: No uniform \"" uniform-glsl-name "\" in shader")))))
    0
