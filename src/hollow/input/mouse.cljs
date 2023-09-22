@@ -1,6 +1,7 @@
 (ns hollow.input.mouse)
 
 (defonce mouse-atom (atom {:pos [0.5 0.5]
+                           :scroll [0 0]
                            :pixel-pos [-1 -1]
                            :down? false
                            :present? false}))
@@ -24,6 +25,9 @@
 
 (defn mouse-pos []
   (:pos @mouse-atom))
+
+(defn mouse-scroll []
+  (:scroll @mouse-atom))
 
 (defn mouse-element-pixel-pos [element]
   (let [rect (.getBoundingClientRect element)
@@ -78,10 +82,16 @@
 
 (set! js/document.onmousewheel
       (fn [event]
-        (doseq [callback (:scroll-x @mouse-callbacks-atom)]
-          (callback event.deltaX))
-        (doseq [callback (:scroll-y @mouse-callbacks-atom)]
-          (callback event.deltaY))))
+        (let [x event.deltaX
+              y event.deltaY]
+          (doseq [callback (:scroll-x @mouse-callbacks-atom)]
+            (callback x))
+          (doseq [callback (:scroll-y @mouse-callbacks-atom)]
+            (callback y))
+          (swap! mouse-atom
+                 update
+                 :scroll
+                 (partial mapv #(+ (* %1 0.0005) %2) [(- x) y])))))
 
 (set! js/document.onmouseenter
       (fn [_]
