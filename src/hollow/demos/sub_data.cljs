@@ -38,7 +38,6 @@
                                             (take 64 (cycle
                                                       (list 0 0 0 255))))})]
                 (set-tex-sub-data! tex
-                                   :f8
                                    [1 1]
                                    [2 2]
                                    (js/Uint8Array.
