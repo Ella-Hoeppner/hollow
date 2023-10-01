@@ -12,8 +12,7 @@
   (kudzu->glsl
    mix-oklab-chunk
    '{:precision {float highp}
-     :uniforms {size vec2
-                tex sampler2D}
+     :uniforms {size vec2}
      :outputs {fragColor vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= fragColor
@@ -21,9 +20,9 @@
                  (vec4 (mix (vec3 0 0 1) (vec3 1) pos.x)
                        1)
                  (if (> pos.y (/ 1 3))
-                   (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x)
+                   (vec4 (mix-oklab (vec3 0 0 1) (vec3 1) pos.x)
                          1)
-                   (vec4 (mixOklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
+                   (vec4 (mix-oklab (vec3 0 0 1) (vec3 1) pos.x 0.2)
                          1)))))}))
 
 (defn init-page! [gl]

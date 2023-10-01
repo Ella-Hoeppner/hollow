@@ -4,8 +4,8 @@
                                        canvas-resolution]]
             [hollow.webgl.shaders :refer [run-purefrag-shader!]]
             (hollow.input.mouse :refer [mouse-pos])
-            [kudzu.chunks.color :refer [hsv-to-rgb-chunk
-                                        rgb-to-hsv-chunk]]
+            [kudzu.chunks.color.hsv :refer [hsv->rgb-chunk
+                                            rgb->hsv-chunk]]
             [kudzu.core :refer [kudzu->glsl]]
             [hollow.webgl.core
              :refer-macros [with-context]
@@ -13,8 +13,8 @@
 
 (def frag-source
   (kudzu->glsl
-   hsv-to-rgb-chunk
-   rgb-to-hsv-chunk
+   hsv->rgb-chunk
+   rgb->hsv-chunk
    '{:precision {float highp}
      :uniforms {size vec2
                 mouse vec2
@@ -23,9 +23,9 @@
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= pos.y (- 1 pos.y))
             (=vec3 texRGB (.xyz (texture tex pos)))
-            (=vec3 hsv (rgb2hsv texRGB))
+            (=vec3 hsv (rgb->hsv texRGB))
             (= hsv.x (+ hsv.x (- (bi->uni mouse.x) 0.5)))
-            (=vec3 outRGB (hsv2rgb hsv))
+            (=vec3 outRGB (hsv->rgb hsv))
             (= fragColor (vec4 outRGB
                                1)))}))
 
