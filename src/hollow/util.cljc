@@ -62,6 +62,9 @@
 
 (def TAU (* Math/PI 2))
 
+(defn degrees->radians [degrees]
+  (* (/ Math/PI 180) degrees))
+
 #?(:clj
    (defmacro gen
      ([exp]
