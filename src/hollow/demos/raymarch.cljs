@@ -7,8 +7,7 @@
                                              sphere-intersection-chunk
                                              raymarch-chunk]]
             [kudzu.chunks.sdf :refer [sphere-sdf-chunk]]
-            [kudzu.chunks.misc :refer [pos-chunk
-                                       sigmoid-chunk
+            [kudzu.chunks.misc :refer [sigmoid-chunk
                                        gradient-chunk]]
             [kudzu.chunks.noise :refer [gabor-noise-chunk]]
             [kudzu.core :refer [kudzu->glsl]]
@@ -23,7 +22,6 @@
 (def frag-glsl
   (unquotable
    (kudzu->glsl
-    pos-chunk
     sphere-intersection-chunk
     sphere-sdf-chunk
     gabor-noise-chunk
@@ -32,29 +30,24 @@
     raymarch-chunk
     ray-chunk
     '{:precision {float highp}
-      :uniforms {size vec2
+      :uniforms {resolution vec2
                  time float}
       :outputs {fragColor vec4}
       :functions
       {sdf (float
             [x vec3]
-            (=vec3 sphereCenter (vec3 0 0 1))
-            (+ (sdSphere x sphereCenter ~sphere-radius)
+            (=vec3 sphere-center (vec3 0 0 1))
+            (+ (sd-sphere (- x sphere-center) ~sphere-radius)
                (* ~max-distortion
                   (-> (gaborNoise 4
                                   [3 4 5 6]
-                                  (vec4 (- x sphereCenter)
+                                  (vec4 (- x sphere-center)
                                         (* 0.25 time)))
                       sigmoid
                       (* 2)
                       (- 1)))))}
-      :main ((=vec2 pos (getPos))
-             (=Ray ray (Ray (vec3 0)
-                            (-> pos
-                                (* 2)
-                                (- 1)
-                                (vec3 1)
-                                normalize)))
+      :main ((=Ray ray (Ray (vec3 0)
+                            (normalize (vec3 (pixel-pos) 1))))
              (=vec2 boundIntersections
                     (findSphereIntersections ray
                                              (vec3 0 0 1)
@@ -89,8 +82,8 @@
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
-     {"size" (canvas-resolution)
-      "time" (u/seconds-since-startup)})
+     {:resolution (canvas-resolution)
+      :time (u/seconds-since-startup)})
     {}))
 
 (defn init []

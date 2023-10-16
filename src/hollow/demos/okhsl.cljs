@@ -13,10 +13,10 @@
   (kudzu->glsl
    okhsl-chunk
    '{:precision {float highp}
-     :uniforms {size vec2
+     :uniforms {resolution vec2
                 hue float}
      :outputs {frag-color vec4}
-     :main ((=vec2 pos (/ gl_FragCoord.xy size))
+     :main ((=vec2 pos (pixel-pos :uni))
             (= frag-color (vec4 (okhsl->srgb (vec3 hue pos)) 1)))}))
 
 (defn update-page! [{:keys [gl] :as state}]
@@ -24,7 +24,7 @@
     (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader! frag-source
                           (canvas-resolution)
-                          {:size (canvas-resolution)
+                          {:resolution (canvas-resolution)
                            :hue (* (u/seconds-since-startup) 0.25)})
     state))
 

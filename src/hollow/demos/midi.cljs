@@ -8,7 +8,6 @@
    [hollow.dom.canvas :refer [maximize-gl-canvas
                               canvas-resolution]]
    [hollow.webgl.shaders :refer [run-purefrag-shader!]]
-   [kudzu.chunks.misc :refer [pos-chunk]]
    [kudzu.tools :refer [unquotable]]
    [hollow.webgl.core
     :refer-macros [with-context]
@@ -20,16 +19,14 @@
 (def frag-glsl
   (unquotable
    (kudzu->glsl
-    pos-chunk
     '{:precision {float highp}
-      :uniforms {size vec2
+      :uniforms {resolution vec2
                  time float
                  circles [vec2 ~(str circle-count)]}
       :outputs {frag-color vec4}
-      :main ((=vec2 pos (getPos))
-             (= frag-color (vec4 0 0 0 1))
+      :main ((= frag-color (vec4 0 0 0 1))
              (:for [i ~circle-count]
-                   (:if (< (distance pos [circles i]) 0.1)
+                   (:if (< (distance (pixel-pos :uni) [circles i]) 0.1)
                         (= frag-color (vec4 1)))))})))
 
 (defn update-page! [{:keys [gl circles] :as state}]
@@ -37,12 +34,12 @@
     (maximize-gl-canvas)
     (run-purefrag-shader! frag-glsl
                           (canvas-resolution)
-                          {"size" (canvas-resolution)
-                           "circles" (flatten
-                                      (take circle-count
-                                            (concat (vals circles)
-                                                    (repeat [-10 -10]))))
-                           "time" (u/seconds-since-startup)}))
+                          {:resolution (canvas-resolution)
+                           :circles (flatten
+                                     (take circle-count
+                                           (concat (vals circles)
+                                                   (repeat [-10 -10]))))
+                           :time (u/seconds-since-startup)}))
   state)
 
 (defn init []

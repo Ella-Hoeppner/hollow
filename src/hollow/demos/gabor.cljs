@@ -5,7 +5,6 @@
             [hollow.webgl.shaders :refer [run-purefrag-shader!]]
             [kudzu.core :refer [kudzu->glsl]]
             [kudzu.chunks.noise :refer [gabor-noise-chunk]]
-            [kudzu.chunks.misc :refer [pos-chunk]]
             [kudzu.tools :refer [unquotable]]
             [hollow.webgl.core
              :refer-macros [with-context]
@@ -13,21 +12,18 @@
 
 (def frag-glsl
   (kudzu->glsl
-   pos-chunk
    gabor-noise-chunk
    (unquotable
     '{:precision {float highp}
-      :uniforms {size vec2
+      :uniforms {resolution vec2
                  time float}
       :outputs {fragColor vec4}
       :main ((= fragColor
                 (-> (gaborNoise 4
                                 ~(u/gen 30 (Math/pow 200 (rand)))
-                                (-> (getPos)
-                                    (* 2)
-                                    (- 1)
-                                    (vec4 (sin time)
-                                          (cos time)))
+                                (vec4 (pixel-pos)
+                                      (sin time)
+                                      (cos time))
                                 0.1)
                     (+ 1)
                     (* 0.5)
@@ -40,8 +36,8 @@
     (run-purefrag-shader!
      frag-glsl
      (canvas-resolution)
-     {"size" (canvas-resolution)
-      "time" (* 0.01 (u/seconds-since-startup))})
+     {:resolution (canvas-resolution)
+      :time (* 0.01 (u/seconds-since-startup))})
     {}))
 
 (defn init []

@@ -3,7 +3,6 @@
             [hollow.dom.canvas :refer [maximize-gl-canvas
                                        canvas-resolution]]
             [kudzu.chunks.noise :refer [pcg-hash-chunk]]
-            [kudzu.chunks.misc :refer [pos-chunk]]
             [kudzu.core :refer [kudzu->glsl]]
             [hollow.webgl.shaders :refer [run-purefrag-shader!]]
             [hollow.webgl.core
@@ -12,25 +11,19 @@
 
 (def frag-source
   (kudzu->glsl
-   pos-chunk
    pcg-hash-chunk
    '{:precision {float highp}
-     :uniforms {size vec2
-                now float}
+     :uniforms {resolution vec2
+                time float}
      :outputs {fragColor vec4}
-     :main ((= fragColor
+     :main ((=vec2 pos (pixel-pos))
+            (= fragColor
                (vec4 (vec3 (rand-pcg (floor
-                                      (* 19 (/ gl_FragCoord.xy
-                                               size)
-                                         now)))
+                                      (* 19 pos time)))
                            (rand-pcg (floor
-                                      (* 23 (/ gl_FragCoord.xy
-                                               size)
-                                         now)))
+                                      (* 23 pos time)))
                            (rand-pcg (floor
-                                      (* 43 (/ gl_FragCoord.xy
-                                               size)
-                                         now))))
+                                      (* 43 pos time))))
                      1)))}))
 
 (defn update-page! [{:keys [gl]}]
@@ -39,8 +32,8 @@
     (run-purefrag-shader!
      frag-source
      (canvas-resolution)
-     {"size" (canvas-resolution)
-      "now" (u/seconds-since-startup)})
+     {:resolution (canvas-resolution)
+      :time (u/seconds-since-startup)})
     {}))
 
 (defn init []

@@ -4,7 +4,6 @@
                                        canvas-resolution]]
             [kudzu.chunks.noise :refer [simplex-2d-chunk
                                         fbm-chunk]]
-            [kudzu.chunks.misc :refer [pos-chunk]]
             [kudzu.core :refer [kudzu->glsl]]
             [hollow.webgl.shaders :refer [run-purefrag-shader!]]
             [hollow.webgl.core
@@ -13,16 +12,15 @@
 
 (def frag-source
   (kudzu->glsl
-   pos-chunk
    simplex-2d-chunk
    fbm-chunk
    '{:precision {float highp}
-     :uniforms {size vec2}
+     :uniforms {resolution vec2}
      :outputs {fragColor vec4}
      :main ((= fragColor
                (vec4 (vec3 (-> (fbm snoise2D
                                     2
-                                    (* (getPos) 3)
+                                    (pixel-pos)
                                     "10"
                                     0.75)
                                (+ 1)
@@ -35,7 +33,7 @@
     (run-purefrag-shader!
      frag-source
      (canvas-resolution)
-     {"size" (canvas-resolution)})
+     {:resolution (canvas-resolution)})
     {}))
 
 (defn init []
