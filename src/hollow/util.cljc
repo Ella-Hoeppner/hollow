@@ -65,6 +65,10 @@
 (defn degrees->radians [degrees]
   (* (/ Math/PI 180) degrees))
 
+(defn uni->bi [x] (dec (* x 2)))
+
+(defn bi->uni [x] (* 0.5 (inc x)))
+
 #?(:clj
    (defmacro gen
      ([exp]
