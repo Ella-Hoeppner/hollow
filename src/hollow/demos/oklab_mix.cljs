@@ -2,7 +2,7 @@
   (:require [hollow.dom.canvas :refer [maximize-gl-canvas
                                        canvas-resolution]]
             [hollow.webgl.shaders :refer [run-purefrag-shader!]]
-            [kudzu.chunks.color :refer [mix-oklab-chunk]]
+            [kudzu.chunks.color.oklab :refer [mix-oklab-chunk]]
             [kudzu.core :refer [kudzu->glsl]]
             [hollow.webgl.core
              :refer-macros [with-context]

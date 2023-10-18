@@ -26,8 +26,8 @@
       :outputs {frag-color vec4}
       :main ((= frag-color (vec4 0 0 0 1))
              (:for [i ~circle-count]
-                   (:if (< (distance (pixel-pos :uni) [circles i]) 0.1)
-                        (= frag-color (vec4 1)))))})))
+                   (:when (< (distance (pixel-pos :uni) [circles i]) 0.1)
+                          (= frag-color (vec4 1)))))})))
 
 (defn update-page! [{:keys [gl circles] :as state}]
   (with-context gl

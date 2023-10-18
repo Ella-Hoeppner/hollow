@@ -62,10 +62,10 @@
   (kudzu-wrapper
    substrate-sample-chunk
    '{:precision {float highp}
-     :uniforms {size vec2}
+     :uniforms {resolution vec2}
      :outputs {fragColor vec4}
      :main ((=float sampleValue
-                    (substrateSample (/ gl_FragCoord.xy size)))
+                    (substrateSample (pixel-pos :uni)))
             (= fragColor (vec4 sampleValue
                                sampleValue
                                sampleValue
@@ -190,7 +190,7 @@
                      (kudzu->glsl (particle-frag-source :u16))]
                     substrate-resolution
                     {"particleTex" agent-tex
-                     "size" substrate-resolution
+                     "resolution" substrate-resolution
                      "radius" agent-radius}
                     {}
                     0
@@ -208,7 +208,7 @@
     (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader! render-frag-source
                           (canvas-resolution)
-                          {"size" (canvas-resolution)
+                          {"resolution" (canvas-resolution)
                            "substrate" (first substrate-textures)}))
   (->> state
        (update-agents! ambient-randomize-chance)
