@@ -34,8 +34,8 @@
 (def frag-source
   '{:precision {float highp}
     :inputs {color vec3}
-    :outputs {fragColor vec4}
-    :main ((= fragColor (vec4 color 1)))})
+    :outputs {frag-color vec4}
+    :main ((= frag-color (vec4 color 1)))})
 
 (defn update-page! [{:keys [gl pos-boj color-boj index-boj] :as state}]
   (with-context gl

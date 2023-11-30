@@ -15,9 +15,9 @@
    (kudzu->glsl
     '{:precision {float highp}
       :uniforms {texs [sampler2D "2"]}
-      :outputs {fragColor vec4}
+      :outputs {frag-color vec4}
       :main
-      ((= fragColor
+      ((= frag-color
           (vec4 (mix (.rgb (texture [texs "0"] (vec2 0.5)))
                      (.rgb (texture [texs "1"] (vec2 0.5)))
                      0.5)

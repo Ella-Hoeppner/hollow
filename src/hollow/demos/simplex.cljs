@@ -15,10 +15,10 @@
    simplex-2d-chunk
    '{:precision {float highp}
      :uniforms {size vec2}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue (* (+ (snoise2D (* pos 10)) 1) 0.5))
-            (= fragColor (vec4 noiseValue
+            (= frag-color (vec4 noiseValue
                                noiseValue
                                noiseValue
                                1)))}))
@@ -29,12 +29,12 @@
    '{:precision {float highp}
      :uniforms {size vec2
                 time float}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue (* (+ (snoise3D (vec3 (* pos 10) time))
                                      1)
                                   0.5))
-            (= fragColor (vec4 (vec3 noiseValue) 1)))}))
+            (= frag-color (vec4 (vec3 noiseValue) 1)))}))
 
 (defn update-page! [{:keys [gl]}]
   (with-context gl

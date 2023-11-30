@@ -17,14 +17,14 @@
     '{:precision {float highp}
       :uniforms {resolution vec2
                  time float}
-      :outputs {fragColor vec4}
-      :main ((= fragColor
-                (-> (gaborNoise 4
-                                ~(u/gen 30 (Math/pow 200 (rand)))
-                                (vec4 (pixel-pos)
-                                      (sin time)
-                                      (cos time))
-                                0.1)
+      :outputs {frag-color vec4}
+      :main ((= frag-color
+                (-> (gabor-noise 4
+                                 ~(u/gen 30 (Math/pow 200 (rand)))
+                                 (vec4 (pixel-pos)
+                                       (sin time)
+                                       (cos time))
+                                 0.1)
                     (+ 1)
                     (* 0.5)
                     vec3

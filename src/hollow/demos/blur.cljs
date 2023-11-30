@@ -20,7 +20,7 @@
    (create-gaussian-sample-chunk :f8 (square-neighborhood 4 3))
    '{:precision {float highp
                  sampler2D highp}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :uniforms {size vec2
                 tex sampler2D
                 blurFactor float}
@@ -28,7 +28,7 @@
             (= pos.y (- 1 pos.y))
             (=vec2 texSize (vec2 (textureSize tex "0")))
             (=float sampleDistFactor blurFactor)
-            (= fragColor
+            (= frag-color
                (gaussianSample tex
                                pos
                                (/ 1 texSize)
@@ -43,14 +43,14 @@
                10)}}
    '{:precision {float highp
                  sampler2D highp}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :uniforms {size vec2
                 tex sampler2D
                 blurFactor float}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= pos.y (- 1 pos.y))
             (=vec2 texSize (vec2 (textureSize tex "0")))
-            (= fragColor
+            (= frag-color
                (:gaussian-expression
                 (texture tex
                          (+ pos

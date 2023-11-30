@@ -15,9 +15,9 @@
    '{:precision {float highp}
      :uniforms {resolution vec2
                 time float}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (pixel-pos))
-            (= fragColor
+            (= frag-color
                (vec4 (vec3 (rand-pcg (floor
                                       (* 19 pos time)))
                            (rand-pcg (floor

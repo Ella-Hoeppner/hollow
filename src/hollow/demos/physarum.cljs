@@ -63,10 +63,10 @@
    substrate-sample-chunk
    '{:precision {float highp}
      :uniforms {resolution vec2}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=float sampleValue
                     (substrateSample (pixel-pos :uni)))
-            (= fragColor (vec4 sampleValue
+            (= frag-color (vec4 sampleValue
                                sampleValue
                                sampleValue
                                1)))}))
@@ -75,7 +75,7 @@
   (kudzu-wrapper
    substrate-sample-chunk
    '{:precision {float highp}
-     :outputs {fragColor uvec4}
+     :outputs {frag-color uvec4}
      :main
      ((=float centerSample (substrateSample (/ gl_FragCoord.xy
                                                :substrate-resolution)))
@@ -98,7 +98,7 @@
                      (substrateSample (/ (+ gl_FragCoord.xy (vec2 1 1))
                                          :substrate-resolution))))
                  8))
-      (= fragColor
+      (= frag-color
          (uvec4 (* (* (mix centerSample
                            averageNeighborSample
                            :substrate-spread-factor)
@@ -113,56 +113,56 @@
    rand-chunk
    substrate-sample-chunk
    '{:precision {float highp}
-     :uniforms {agentTex usampler2D
-                randomizeChance float
+     :uniforms {agent-tex usampler2D
+                randomize-chance float
                 time float}
-     :outputs {fragColor uvec4}
+     :outputs {frag-color uvec4}
      :main
      ((=vec2 pos (/ gl_FragCoord.xy :agent-tex-resolution))
-      (=uvec4 oldFragColor (texture agentTex pos))
+      (=uvec4 old-frag-color (texture agent-tex pos))
 
-      (=vec2 agentPos (/ (vec2 oldFragColor.xy) :u16-max))
-      (=float agentAngle (* :TAU (/ (float oldFragColor.z) :u16-max)))
+      (=vec2 agent-pos (/ (vec2 old-frag-color.xy) :u16-max))
+      (=float agent-angle (* :TAU (/ (float old-frag-color.z) :u16-max)))
 
-      (=float clockwiseAngle (+ agentAngle :sensor-spread))
-      (=float clockwiseSensorSample
+      (=float clockwise-angle (+ agent-angle :sensor-spread))
+      (=float clockwise-sensor-sample
               (substrateSample
-               (+ agentPos
+               (+ agent-pos
                   (* :sensor-distance
-                     (vec2 (cos clockwiseAngle)
-                           (sin clockwiseAngle))))))
+                     (vec2 (cos clockwise-angle)
+                           (sin clockwise-angle))))))
 
-      (=float counterclockwiseAngle (- agentAngle :sensor-spread))
-      (=float counterclockwiseSensorSample
+      (=float counterclockwise-angle (- agent-angle :sensor-spread))
+      (=float counterclockwise-sensor-sample
               (substrateSample
-               (+ agentPos
+               (+ agent-pos
                   (* :sensor-distance
-                     (vec2 (cos counterclockwiseAngle)
-                           (sin counterclockwiseAngle))))))
+                     (vec2 (cos counterclockwise-angle)
+                           (sin counterclockwise-angle))))))
 
-      (=float newAgentAngle
-              (mod (+ agentAngle
+      (=float newagent-angle
+              (mod (+ agent-angle
                       (* :agent-turn-factor
-                         (- clockwiseSensorSample
-                            counterclockwiseSensorSample)))
+                         (- clockwise-sensor-sample
+                            counterclockwise-sensor-sample)))
                    :TAU))
-      (=vec2 newAgentPos
-             (mod (+ agentPos
+      (=vec2 newagent-pos
+             (mod (+ agent-pos
                      (* :agent-speed-factor
-                        (vec2 (cos newAgentAngle)
-                              (sin newAgentAngle))))
+                        (vec2 (cos newagent-angle)
+                              (sin newagent-angle))))
                   1))
 
-      (=vec2 randSeed (* 400 (+ pos (vec2 (mod time 3.217) 0))))
+      (=vec2 rand-seed (* 400 (+ pos (vec2 (mod time 3.217) 0))))
 
-      (= fragColor
-         (uvec4 (* (if (< (rand (+ randSeed (:rand -100 100)))
-                          randomizeChance)
-                     (vec3 (rand (+ randSeed (:rand -100 100)))
-                           (rand (+ randSeed (:rand -100 100)))
-                           (rand (+ randSeed (:rand -100 100))))
-                     (vec3 newAgentPos
-                           (/ newAgentAngle :TAU)))
+      (= frag-color
+         (uvec4 (* (if (< (rand (+ rand-seed (:rand -100 100)))
+                          randomize-chance)
+                     (vec3 (rand (+ rand-seed (:rand -100 100)))
+                           (rand (+ rand-seed (:rand -100 100)))
+                           (rand (+ rand-seed (:rand -100 100))))
+                     (vec3 newagent-pos
+                           (/ newagent-angle :TAU)))
                    :u16-max)
                 0)))}))
 
@@ -174,10 +174,10 @@
     (with-context gl
       (run-purefrag-shader! agent-logic-frag-source
                             agent-tex-resolution
-                            {"randomizeChance" randomize-chance
-                             "time" (u/seconds-since-startup)
-                             "substrate" substrate-tex
-                             "agentTex" front-tex}
+                            {:randomize-chance randomize-chance
+                             :time (u/seconds-since-startup)
+                             :substrate substrate-tex
+                             :agent-tex front-tex}
                             {:target back-tex})))
   (update state :agent-textures reverse))
 
@@ -189,9 +189,9 @@
       (run-shaders! [(kudzu->glsl (particle-vert-source :u16))
                      (kudzu->glsl (particle-frag-source :u16))]
                     substrate-resolution
-                    {"particleTex" agent-tex
-                     "resolution" substrate-resolution
-                     "radius" agent-radius}
+                    {:particle-tex agent-tex
+                     :resolution substrate-resolution
+                     :radius agent-radius}
                     {}
                     0
                     (* 6 agent-tex-resolution agent-tex-resolution)
@@ -199,7 +199,7 @@
 
       (run-purefrag-shader! substrate-logic-frag-source
                             substrate-resolution
-                            {"substrate" front-tex}
+                            {:substrate front-tex}
                             {:target back-tex})))
   (update state :substrate-textures reverse))
 
@@ -208,8 +208,8 @@
     (maximize-gl-canvas {:aspect-ratio 1})
     (run-purefrag-shader! render-frag-source
                           (canvas-resolution)
-                          {"resolution" (canvas-resolution)
-                           "substrate" (first substrate-textures)}))
+                          {:resolution (canvas-resolution)
+                           :substrate (first substrate-textures)}))
   (->> state
        (update-agents! ambient-randomize-chance)
        update-substrate!))

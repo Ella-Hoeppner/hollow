@@ -13,9 +13,9 @@
    mix-oklab-chunk
    '{:precision {float highp}
      :uniforms {size vec2}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
-            (= fragColor
+            (= frag-color
                (if (> pos.y (/ 2 3))
                  (vec4 (mix (vec3 0 0 1) (vec3 1) pos.x)
                        1)

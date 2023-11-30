@@ -19,9 +19,9 @@
                             :uniforms {size vec2
                                        time float
                                        tex sampler3D}
-                            :outputs {fragColor vec4}
+                            :outputs {frag-color vec4}
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
-                                   (= fragColor
+                                   (= frag-color
                                       (texture tex
                                                (vec3 pos (mod time 1)))))}
                           (canvas-resolution)

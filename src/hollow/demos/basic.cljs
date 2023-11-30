@@ -14,9 +14,9 @@
      (kudzu->glsl
       '{:precision {float highp}
         :uniforms {size vec2}
-        :outputs {fragColor vec4}
+        :outputs {frag-color vec4}
         :main ((=vec2 pos (/ gl_FragCoord.xy size))
-               (= fragColor (vec4 pos 0 1)))})
+               (= frag-color (vec4 pos 0 1)))})
      (canvas-resolution)
      {"size" (canvas-resolution)})
     {}))

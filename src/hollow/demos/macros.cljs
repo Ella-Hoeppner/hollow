@@ -18,11 +18,11 @@
      :uniforms {size vec2
                 time float
                 mouse vec2}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float dist (distance pos
                                    (vec2 (:rand) (:rand))))
-            (= fragColor
+            (= frag-color
                (if (> dist (:rand))
                  (vec4 1)
                  (vec4 0 0 0 1))))}))

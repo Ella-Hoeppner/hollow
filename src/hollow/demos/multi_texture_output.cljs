@@ -14,15 +14,15 @@
   (kudzu->glsl
    {:constants {:texture-resolution texture-resolution}}
    '{:precision {float highp}
-     :outputs {fragColor0 vec4
-               fragColor1 vec4}
-     :layout {fragColor0 0
-              fragColor1 1}
+     :outputs {frag-color0 vec4
+               frag-color1 vec4}
+     :layout {frag-color0 0
+              frag-color1 1}
      :main ((=vec2 pos (/ gl_FragCoord.xy :texture-resolution))
-            (= fragColor0 (vec4 pos
+            (= frag-color0 (vec4 pos
                                 0
                                 1))
-            (= fragColor1 (vec4 0
+            (= frag-color1 (vec4 0
                                 pos
                                 1)))}))
 
@@ -33,9 +33,9 @@
      :uniforms {size vec2
                 tex1 sampler2D
                 tex2 sampler2D}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
-            (= fragColor
+            (= frag-color
                (if (< pos.x 0.5)
                  (texture tex1 (* pos (vec2 2 1)))
                  (texture tex2 (* (- pos (vec2 0.5 0))

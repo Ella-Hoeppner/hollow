@@ -17,7 +17,7 @@
      :uniforms {size vec2
                 time float
                 mouse vec2}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue
                     (* (+ (snoiseTileable2D (vec2 0)
@@ -26,7 +26,7 @@
                                                (vec2 100 -20)))
                           1)
                        0.5))
-            (= fragColor (vec4 noiseValue
+            (= frag-color (vec4 noiseValue
                                noiseValue
                                noiseValue
                                1)))}))

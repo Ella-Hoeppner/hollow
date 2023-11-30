@@ -17,10 +17,10 @@
     (run-purefrag-shader! '{:precision {float highp}
                             :uniforms {size vec2
                                        tex sampler2D}
-                            :outputs {fragColor vec4}
+                            :outputs {frag-color vec4}
                             :main ((=vec2 pos (/ gl_FragCoord.xy size))
                                    (= pos.x (- 1 pos.x))
-                                   (= fragColor
+                                   (= frag-color
                                       (vec4 (.xyz
                                              (texture tex
                                                       (vec2 pos.x (- 1 pos.y))))

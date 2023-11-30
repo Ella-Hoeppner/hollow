@@ -17,9 +17,9 @@
      '{:precision {float highp}
        :uniforms {size vec2
                   tex sampler2D}
-       :outputs {fragColor vec4}
+       :outputs {frag-color vec4}
        :main ((=vec2 pos (/ gl_FragCoord.xy size))
-              (= fragColor
+              (= frag-color
                  (texture tex
                           (vec2 pos.x (- 1 pos.y)))))}
      (canvas-resolution)

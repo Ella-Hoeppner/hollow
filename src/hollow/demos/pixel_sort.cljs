@@ -21,7 +21,7 @@
                 tex sampler2D
                 frame int
                 threshold float}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :functions {grayscale
                  (float
                   [c vec3]
@@ -42,7 +42,7 @@
       (=float currentGrayscale (grayscale currentValue.rgb))
       (=float comparisonGrayscale (grayscale comparisonValue.rgb))
 
-      (= fragColor
+      (= frag-color
          (if (|| (< (+ pos.x dir.x) 0)
                  (> (+ pos.x dir.x) 1))
            currentValue
@@ -71,9 +71,9 @@
                            '{:precision {float highp}
                              :uniforms {size vec2
                                         tex sampler2D}
-                             :outputs {fragColor vec4}
+                             :outputs {frag-color vec4}
                              :main ((=vec2 pos (/ gl_FragCoord.xy size))
-                                    (= fragColor (texture tex pos)))})
+                                    (= frag-color (texture tex pos)))})
                           (canvas-resolution)
                           {"size" (canvas-resolution)
                            "tex" (second textures)}))
@@ -88,10 +88,10 @@
                              '{:precision {float highp}
                                :uniforms {size vec2
                                           tex sampler2D}
-                               :outputs {fragColor vec4}
+                               :outputs {frag-color vec4}
                                :main ((=vec2 pos (/ gl_FragCoord.xy size))
                                       (= pos.y (- 1 pos.y))
-                                      (= fragColor (texture tex pos)))})
+                                      (= frag-color (texture tex pos)))})
                             sort-resolution
                             {"size" [sort-resolution sort-resolution]
                              "tex" (html-image-tex "img")}

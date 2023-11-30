@@ -36,9 +36,9 @@
                             1)))}
                 '{:precision {float highp}
                   :uniforms {color vec3}
-                  :outputs {fragColor vec4}
+                  :outputs {frag-color vec4}
                   :main
-                  ((= fragColor (vec4 color 1)))}]
+                  ((= frag-color (vec4 color 1)))}]
                (canvas-resolution)
                {"color" color}
                {"position"

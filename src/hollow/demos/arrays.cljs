@@ -15,7 +15,7 @@
     '{:precision {float highp}
       :uniforms {size vec2
                  decisions [bool "3"]}
-      :outputs {fragColor vec4}
+      :outputs {frag-color vec4}
       :functions
       {decide-colors (vec3
                       [c [vec3 "2"]
@@ -30,7 +30,7 @@
           [vec3
            (vec3 1 1 1)
            (vec3 0 0 0)])
-       (= fragColor
+       (= frag-color
           (vec4 (decide-colors color-vectors decisions)
                 1)))})))
 

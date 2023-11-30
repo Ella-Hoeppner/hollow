@@ -16,8 +16,8 @@
    fbm-chunk
    '{:precision {float highp}
      :uniforms {resolution vec2}
-     :outputs {fragColor vec4}
-     :main ((= fragColor
+     :outputs {frag-color vec4}
+     :main ((= frag-color
                (vec4 (vec3 (-> (fbm snoise2D
                                     2
                                     (pixel-pos)

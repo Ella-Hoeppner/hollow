@@ -32,14 +32,14 @@
     '{:precision {float highp}
       :uniforms {resolution vec2
                  time float}
-      :outputs {fragColor vec4}
+      :outputs {frag-color vec4}
       :functions
       {sdf (float
             [x vec3]
             (=vec3 sphere-center (vec3 0 0 1))
             (+ (sd-sphere (- x sphere-center) ~sphere-radius)
                (* ~max-distortion
-                  (-> (gaborNoise 4
+                  (-> (gabor-noise 4
                                   [3 4 5 6]
                                   (vec4 (- x sphere-center)
                                         (* 0.25 time)))
@@ -48,29 +48,29 @@
                       (- 1)))))}
       :main ((=Ray ray (Ray (vec3 0)
                             (normalize (vec3 (pixel-pos) 1))))
-             (=vec2 boundIntersections
-                    (findSphereIntersections ray
+             (=vec2 bound-intersections
+                    (find-sphere-intersections ray
                                              (vec3 0 0 1)
                                              ~(+ sphere-radius
                                                  (* max-distortion 1.01))))
-             (=Ray boundRay
-                   (Ray (+ ray.pos (* ray.dir boundIntersections.x))
+             (=Ray bound-ray
+                   (Ray (+ ray.pos (* ray.dir bound-intersections.x))
                         ray.dir))
-             (=float surfaceDistance
+             (=float surface-distance
                      (raymarch sdf
-                               boundRay
-                               (- boundIntersections.y
-                                  boundIntersections.x)
+                               bound-ray
+                               (- bound-intersections.y
+                                  bound-intersections.x)
                                {:step-factor 0.65}))
-             (= fragColor
-                (vec4 (if (> surfaceDistance 0)
+             (= frag-color
+                (vec4 (if (> surface-distance 0)
                         (-> (normalize
-                             (findGradient 3
-                                           sdf
-                                           0.0001
-                                           (+ boundRay.pos
-                                              (* boundRay.dir
-                                                 surfaceDistance))))
+                             (find-gradient 3
+                                            sdf
+                                            0.0001
+                                            (+ bound-ray.pos
+                                               (* bound-ray.dir
+                                                  surface-distance))))
                             (+ 1)
                             (* 0.5))
                         (vec3 0))

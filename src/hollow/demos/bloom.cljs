@@ -19,10 +19,10 @@
      :uniforms {size vec2
                 mouse vec2
                 tex sampler2D}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= pos.y (- 1 pos.y))
-            (= fragColor (-> (bloom tex
+            (= frag-color (-> (bloom tex
                                     pos
                                     (* (bi->uni mouse.x) 0.0025)
                                     (bi->uni mouse.y))

@@ -19,14 +19,14 @@
      :uniforms {size vec2
                 mouse vec2
                 tex sampler2D}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (= pos.y (- 1 pos.y))
             (=vec3 texRGB (.xyz (texture tex pos)))
             (=vec3 hsv (rgb->hsv texRGB))
             (= hsv.x (+ hsv.x (- (bi->uni mouse.x) 0.5)))
             (=vec3 outRGB (hsv->rgb hsv))
-            (= fragColor (vec4 outRGB
+            (= frag-color (vec4 outRGB
                                1)))}))
 
 (defn update-page! [{:keys [gl texture] :as state}]

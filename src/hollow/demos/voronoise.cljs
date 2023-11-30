@@ -17,7 +17,7 @@
      :uniforms {size vec2
                 mouse vec2
                 time float}
-     :outputs {fragColor vec4}
+     :outputs {frag-color vec4}
      :main ((=vec2 pos (/ gl_FragCoord.xy size))
             (=float noiseValue
                     (voronoise (bi->uni mouse.x)
@@ -25,7 +25,7 @@
                                (+ (* pos 23)
                                   (vec2 (cos time)
                                         (sin time)))))
-            (= fragColor (vec4 (vec3 noiseValue) 1)))}))
+            (= frag-color (vec4 (vec3 noiseValue) 1)))}))
 
 (defn update-page! [{:keys [gl]}]
   (with-context gl

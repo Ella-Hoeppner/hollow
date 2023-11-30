@@ -16,8 +16,8 @@
                  sampler2D highp}
      :uniforms {size vec2
                 tex sampler2D}
-     :outputs {fragColor vec4}
-     :main ((= fragColor (texture tex (/ gl_FragCoord.xy size))))}))
+     :outputs {frag-color vec4}
+     :main ((= frag-color (texture tex (/ gl_FragCoord.xy size))))}))
 
 (defn update-page! [{:keys [gl texture] :as state}]
   (with-context gl
