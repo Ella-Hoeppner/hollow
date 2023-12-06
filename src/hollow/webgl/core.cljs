@@ -24,19 +24,22 @@
                                 append-to-body?
                                 preserve-drawing-buffer?
                                 alpha
+                                premultiplied-alpha
                                 stencil?]
                          :or {name :default
                               alpha true
-                              append-to-body? true}}]]
+                              append-to-body? true
+                              premultiplied-alpha true}}]]
   (when-let [old-canvas (js/document.getElementById (str name))]
     (.removeChild old-canvas.parentNode old-canvas))
   (when (nil? @hollows-atom) (update-hollows!))
   (let [gl (if canvas
-             (get-context canvas
-                          {"preserveDrawingBuffer" (boolean 
-                                                    preserve-drawing-buffer?)
-                           "alpha" alpha
-                           "stencil" (boolean stencil?)})
+             (get-context
+              canvas
+              {"preserveDrawingBuffer" (boolean preserve-drawing-buffer?)
+               "alpha" alpha
+               "premultipliedAlpha" premultiplied-alpha
+               "stencil" (boolean stencil?)})
              (create-context
               name
               {:canvas-element canvas
