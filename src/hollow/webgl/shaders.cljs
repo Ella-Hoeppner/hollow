@@ -80,9 +80,9 @@
            (create-boj! gl
                         4
                         {:initial-data (js/Float32Array.
-                                        (clj->js [-1 -1 -0.99999 1
-                                                  -1 3 -0.99999 1
-                                                  3 -1 -0.99999 1]))})))
+                                        (clj->js [-1 -1 0.99999 1
+                                                  -1 3 0.99999 1
+                                                  3 -1 0.99999 1]))})))
   (@purefrag-vert-pos-bojs-atom gl))
 
 (defn create-purefrag-hollow [gl frag-source]
