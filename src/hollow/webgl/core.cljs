@@ -122,13 +122,14 @@
                    gl.COLOR
                    0
                    (js/Uint32Array.
-                    (if (nil? color)
-                      (repeat 4 0)
-                      (if (number? color)
-                        (repeat 4 color)
-                        (case (count color)
-                          4 color
-                          1 (repeat 4 (first color))))))))
+                    (vec
+                     (if (nil? color)
+                       (repeat 4 0)
+                       (if (number? color)
+                         (repeat 4 color)
+                         (case (count color)
+                           4 color
+                           1 (repeat 4 (first color)))))))))
 
 (defn clear! [gl & [{:keys [mask
                             color
