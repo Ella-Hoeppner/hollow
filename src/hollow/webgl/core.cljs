@@ -1,5 +1,8 @@
 (ns hollow.webgl.core
   (:require [hollow.util :as u]
+            [hollow.webgl.textures :refer [target-textures!
+                                           target-screen!
+                                           get-tex-type]]
             [hollow.dom.canvas :refer [create-context
                                        get-context]]))
 
@@ -9,11 +12,12 @@
   (doseq [hollow (vals @hollows-atom)]
     (when-let [{:keys [state gl update-fn]} hollow]
       (swap! state assoc :gl gl)
-      (when update-fn (reset! state
-                              (let [new-state (update-fn @state)]
-                                (if (map? new-state)
-                                  new-state
-                                  (throw "update-fn must return a hash-map")))))
+      (when update-fn
+        (reset! state
+                (let [new-state (update-fn @state)]
+                  (if (map? new-state)
+                    new-state
+                    (throw "hollow: update-fn must return a hash-map")))))
       (swap! state assoc :gl gl)))
   (js/requestAnimationFrame update-hollows!))
 
@@ -54,7 +58,7 @@
                       (let [init-state (init-fn-or-value gl)]
                         (if (map? init-state)
                           (assoc init-state :gl gl)
-                          (throw "init-fn must return a hash-map")))
+                          (throw "hollow: init-fn must return a hash-map")))
                       init-fn-or-value))
             :gl gl
             :update-fn update-fn})))
@@ -100,16 +104,60 @@
 (defn hollow-context [& hollow-name]
   (:gl (@hollows-atom (or hollow-name :default))))
 
-(defn clear! [gl & clear-masks]
-  (.clear gl (apply bit-or (map #(or ({:color gl.COLOR_BUFFER_BIT
-                                       :depth gl.DEPTH_BUFFER_BIT
-                                       :stencil gl.STENCIL_BUFFER_BIT
-                                       :all (bit-or gl.COLOR_BUFFER_BIT
-                                                    gl.DEPTH_BUFFER_BIT
-                                                    gl.STENCIL_BUFFER_BIT)}
-                                      %)
-                                     %)
-                                clear-masks))))
+(defn- clear-float! [gl bit-mask color]
+  (let [[r g b a]
+        (if (nil? color)
+          (repeat 4 0)
+          (if (number? color)
+            (list color color color 1)
+            (case (count color)
+              4 color
+              3 (concat color (list 1))
+              1 (concat (repeat 3 (first color)) (list 1)))))]
+    (.clearColor gl r g b a))
+  (.clear gl bit-mask))
+
+(defn- clear-uint! [gl color]
+  (.clearBufferuiv gl
+                   gl.COLOR
+                   0
+                   (js/Uint32Array.
+                    (if (nil? color)
+                      (repeat 4 0)
+                      (if (number? color)
+                        (repeat 4 color)
+                        (case (count color)
+                          4 color
+                          1 (repeat 4 (first color))))))))
+
+(defn clear! [gl & [{:keys [mask
+                            color
+                            target]
+                     :or {mask #{:color :depth :stencil}}}]]
+  (let [bit-mask (apply bit-or
+                        (map #(or ({:color gl.COLOR_BUFFER_BIT
+                                    :depth gl.DEPTH_BUFFER_BIT
+                                    :stencil gl.STENCIL_BUFFER_BIT}
+                                   %)
+                                  %)
+                             (if (coll? mask)
+                               mask
+                               (list mask))))]
+    (if target
+      (let [tex-type (get-tex-type target)]
+        (target-textures! gl target)
+        (cond
+          (= tex-type :f8)
+          (clear-float! gl bit-mask color)
+
+          (= tex-type :u32)
+          (clear-uint! gl color)
+
+          :else
+          (throw
+           (str "hollow: clear! doesn't work for texture type " tex-type))))
+      (do (target-screen! gl)
+          (clear-float! gl bit-mask color)))))
 
 (defn enable! [gl & enable-values]
   (doseq [enable-value enable-values]

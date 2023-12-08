@@ -251,11 +251,11 @@
       (.readPixels gl x y width height gl.RGBA_INTEGER gl.UNSIGNED_INT array))
     array))
 
-(defn tex-resolution [tex]
+(defn get-tex-resolution [tex]
   (:resolution (@tex-metadata-atom tex)))
 
-(defn tex-type [tex]
-  (:type (@tex-metadata-atom tex)))
+(defn get-tex-type [tex]
+  (:tex-type (@tex-metadata-atom tex)))
 
 (defn copy-html-image-data! [gl tex element-or-id]
   (let [element (if (string? element-or-id)
