@@ -129,7 +129,8 @@
                          (repeat 4 color)
                          (case (count color)
                            4 color
-                           1 (repeat 4 (first color)))))))))
+                           1 (repeat 4 (first color))))))))
+  (.clearBufferfi gl gl.DEPTH_STENCIL 0 0 0))
 
 (defn clear! [gl & [{:keys [mask
                             color

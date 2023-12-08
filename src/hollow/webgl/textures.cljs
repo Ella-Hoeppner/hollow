@@ -3,6 +3,15 @@
 (defonce framebuffer-map-atom (atom {}))
 (defonce tex-metadata-atom (atom {}))
 
+(defn get-tex-resolution [tex]
+  (:resolution (@tex-metadata-atom tex)))
+
+(defn get-tex-type [tex]
+  (:tex-type (@tex-metadata-atom tex)))
+
+(defn get-tex-depth-renderbuffer [tex]
+  (:depth-renderbuffer (@tex-metadata-atom tex)))
+
 (defn get-framebuffer [gl textures]
   (if-let [framebuffer (@framebuffer-map-atom [gl textures])]
     framebuffer
@@ -31,7 +40,14 @@
 (defn target-textures! [gl & textures]
   (.bindFramebuffer gl gl.FRAMEBUFFER (get-framebuffer gl textures))
   (.drawBuffers gl (map #(+ gl.COLOR_ATTACHMENT0 %)
-                        (range (count textures)))))
+                        (range (count textures))))
+  (when-let [depth-renderbuffer (some get-tex-depth-renderbuffer textures)]
+    (.bindRenderbuffer gl gl.RENDERBUFFER depth-renderbuffer)
+    (.framebufferRenderbuffer gl
+                              gl.FRAMEBUFFER
+                              gl.DEPTH_ATTACHMENT
+                              gl.RENDERBUFFER
+                              depth-renderbuffer)))
 
 (defn set-tex-parameters [gl texture filter-mode wrap-mode & [three-d?]]
   (let [texture-target (if three-d? gl.TEXTURE_3D gl.TEXTURE_2D)]
@@ -192,6 +208,7 @@
                   resolution
                   & [{:keys [wrap-mode
                              filter-mode
+                             depth-buffer?
                              channels
                              data]
                       :or {wrap-mode :repeat
@@ -204,14 +221,27 @@
     (swap! tex-metadata-atom
            assoc
            tex
-           {:resolution (if three-d?
-                          (if (number? resolution)
-                            [resolution resolution resolution]
-                            (vec resolution))
-                          (if (number? resolution)
-                            [resolution resolution]
-                            (vec resolution)))
-            :tex-type tex-type})
+           (let [processed-resolution (if three-d?
+                                        (if (number? resolution)
+                                          [resolution resolution resolution]
+                                          (vec resolution))
+                                        (if (number? resolution)
+                                          [resolution resolution]
+                                          (vec resolution)))]
+             {:resolution processed-resolution
+              :tex-type tex-type
+              :depth-renderbuffer
+              (when depth-buffer?
+                (let [depth-renderbuffer (.createRenderbuffer gl)]
+                  (.bindRenderbuffer gl
+                                     gl.RENDERBUFFER
+                                     depth-renderbuffer)
+                  (.renderbufferStorage gl
+                                        gl.RENDERBUFFER
+                                        gl.DEPTH_COMPONENT16
+                                        (first processed-resolution)
+                                        (second processed-resolution))
+                  depth-renderbuffer))}))
     (set-tex-data! gl tex data options)
     (.bindTexture gl texture-target tex)
     (set-tex-parameters gl
@@ -250,12 +280,6 @@
       :u32
       (.readPixels gl x y width height gl.RGBA_INTEGER gl.UNSIGNED_INT array))
     array))
-
-(defn get-tex-resolution [tex]
-  (:resolution (@tex-metadata-atom tex)))
-
-(defn get-tex-type [tex]
-  (:tex-type (@tex-metadata-atom tex)))
 
 (defn copy-html-image-data! [gl tex element-or-id]
   (let [element (if (string? element-or-id)
