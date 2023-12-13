@@ -1,8 +1,6 @@
 (ns hollow.util
   #?(:clj (:require [clojure.walk :refer [prewalk-replace
-                                          prewalk]]
-                    [clojure.pprint :refer [pprint]]))
-  #?(:cljs (:require [cljs.pprint :refer [pprint]]))
+                                          prewalk]]))
   #?(:cljs (:require-macros [hollow.util])))
 
 (defn now []
@@ -24,7 +22,7 @@
        :clj (prn tables)))
   (last tables))
 
-(defn pretty-log [& vals]
+#_(defn pretty-log [& vals]
   (doseq [val vals]
     #?(:cljs (pprint val)
        :clj (pprint val)))
