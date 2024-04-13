@@ -5,4 +5,4 @@
                     :output-dir "out/js"
                     :modules {:base
                               #_{}
-                              {:init-fn hollow.demos.mix-oklab/init}}}}}
+                              {:init-fn hollow.demos.basic/init}}}}}
