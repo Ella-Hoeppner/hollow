@@ -1,4 +1,30 @@
-body {
+body, html {
+  height: 100%;
   margin: 0;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#demo-select {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  text-align: center;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 150px;
+}
+
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+select {
+  width: 100%;
 }

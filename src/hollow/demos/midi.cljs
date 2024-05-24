@@ -43,13 +43,10 @@
   state)
 
 (defn init []
-  (js/window.addEventListener
-   "load"
-   (fn []
-     (add-note-down-callback
-      (fn [{:keys [note]}]
-        (update-hollow-state! #(update % :circles assoc note [(rand) (rand)]))))
-     (add-note-up-callback
-      (fn [{:keys [note]}]
-        (update-hollow-state! #(update % :circles dissoc note))))
-     (start-hollow! nil update-page!))))
+  (add-note-down-callback
+   (fn [{:keys [note]}]
+     (update-hollow-state! #(update % :circles assoc note [(rand) (rand)]))))
+  (add-note-up-callback
+   (fn [{:keys [note]}]
+     (update-hollow-state! #(update % :circles dissoc note))))
+  (start-hollow! nil update-page!))

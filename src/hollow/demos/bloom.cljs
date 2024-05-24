@@ -43,4 +43,4 @@
   {:texture (html-image-tex gl "img")})
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! init-page! update-page!)))
+  (start-hollow! init-page! update-page!))

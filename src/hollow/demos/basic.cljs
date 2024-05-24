@@ -22,5 +22,4 @@
     {}))
 
 (defn init []
-  (js/window.addEventListener "load"
-                              #(start-hollow! init-page! nil)))
+  (start-hollow! init-page! nil))

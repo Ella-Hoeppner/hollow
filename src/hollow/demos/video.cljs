@@ -28,22 +28,19 @@
   state)
 
 (defn init []
-  (js/window.addEventListener
-   "load"
-   (fn []
-     (let [video (js/document.createElement "video")]
-       (set! video.src "./test_video.mp4")
-       (set! video.muted "muted")
-       (set! video.loop "true")
-       (.play video)
-       (.addEventListener
-        video
-        "timeupdate"
-        (let [started?-atom (atom false)]
-          #(or @started?-atom
-               (do (reset! started?-atom true)
-                   (start-hollow!
-                    (fn [gl]
-                      {:texture (create-tex gl :f8 1)
-                       :video video})
-                    update-page!)))))))))
+  (let [video (js/document.createElement "video")]
+    (set! video.src "./test_video.mp4")
+    (set! video.muted "muted")
+    (set! video.loop "true")
+    (.play video)
+    (.addEventListener
+     video
+     "timeupdate"
+     (let [started?-atom (atom false)]
+       #(or @started?-atom
+            (do (reset! started?-atom true)
+                (start-hollow!
+                 (fn [gl]
+                   {:texture (create-tex gl :f8 1)
+                    :video video})
+                 update-page!)))))))

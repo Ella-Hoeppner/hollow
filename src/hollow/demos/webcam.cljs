@@ -31,17 +31,14 @@
   state)
 
 (defn init []
-  (js/window.addEventListener
-   "load"
-   (fn []
-     (create-webcam-video-element
-      (fn [video]
-        (.addEventListener video
-                           "timeupdate"
-                           (let [started?-atom (atom false)]
-                             #(or @started?-atom
-                                  (do (reset! started?-atom true)
-                                      (start-hollow!
-                                       (fn [gl] {:texture (create-tex gl :f8 1)
-                                                 :video video})
-                                       update-page!))))))))))
+  (create-webcam-video-element
+   (fn [video]
+     (.addEventListener video
+                        "timeupdate"
+                        (let [started?-atom (atom false)]
+                          #(or @started?-atom
+                               (do (reset! started?-atom true)
+                                   (start-hollow!
+                                    (fn [gl] {:texture (create-tex gl :f8 1)
+                                              :video video})
+                                    update-page!))))))))

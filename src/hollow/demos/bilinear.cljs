@@ -67,4 +67,4 @@
                            :data (js/Uint16Array. pixel-data)}))})
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! init-page! update-page!)))
+  (start-hollow! init-page! update-page!))

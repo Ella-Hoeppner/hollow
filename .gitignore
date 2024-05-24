@@ -1,0 +1,5 @@
+.clj-kondo
+.cpcache
+.lsp
+.shadow-cljs
+out/js
