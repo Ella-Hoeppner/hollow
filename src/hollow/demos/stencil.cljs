@@ -53,6 +53,6 @@
     {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! render!
-                                                     nil
-                                                     {:stencil? true})))
+  (start-hollow! render!
+                 nil
+                 {:stencil? true}))

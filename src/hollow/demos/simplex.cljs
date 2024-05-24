@@ -52,4 +52,4 @@
     {}))
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! nil update-page!)))
+  (start-hollow! nil update-page!))

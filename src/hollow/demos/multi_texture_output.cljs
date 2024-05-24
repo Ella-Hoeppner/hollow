@@ -65,6 +65,5 @@
        :tex2 tex2})))
 
 (defn init []
-  (js/window.addEventListener "load"
-                              #(start-hollow! init-page!
-                                              update-page!)))
+  (start-hollow! init-page!
+                 update-page!))

@@ -80,4 +80,4 @@
               (html-image-tex "img"))})
 
 (defn init []
-  (js/window.addEventListener "load" #(start-hollow! init-page! update-page!)))
+  (start-hollow! init-page! update-page!))
